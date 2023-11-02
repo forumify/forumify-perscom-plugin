@@ -1,0 +1,15 @@
+{
+    "name": "forumify/forumify-perscom-plugin",
+    "type": "symfony-bundle",
+    "license": "OSL-3.0",
+    "version": "0.1.0",
+    "require": {
+        "php": ">=8.2",
+        "forumify/forumify-platform": "*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Forumify\\PerscomPlugin\\": "src/"
+        }
+    }
+}

@@ -1,0 +1,12 @@
+admin:
+  resource: ../src/Admin/Controller
+  type: attribute
+  prefix: admin/perscom/
+  name_prefix: perscom_admin_
+
+forum:
+    resource: ../src/Forum/Controller
+    type: attribute
+    prefix: perscom/
+    name_prefix: perscom_
+
