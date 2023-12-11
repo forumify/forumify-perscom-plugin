@@ -11,5 +11,20 @@
         "psr-4": {
             "Forumify\\PerscomPlugin\\": "src/"
         }
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../forumify-platform",
+            "options": {
+                "symlink": true
+            }
+        }
+    ],
+    "config": {
+        "allow-plugins": {
+            "symfony/flex": false,
+            "symfony/runtime": false
+        }
     }
 }
