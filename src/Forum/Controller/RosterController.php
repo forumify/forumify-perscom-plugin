@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Controller;
 
+use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -11,8 +12,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class RosterController extends AbstractController
 {
     #[Route('/roster', 'roster')]
-    public function __invoke(): Response
+    public function __invoke(PerscomFactory $perscomFactory): Response
     {
-        return new Response('ok');
+        $perscom = $perscomFactory->getPerscom();
+        $groups = $perscom->groups()->all(['units', 'units.users', 'units.users.rank', 'units.users.status'])->json()['data'] ?? [];
+
+        return $this->render('@ForumifyPerscomPlugin/frontend/personnel/roster.html.twig', [
+            'groups' => $groups
+        ]);
     }
 }

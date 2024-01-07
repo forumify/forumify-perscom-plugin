@@ -1,0 +1,22 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+{% block body %}
+    {% embed '@Forumify/admin/components/simple_form.html.twig' with {
+        title: 'perscom.settings.title'|trans,
+        form: form
+    } only %}
+        {% block form %}
+            <p class="alert alert-info mb-6 text-small"><i class="ph ph-info"></i> {{ 'perscom.settings.license_requirement'|trans }}</p>
+            {{ parent() }}
+        {% endblock %}
+    {% endembed %}
+    <div class="box mt-6">
+        <p class="mb-2 text-small">
+            {{ 'perscom.settings.sync_text'|trans }}
+        </p>
+        <p class="mb-2">
+            {{ 'perscom.settings.last_synced'|trans }}
+            <span class="text-bold">{{ setting('perscom.last_synced') ?: 'perscom.settings.never'|trans }}</span>
+        </p>
+        <a href="{{ path('perscom_admin_sync') }}" class="btn-outlined">{{ 'perscom.settings.sync_now'|trans }}</a>
+    </div>
+{% endblock %}

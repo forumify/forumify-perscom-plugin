@@ -21,14 +21,16 @@ class SettingsController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            $settingRepository->set('perscom.endpoint', $data['endpoint']);
             $settingRepository->set('perscom.perscom_id', $data['perscom_id']);
             $settingRepository->set('perscom.api_key', $data['api_key']);
 
             $this->addFlash('success', 'saved');
+            return $this->redirectToRoute('perscom_admin_settings');
         }
 
-        return $this->render('@PerscomPlugin/admin/settings/settings.html.twig', [
-            'form' => $form,
+        return $this->render('@ForumifyPerscomPlugin/admin/settings.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 }

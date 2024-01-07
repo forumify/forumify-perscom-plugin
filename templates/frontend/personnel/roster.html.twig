@@ -1,0 +1,30 @@
+{% extends '@Forumify/frontend/base.html.twig' %}
+{% block body %}
+    <ul>
+        {% for group in groups %}
+            <li>
+                <h3 class="mb-4">{{ group.name }}</h3>
+                <ul>
+                    {% for unit in group.units %}
+                        <li class="card mb-2">
+                            <h4 class="card-title">{{ unit.name }}</h4>
+                            <ul class="card-body">
+                                {% for user in unit.users %}
+                                    <li class="text-small mb-1">
+                                        <a href="#" class="btn-link w-100">
+                                            {% include '@ForumifyPerscomPlugin/frontend/personnel/components/soldier_row.html.twig' with {
+                                                soldier: user
+                                            } only %}
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="text-small mb1">{{ 'perscom.roster.no_users'|trans }}</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

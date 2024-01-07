@@ -5,22 +5,20 @@
     "version": "0.1.0",
     "require": {
         "php": ">=8.2",
-        "forumify/forumify-platform": "*"
+        "forumify/forumify-platform": "*",
+        "deschutesdesigngroupllc/perscom-php-sdk": "dev-master"
     },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../forumify-platform"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Forumify\\PerscomPlugin\\": "src/"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../forumify-platform",
-            "options": {
-                "symlink": true
-            }
-        }
-    ],
     "config": {
         "allow-plugins": {
             "symfony/flex": false,
