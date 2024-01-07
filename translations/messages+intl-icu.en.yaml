@@ -1,6 +1,7 @@
 perscom:
   roster:
     no_users: 'No users in unit.'
+    user_missing: 'This user does not have a forum account.'
   settings:
     title: 'PERSCOM.io Plugin Configuration'
     license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'

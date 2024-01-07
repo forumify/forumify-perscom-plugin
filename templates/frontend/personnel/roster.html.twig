@@ -7,11 +7,11 @@
                 <ul>
                     {% for unit in group.units %}
                         <li class="card mb-2">
-                            <h4 class="card-title">{{ unit.name }}</h4>
+                            <div class="card-title">{{ unit.name }}</div>
                             <ul class="card-body">
                                 {% for user in unit.users %}
                                     <li class="text-small mb-1">
-                                        <a href="#" class="btn-link w-100">
+                                        <a href="{{ path('perscom_user', { id: user.id }) }}" class="btn-link w-100">
                                             {% include '@ForumifyPerscomPlugin/frontend/personnel/components/soldier_row.html.twig' with {
                                                 soldier: user
                                             } only %}
