@@ -1,14 +1,14 @@
 {% extends '@Forumify/frontend/base.html.twig' %}
 {% block body %}
     {% embed '@Forumify/components/tabs.html.twig' %}
-        {% block tabHeaders %}
+        {% block tabs %}
             {% for group in groups %}
                 <button class="btn-link" data-tab-id="group-{{ group.id }}">
                     {{ group.name }}
                 </button>
             {% endfor %}
         {% endblock %}
-        {% block tabBodies %}
+        {% block tabpanels %}
             {% for group in groups %}
                 <ul id="group-{{ group.id }}">
                     {% for unit in group.units %}
