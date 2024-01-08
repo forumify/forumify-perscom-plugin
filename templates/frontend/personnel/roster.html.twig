@@ -1,30 +1,25 @@
 {% extends '@Forumify/frontend/base.html.twig' %}
 {% block body %}
-    <ul>
-        {% for group in groups %}
-            <li>
-                <h3 class="mb-4">{{ group.name }}</h3>
-                <ul>
+    {% embed '@Forumify/components/tabs.html.twig' %}
+        {% block tabHeaders %}
+            {% for group in groups %}
+                <button class="btn-link" data-tab-id="group-{{ group.id }}">
+                    {{ group.name }}
+                </button>
+            {% endfor %}
+        {% endblock %}
+        {% block tabBodies %}
+            {% for group in groups %}
+                <ul id="group-{{ group.id }}">
                     {% for unit in group.units %}
                         <li class="card mb-2">
-                            <div class="card-title">{{ unit.name }}</div>
-                            <ul class="card-body">
-                                {% for user in unit.users %}
-                                    <li class="text-small mb-1">
-                                        <a href="{{ path('perscom_user', { id: user.id }) }}" class="btn-link w-100">
-                                            {% include '@ForumifyPerscomPlugin/frontend/personnel/components/soldier_row.html.twig' with {
-                                                soldier: user
-                                            } only %}
-                                        </a>
-                                    </li>
-                                {% else %}
-                                    <li class="text-small mb1">{{ 'perscom.roster.no_users'|trans }}</li>
-                                {% endfor %}
-                            </ul>
+                            {% include '@ForumifyPerscomPlugin/frontend/personnel/components/unit.html.twig' with {
+                                unit: unit
+                            } only %}
                         </li>
                     {% endfor %}
                 </ul>
-            </li>
-        {% endfor %}
-    </ul>
+            {% endfor %}
+        {% endblock %}
+    {% endembed %}
 {% endblock %}
