@@ -1,0 +1,14 @@
+{% extends '@Forumify/frontend/base.html.twig' %}
+{% block body %}
+    <div class="flex justify-between">
+        <div>
+            <h2>{{ user.name }}</h2>
+            <p class="text-subtitle">{{ user.rank.name}}, {{ user.position.name }}</p>
+        </div>
+        {% if forumAccount %}
+            <a class="btn-primary" href="{{ path('forumify_forum_profile', { username: forumAccount.username }) }}">
+                {{ 'perscom.user.forum_profile'|trans }}
+            </a>
+        {% endif %}
+    </div>
+{% endblock %}

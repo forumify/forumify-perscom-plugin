@@ -7,7 +7,7 @@ namespace Forumify\PerscomPlugin;
 use Forumify\Plugin\AbstractForumifyPlugin;
 use Forumify\Plugin\PluginMetadata;
 
-class ForumifyPerscomPlugin extends AbstractForumifyPlugin
+class ForumifyPerscomPluginBundle extends AbstractForumifyPlugin
 {
     public function getPluginMetadata(): PluginMetadata
     {

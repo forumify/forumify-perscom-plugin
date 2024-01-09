@@ -3,7 +3,7 @@
     {% for user in unit.users %}
         <li class="text-small mb-1">
             <a href="{{ path('perscom_user', { id: user.id }) }}" class="btn-link w-100">
-                {% include '@ForumifyPerscomPlugin/frontend/personnel/components/soldier_row.html.twig' with {
+                {% include '@ForumifyPerscomPlugin/frontend/roster/components/soldier_row.html.twig' with {
                     soldier: user
                 } only %}
             </a>

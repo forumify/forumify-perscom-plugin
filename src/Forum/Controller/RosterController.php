@@ -20,7 +20,7 @@ class RosterController extends AbstractController
             ->all(['units', 'units.users', 'units.users.rank', 'units.users.status'])
             ->json('data') ?? [];
 
-        return $this->render('@ForumifyPerscomPlugin/frontend/personnel/roster.html.twig', [
+        return $this->render('@ForumifyPerscomPlugin/frontend/roster/roster.html.twig', [
             'groups' => $groups
         ]);
     }

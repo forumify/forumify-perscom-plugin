@@ -13,7 +13,7 @@
                 <ul id="group-{{ group.id }}">
                     {% for unit in group.units %}
                         <li class="card mb-2">
-                            {% include '@ForumifyPerscomPlugin/frontend/personnel/components/unit.html.twig' with {
+                            {% include '@ForumifyPerscomPlugin/frontend/roster/components/unit.html.twig' with {
                                 unit: unit
                             } only %}
                         </li>
