@@ -1,14 +1,110 @@
 {% extends '@Forumify/frontend/base.html.twig' %}
+{% block title_page %}
+    {{ user.rank.abbreviation }} {{ user.name }}
+{% endblock %}
 {% block body %}
-    <div class="flex justify-between">
+    <div class="flex justify-between mb-6">
         <div>
-            <h2>{{ user.name }}</h2>
-            <p class="text-subtitle">{{ user.rank.name}}, {{ user.position.name }}</p>
+            <h2 class="flex gap-4 items-center">
+                {{ user.name }}
+                {% if user.status %}
+                    {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
+                        status: user.status
+                    } only %}
+                {% endif %}
+            </h2>
+            <p class="text-subtitle">{{ user.rank.name ?? '' }}, {{ user.position.name ?? '' }}</p>
         </div>
         {% if forumAccount %}
             <a class="btn-primary" href="{{ path('forumify_forum_profile', { username: forumAccount.username }) }}">
                 {{ 'perscom.user.forum_profile'|trans }}
             </a>
         {% endif %}
+    </div>
+    {% if user.cover_photo_url %}
+        <div class="box text-center mb-4">
+            <img height="530px" width="auto" src="{{ user.cover_photo_url }}">
+        </div>
+    {% endif %}
+    <div class="flex gap-4">
+        <div class="w-25 flex flex-col gap-4">
+            {% if user.rank %}
+                <div class="card">
+                    <div class="card-title">{{ 'perscom.user.rank'|trans }}</div>
+                    <div class="card-body flex flex-col items-center">
+                        {% if user.rank.image %}
+                            <img width="125px" height="auto" src="{{ user.rank.image.image_url }}" alt="">
+                        {% endif %}
+                        <div class="text-small">{{ user.rank.name }}</div>
+                    </div>
+                </div>
+            {% endif %}
+            <div class="card">
+                <div class="card-title">{{ 'perscom.user.length_in_service'|trans }}</div>
+                <div class="card-body flex flex-col">
+                    <p><span class="text-bold">{{ 'perscom.user.time_in_service'|trans }}:</span> PLACEHOLDER</p>
+                    <p><span class="text-bold">{{ 'perscom.user.time_in_grade'|trans }}:</span> PLACEHOLDER</p>
+                </div>
+            </div>
+        </div>
+        <div class="w-75">
+            {% embed '@Forumify/components/tabs.html.twig' %}
+                {% block tabs %}
+                    <button class="btn-link" data-tab-id="assignment">{{ 'perscom.user.assignment'|trans }}</button>
+                    <button class="btn-link" data-tab-id="service_record">{{ 'perscom.user.service_record'|trans }}</button>
+                    <button class="btn-link" data-tab-id="combat_record">{{ 'perscom.user.combat_record'|trans }}</button>
+                    <button class="btn-link" data-tab-id="assignment_record">{{ 'perscom.user.assignment_record'|trans }}</button>
+                    <button class="btn-link" data-tab-id="qualifications">{{ 'perscom.user.qualifications'|trans }}</button>
+                {% endblock %}
+                {% block tabpanels %}
+                    <div id="assignment">
+                        <div class="card mb-4">
+                            <div class="card-title">{{ 'perscom.user.assignment'|trans }}</div>
+                            <div class="card-body">
+                                <div class="flex justify-evenly">
+                                    {% if user.specialty %}
+                                        <div class="flex flex-col items-center">
+                                            <p class="text-small">{{ 'perscom.user.specialty'|trans }}</p>
+                                            <p>{{ user.specialty.name }}</p>
+                                        </div>
+                                    {% endif %}
+                                    {% if user.position %}
+                                        <div class="flex flex-col items-center">
+                                            <p class="text-small">{{ 'perscom.user.position'|trans }}</p>
+                                            <p>{{ user.position.name }}</p>
+                                        </div>
+                                    {% endif %}
+                                    {% if user.unit %}
+                                        <div class="flex flex-col items-center">
+                                            <p class="text-small">{{ 'perscom.user.unit'|trans }}</p>
+                                            <p>{{ user.unit.name }}</p>
+                                        </div>
+                                    {% endif %}
+                                    {% if user.status %}
+                                        <div class="flex flex-col items-center">
+                                            <p class="text-small">{{ 'perscom.user.status'|trans }}</p>
+                                            <p>{{ user.status.name }}</p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <img class="mb-4" width="100%" height="auto" src="{{ user.profile_photo_url }}">
+                        <div class="card mb-4">
+                            <div class="card-title">{{ 'perscom.user.secondary_positions'|trans }}</div>
+                            <div class="card-body">
+                                <ul class="text-small flex flex-col gap-2">
+                                    {% for position in user.secondary_positions %}
+                                        <li>{{ position.name }}</li>
+                                    {% else %}
+                                        <li>{{ 'perscom.user.no_secondary_positions'|trans }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                {% endblock %}
+            {% endembed %}
+        </div>
     </div>
 {% endblock %}

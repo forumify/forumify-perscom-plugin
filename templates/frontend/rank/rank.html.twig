@@ -1,0 +1,5 @@
+{% extends '@Forumify/frontend/base.html.twig' %}
+{% block title_page %}{{ 'perscom.rank.title'|trans }}{% endblock %}
+{% block body %}
+    {{ component('RankList', { size: 50 }) }}
+{% endblock %}

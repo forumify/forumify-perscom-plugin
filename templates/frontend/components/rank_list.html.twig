@@ -1,0 +1,39 @@
+{% embed '@Forumify/components/list.html.twig' with { class: '' } %}
+    {% block pagination_top %}
+        <div class="mb-6">
+            {% include '@Forumify/components/components/pagination.html.twig' %}
+        </div>
+    {% endblock %}
+    {% block list %}
+        <ul>
+            {% for item in this.result.data %}
+                <li class="card flex flex-col mb-4">
+                    <div class="card-title">
+                        {{ item.name }}
+                    </div>
+                    <div class="card-body flex">
+                        <div class="w-25 flex flex-col items-center">
+                            {% if item.image %}
+                                <img src="{{ item.image.image_url }}" width="150px" height="auto">
+                            {% endif %}
+                            <div class="text-small">
+                                <span class="text-bold">{{ item.paygrade }}</span> | {{ item.abbreviation }}
+                            </div>
+                        </div>
+                        <div class="w-75">
+                            {{ item.description|raw }}
+                        </div>
+                    </div>
+                </li>
+            {% else %}
+                <li>{{ 'perscom.rank.no_ranks'|trans }}</li>
+
+            {% endfor %}
+        </ul>
+    {% endblock %}
+    {% block pagination_bottom %}
+        <div class="mt-6">
+            {% include '@Forumify/components/components/pagination.html.twig' %}
+        </div>
+    {% endblock %}
+{% endembed %}

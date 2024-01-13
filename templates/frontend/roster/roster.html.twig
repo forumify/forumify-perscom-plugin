@@ -12,11 +12,24 @@
             {% for group in groups %}
                 <ul id="group-{{ group.id }}">
                     {% for unit in group.units %}
-                        <li class="card mb-2">
-                            {% include '@ForumifyPerscomPlugin/frontend/roster/components/unit.html.twig' with {
-                                unit: unit
-                            } only %}
-                        </li>
+                        {% if unit.users is not empty %}
+                            <li class="card mb-4">
+                                <div class="card-title">{{ unit.name }}</div>
+                                <ul class="card-body">
+                                    {% for user in unit.users %}
+                                        <li class="text-small">
+                                            <a href="{{ path('perscom_user', { id: user.id }) }}" class="btn-link w-100">
+                                                {% include '@ForumifyPerscomPlugin/frontend/roster/components/soldier_row.html.twig' with {
+                                                    soldier: user
+                                                } only %}
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="text-small mb1">{{ 'perscom.roster.no_users'|trans }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </li>
+                        {% endif %}
                     {% endfor %}
                 </ul>
             {% endfor %}

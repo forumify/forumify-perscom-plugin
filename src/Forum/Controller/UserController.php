@@ -27,7 +27,7 @@ class UserController extends AbstractController
         try {
             $user = $perscomFactory->getPerscom()
                 ->users()
-                ->get($id, ['rank', 'status', 'position', 'unit', 'profile'])
+                ->get($id, ['rank', 'rank.image', 'status', 'unit', 'specialty', 'position', 'secondary_positions'])
                 ->json('data');
         } catch (NotFoundException) {
             throw new NotFoundHttpException($translator->trans('perscom.user.not_found'));

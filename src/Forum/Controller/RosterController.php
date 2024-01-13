@@ -17,7 +17,7 @@ class RosterController extends AbstractController
         $perscom = $perscomFactory->getPerscom();
         $groups = $perscom
             ->groups()
-            ->all(['units', 'units.users', 'units.users.rank', 'units.users.status'])
+            ->all(['units', 'units.users', 'units.users.position', 'units.users.rank', 'units.users.rank.image', 'units.users.status'])
             ->json('data') ?? [];
 
         return $this->render('@ForumifyPerscomPlugin/frontend/roster/roster.html.twig', [
