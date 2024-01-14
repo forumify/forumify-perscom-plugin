@@ -51,57 +51,26 @@
             {% embed '@Forumify/components/tabs.html.twig' %}
                 {% block tabs %}
                     <button class="btn-link" data-tab-id="assignment">{{ 'perscom.user.assignment'|trans }}</button>
-                    <button class="btn-link" data-tab-id="service_record">{{ 'perscom.user.service_record'|trans }}</button>
-                    <button class="btn-link" data-tab-id="combat_record">{{ 'perscom.user.combat_record'|trans }}</button>
-                    <button class="btn-link" data-tab-id="assignment_record">{{ 'perscom.user.assignment_record'|trans }}</button>
-                    <button class="btn-link" data-tab-id="qualifications">{{ 'perscom.user.qualifications'|trans }}</button>
+                    <button class="btn-link" data-tab-id="service-record">{{ 'perscom.user.service_record'|trans }}</button>
+                    <button class="btn-link" data-tab-id="combat-record">{{ 'perscom.user.combat_record'|trans }}</button>
+                    <button class="btn-link" data-tab-id="assignment-record">{{ 'perscom.user.assignment_record'|trans }}</button>
+                    <button class="btn-link" data-tab-id="qualification-record">{{ 'perscom.user.qualifications'|trans }}</button>
                 {% endblock %}
                 {% block tabpanels %}
                     <div id="assignment">
-                        <div class="card mb-4">
-                            <div class="card-title">{{ 'perscom.user.assignment'|trans }}</div>
-                            <div class="card-body">
-                                <div class="flex justify-evenly">
-                                    {% if user.specialty %}
-                                        <div class="flex flex-col items-center">
-                                            <p class="text-small">{{ 'perscom.user.specialty'|trans }}</p>
-                                            <p>{{ user.specialty.name }}</p>
-                                        </div>
-                                    {% endif %}
-                                    {% if user.position %}
-                                        <div class="flex flex-col items-center">
-                                            <p class="text-small">{{ 'perscom.user.position'|trans }}</p>
-                                            <p>{{ user.position.name }}</p>
-                                        </div>
-                                    {% endif %}
-                                    {% if user.unit %}
-                                        <div class="flex flex-col items-center">
-                                            <p class="text-small">{{ 'perscom.user.unit'|trans }}</p>
-                                            <p>{{ user.unit.name }}</p>
-                                        </div>
-                                    {% endif %}
-                                    {% if user.status %}
-                                        <div class="flex flex-col items-center">
-                                            <p class="text-small">{{ 'perscom.user.status'|trans }}</p>
-                                            <p>{{ user.status.name }}</p>
-                                        </div>
-                                    {% endif %}
-                                </div>
-                            </div>
-                        </div>
-                        <img class="mb-4" width="100%" height="auto" src="{{ user.profile_photo_url }}">
-                        <div class="card mb-4">
-                            <div class="card-title">{{ 'perscom.user.secondary_positions'|trans }}</div>
-                            <div class="card-body">
-                                <ul class="text-small flex flex-col gap-2">
-                                    {% for position in user.secondary_positions %}
-                                        <li>{{ position.name }}</li>
-                                    {% else %}
-                                        <li>{{ 'perscom.user.no_secondary_positions'|trans }}</li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                        </div>
+                        {% include '@ForumifyPerscomPlugin/frontend/user/components/assignment.html.twig' %}
+                    </div>
+                    <div id="service-record">
+                        {{ component('RecordTable', { data: user.service_records }) }}
+                    </div>
+                    <div id="combat-record">
+                        {{ component('RecordTable', { data: user.combat_records }) }}
+                    </div>
+                    <div id="assignment-record">
+                        {{ component('AssignmentRecordTable', { data: user.assignment_records }) }}
+                    </div>
+                    <div id="qualification-record">
+                        {{ component('QualificationRecordTable', { data: user.qualification_records }) }}
                     </div>
                 {% endblock %}
             {% endembed %}

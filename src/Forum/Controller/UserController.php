@@ -27,14 +27,29 @@ class UserController extends AbstractController
         try {
             $user = $perscomFactory->getPerscom()
                 ->users()
-                ->get($id, ['rank', 'rank.image', 'status', 'unit', 'specialty', 'position', 'secondary_positions'])
+                ->get($id, [
+                    'rank',
+                    'rank.image',
+                    'status',
+                    'unit',
+                    'specialty',
+                    'position',
+                    'secondary_positions',
+                    'service_records',
+                    'combat_records',
+                    'assignment_records',
+                    'assignment_records.position',
+                    'assignment_records.unit',
+                    'assignment_records.status',
+                    'qualification_records',
+                    'qualification_records.qualification',
+                ])
                 ->json('data');
         } catch (NotFoundException) {
             throw new NotFoundHttpException($translator->trans('perscom.user.not_found'));
         }
 
         $forumUser = $userRepository->findOneBy(['email' => $user['email']]);
-
         return $this->render('@ForumifyPerscomPlugin/frontend/user/user.html.twig', [
             'user' => $user,
             'forumAccount' => $forumUser,
