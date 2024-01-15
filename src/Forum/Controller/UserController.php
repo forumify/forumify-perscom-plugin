@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Controller;
 
+use DateTime;
 use Forumify\Core\Repository\UserRepository;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Saloon\Exceptions\Request\Statuses\NotFoundException;
@@ -36,6 +37,9 @@ class UserController extends AbstractController
                     'position',
                     'secondary_positions',
                     'service_records',
+                    'rank_records',
+                    'rank_records.rank',
+                    'rank_records.rank.image',
                     'combat_records',
                     'assignment_records',
                     'assignment_records.position',
@@ -49,10 +53,18 @@ class UserController extends AbstractController
             throw new NotFoundHttpException($translator->trans('perscom.user.not_found'));
         }
 
+        $now = new DateTime();
+        $tis = (new DateTime($user['created_at']))->diff($now);
+
+        $lastRankRecord = reset($user['rank_records']);
+        $tig = $lastRankRecord !== false ? (new DateTime($lastRankRecord['created_at']))->diff($now) : null;
+
         $forumUser = $userRepository->findOneBy(['email' => $user['email']]);
         return $this->render('@ForumifyPerscomPlugin/frontend/user/user.html.twig', [
             'user' => $user,
             'forumAccount' => $forumUser,
+            'tis' => $tis,
+            'tig' => $tig,
         ]);
     }
 }

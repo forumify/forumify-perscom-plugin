@@ -42,8 +42,24 @@
             <div class="card">
                 <div class="card-title">{{ 'perscom.user.length_in_service'|trans }}</div>
                 <div class="card-body flex flex-col">
-                    <p><span class="text-bold">{{ 'perscom.user.time_in_service'|trans }}:</span> PLACEHOLDER</p>
-                    <p><span class="text-bold">{{ 'perscom.user.time_in_grade'|trans }}:</span> PLACEHOLDER</p>
+                    <p class="text-bold">{{ 'perscom.user.time_in_service'|trans }}</p>
+                    <p class="mb-2">
+                        {{ [
+                            'date_relative.years'|trans({ count: tis.format('%y') }),
+                            'date_relative.months'|trans({ count: tis.format('%m') }),
+                            'date_relative.days'|trans({ count: tis.format('%d') })
+                        ]|filter(v => v is not empty)|join(', ') }}
+                    </p>
+                    {% if tig %}
+                        <p class="text-bold">{{ 'perscom.user.time_in_grade'|trans }}</p>
+                        <p class="mb-2">
+                            {{ [
+                                'date_relative.years'|trans({ count: tig.format('%y') }),
+                                'date_relative.months'|trans({ count: tig.format('%m') }),
+                                'date_relative.days'|trans({ count: tig.format('%d') })
+                            ]|filter(v => v is not empty)|join(', ') }}
+                        </p>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -53,6 +69,7 @@
                     <button class="btn-link" data-tab-id="assignment">{{ 'perscom.user.assignment'|trans }}</button>
                     <button class="btn-link" data-tab-id="service-record">{{ 'perscom.user.service_record'|trans }}</button>
                     <button class="btn-link" data-tab-id="combat-record">{{ 'perscom.user.combat_record'|trans }}</button>
+                    <button class="btn-link" data-tab-id="rank-record">{{ 'perscom.user.rank_record'|trans }}</button>
                     <button class="btn-link" data-tab-id="assignment-record">{{ 'perscom.user.assignment_record'|trans }}</button>
                     <button class="btn-link" data-tab-id="qualification-record">{{ 'perscom.user.qualifications'|trans }}</button>
                 {% endblock %}
@@ -65,6 +82,9 @@
                     </div>
                     <div id="combat-record">
                         {{ component('RecordTable', { data: user.combat_records }) }}
+                    </div>
+                    <div id="rank-record">
+                        {{ component('RankRecordTable', { data: user.rank_records }) }}
                     </div>
                     <div id="assignment-record">
                         {{ component('AssignmentRecordTable', { data: user.assignment_records }) }}

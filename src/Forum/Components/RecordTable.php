@@ -15,7 +15,7 @@ class RecordTable extends AbstractTable
     #[LiveProp]
     public array $data;
 
-    public function __construct(private readonly TranslatorInterface $translator)
+    public function __construct(protected readonly TranslatorInterface $translator)
     {
     }
 
@@ -37,7 +37,7 @@ class RecordTable extends AbstractTable
             'field' => '[created_at]',
             'sortable' => false,
             'searchable' => false,
-            'class' => 'text-small',
+            'class' => 'w-25 text-small',
             'renderer' => fn (string $date) => $this->translator->trans('date', ['date' => new \DateTime($date)]),
         ]);
 

@@ -1,16 +1,16 @@
 <div class="flex justify-between items-center w-100">
-    <div class="w-25 text-left">
-        {% if soldier.rank.image %}
+    <div class="w-5 text-left">
+        {% if soldier.rank and soldier.rank.image %}
             <img width="24px" height="24px" src="{{ soldier.rank.image.image_url }}" alt="">
         {% endif %}
     </div>
-    <div class="w-50 text-center">
+    <div class="w-40 text-center">
         {% if soldier.rank %}{{ soldier.rank.name }}{% endif %} {{ soldier.name }}
     </div>
-    <div class="w-25 text-center">
+    <div class="w-35 text-center">
         {% if soldier.position %}{{ soldier.position.name }}{% endif %}
     </div>
-    <div class="w-25 text-center">
+    <div class="w-20 text-center">
         {% if soldier.status %}
             {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
                 status: soldier.status

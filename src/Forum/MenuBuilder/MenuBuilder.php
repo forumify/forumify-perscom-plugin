@@ -26,6 +26,7 @@ class MenuBuilder implements ForumMenuBuilderInterface
 
         $menu->addItem(new Menu('PERSCOM', [], [
             new MenuItem($t->trans('perscom.roster.title'), $u->generate('perscom_roster')),
+            new MenuItem($t->trans('perscom.award.title'), $u->generate('perscom_awards')),
             new MenuItem($t->trans('perscom.rank.title'), $u->generate('perscom_ranks')),
         ]));
     }
