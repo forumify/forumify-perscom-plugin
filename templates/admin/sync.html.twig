@@ -1,8 +1,0 @@
-{% extends '@Forumify/admin/base.html.twig' %}
-{% block body %}
-    {% include '@Forumify/admin/components/confirm.html.twig' with {
-        warningText: 'perscom.settings.sync_warning'|trans,
-        confirmPath: path('perscom_admin_sync', { confirmed: true }),
-        cancelPath: path('perscom_admin_settings')
-    } only %}
-{% endblock %}

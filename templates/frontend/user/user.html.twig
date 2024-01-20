@@ -23,7 +23,7 @@
     </div>
     {% if user.cover_photo_url %}
         <div class="box text-center mb-4">
-            <img height="530px" width="auto" src="{{ user.cover_photo_url }}">
+            <img style="max-height: 530px; max-width: 100%" src="{{ user.cover_photo_url }}">
         </div>
     {% endif %}
     <div class="flex gap-4">
@@ -68,6 +68,7 @@
                 {% block tabs %}
                     <button class="btn-link" data-tab-id="assignment">{{ 'perscom.user.assignment'|trans }}</button>
                     <button class="btn-link" data-tab-id="service-record">{{ 'perscom.user.service_record'|trans }}</button>
+                    <button class="btn-link" data-tab-id="award-record">{{ 'perscom.user.award_record'|trans }}</button>
                     <button class="btn-link" data-tab-id="combat-record">{{ 'perscom.user.combat_record'|trans }}</button>
                     <button class="btn-link" data-tab-id="rank-record">{{ 'perscom.user.rank_record'|trans }}</button>
                     <button class="btn-link" data-tab-id="assignment-record">{{ 'perscom.user.assignment_record'|trans }}</button>
@@ -79,6 +80,9 @@
                     </div>
                     <div id="service-record">
                         {{ component('RecordTable', { data: user.service_records }) }}
+                    </div>
+                    <div id="award-record">
+                        {{ component('RecordTable', { data: user.award_records }) }}
                     </div>
                     <div id="combat-record">
                         {{ component('RecordTable', { data: user.combat_records }) }}

@@ -1,22 +1,30 @@
 {% extends '@Forumify/admin/base.html.twig' %}
 {% block body %}
-    {% embed '@Forumify/admin/components/simple_form.html.twig' with {
-        title: 'perscom.settings.title'|trans,
-        form: form
-    } only %}
-        {% block form %}
-            <p class="alert alert-info mb-6 text-small"><i class="ph ph-info"></i> {{ 'perscom.settings.license_requirement'|trans }}</p>
-            {{ parent() }}
-        {% endblock %}
-    {% endembed %}
-    <div class="box mt-6">
-        <p class="mb-2 text-small">
-            {{ 'perscom.settings.sync_text'|trans }}
-        </p>
-        <p class="mb-2">
-            {{ 'perscom.settings.last_synced'|trans }}
-            <span class="text-bold">{{ setting('perscom.last_synced') ?: 'perscom.settings.never'|trans }}</span>
-        </p>
-        <a href="{{ path('perscom_admin_sync') }}" class="btn-outlined">{{ 'perscom.settings.sync_now'|trans }}</a>
+    <h1 class="mb-4">{{ 'perscom.settings.title'|trans }}</h1>
+    {{ form_start(form) }}
+    <div class="box">
+        {% embed '@Forumify/components/tabs.html.twig' %}
+            {% block tabs %}
+                <button type="button" class="btn-link" data-tab-id="settings">{{ 'perscom.settings.tab_settings'|trans }}</button>
+                <button type="button" class="btn-link" data-tab-id="activity-tracker">{{ 'perscom.settings.tab_activity_tracker'|trans }}</button>
+            {% endblock %}
+            {% block tabpanels %}
+                <div id="settings">
+                    <p class="alert alert-info mb-6 text-small"><i class="ph ph-info"></i> {{ 'perscom.settings.license_requirement'|trans }}</p>
+                    {{ form_row(form.settings__endpoint) }}
+                    {{ form_row(form.settings__perscom_id) }}
+                    {{ form_row(form.settings__api_key) }}
+                </div>
+                <div id="activity-tracker">
+                    {{ form_row(form.activity_tracker__status_to_track) }}
+                    {{ form_row(form.activity_tracker__time_until_inactive) }}
+                    {{ form_row(form.activity_tracker__inactive_status) }}
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="flex justify-center items-center gap-2">
+            <button type="submit" class="btn-primary">{{ 'save'|trans }}</button>
+        </div>
     </div>
+    {{ form_end(form) }}
 {% endblock %}

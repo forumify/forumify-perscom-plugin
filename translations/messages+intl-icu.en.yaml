@@ -1,12 +1,9 @@
 perscom:
   settings:
+    tab_settings: 'Settings'
+    tab_activity_tracker: 'Activity Tracker'
     title: 'PERSCOM.io Plugin Configuration'
     license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
-    sync_text: 'The PERSCOM forumify plugin periodically syncs data with PERSCOM.io to increase performance and reduce traffic to the PERSCOM.io API. For this reason, data displayed through this plugin may be slightly outdated. This sync happens automatically every 12 hours. You can also run the data sync manually using the button below.'
-    last_synced: 'Last synced:'
-    never: 'Never'
-    sync_now: 'Sync now'
-    sync_warning: 'This process may take some time. The plugin already automatically syncs data every 12 hours. Only use this functionality to debug any issues with the automatic sync.'
   roster:
     title: 'Roster'
     no_users: 'No users in unit.'
@@ -19,6 +16,7 @@ perscom:
     time_in_grade: 'Time in grade'
     assignment: 'Assignment'
     service_record: 'Service Record'
+    award_record: 'Award Record'
     combat_record: 'Combat Record'
     rank_record: 'Rank Record'
     assignment_record: 'Assignment Record'

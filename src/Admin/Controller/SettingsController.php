@@ -21,9 +21,14 @@ class SettingsController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $settingRepository->set('perscom.endpoint', $data['endpoint']);
-            $settingRepository->set('perscom.perscom_id', $data['perscom_id']);
-            $settingRepository->set('perscom.api_key', $data['api_key']);
+            $settingRepository->setBulk([
+                'perscom.endpoint' => $data['settings__endpoint'],
+                'perscom.perscom_id' => $data['settings__perscom_id'],
+                'perscom.api_key' => $data['settings__api_key'],
+                'perscom.activity_tracker.time_until_inactive' => $data['activity_tracker__time_until_inactive'],
+                'perscom.activity_tracker.inactive_status' => $data['activity_tracker__inactive_status'],
+            ]);
+            $settingRepository->setJson('perscom.activity_tracker.status_to_track', $data['activity_tracker__status_to_track']);
 
             $this->addFlash('success', 'saved');
             return $this->redirectToRoute('perscom_admin_settings');
