@@ -1,12 +1,18 @@
 perscom:
   settings:
     tab_settings: 'Settings'
-    tab_activity_tracker: 'Activity Tracker'
+    tab_enlistment: 'Enlistment'
     title: 'PERSCOM.io Plugin Configuration'
     license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
   roster:
     title: 'Roster'
     no_users: 'No users in unit.'
+  enlistment:
+    enlist: 'Enlist'
+    not_eligible: 'You are currently not eligible for enlistment.'
+    pending: 'Your enlistment is currently pending.'
+    topic: 'View enlistment topic'
+    start_new: 'Start another enlistment'
   user:
     not_found: 'This user does not exist on PERSCOM.'
     forum_profile: 'Visit forum profile'

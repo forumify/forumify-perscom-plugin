@@ -1,0 +1,15 @@
+{% extends '@Forumify/frontend/base.html.twig' %}
+{% block title_page %}{{ 'perscom.enlistment.enlist'|trans }}{% endblock %}
+{% block body %}
+    <div class="box">
+        <div class="mb-4">
+            {{ instructions|markdown }}
+        </div>
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <div class="flex justify-center items-center gap-2">
+            <button type="submit" class="btn-primary">{{ 'perscom.enlistment.enlist'|trans }}</button>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

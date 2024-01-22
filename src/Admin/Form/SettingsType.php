@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Admin\Form;
 
 use Forumify\Core\Repository\SettingRepository;
+use Forumify\Forum\Entity\Forum;
+use Forumify\Forum\Repository\ForumRepository;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
@@ -17,12 +20,56 @@ use Symfony\Component\Form\FormBuilderInterface;
 class SettingsType extends AbstractType
 {
     public function __construct(
-        private readonly SettingRepository $settingRepository,
         private readonly PerscomFactory $perscomFactory,
+        private readonly ForumRepository $forumRepository,
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $statusChoices = $this->getStatusChoices();
+        $formChoices = $this->getFormChoices();
+        $forumChoices = [];
+        foreach ($this->forumRepository->findAll() as $forum) {
+            $forumChoices[$forum->getTitle()] = $forum->getId();
+        }
+
+        $builder
+            // general settings
+            ->add('perscom__endpoint', TextType::class, [
+                'label' => 'Endpoint',
+            ])
+            ->add('perscom__perscom_id', TextType::class, [
+                'label' => 'PERSCOM ID',
+                'help' => 'Can be found on your PERSCOM dashboard, under "System" > "Settings".',
+            ])
+            ->add('perscom__api_key', PasswordType::class, [
+                'label' => 'API Key',
+                'help' => 'Create a new API key for forumify on your PERSCOM dashboard, under "System" > "API" > "Keys". Remember to add all scopes!',
+                'required' => false,
+            ])
+            // enlistment
+            ->add('perscom__enlistment__status', ChoiceType::class, [
+                'label' => 'Eligible Status',
+                'help' => 'Only users in these statuses can start the enlistment process. Users who do not have a PERSCOM account yet will always be allowed to enlist.',
+                'multiple' => true,
+                'choices' => $statusChoices,
+                'required' => false,
+            ])
+            ->add('perscom__enlistment__form', ChoiceType::class, [
+                'label' => 'Enlistment Form',
+                'help' => 'The form to use for enlistments, by default, all required fields to create a PERSCOM user are already added by this plugin.',
+                'choices' => $formChoices,
+            ])
+            ->add('perscom__enlistment__forum', ChoiceType::class, [
+                'label' => 'Target Forum',
+                'help' => 'The forum in which to post enlistments.',
+                'required' => false,
+                'choices' => $forumChoices,
+            ]);
+    }
+
+    private function getStatusChoices(): array
     {
         $statuses = $this->perscomFactory
             ->getPerscom()
@@ -30,44 +77,26 @@ class SettingsType extends AbstractType
             ->all(limit: 100)
             ->json('data') ?? [];
 
-        $statusChoices = array_combine(
-            array_column($statuses, 'name'),
-            array_column($statuses, 'id'),
-        );
+        return $this->toChoiceArray($statuses);
+    }
 
-        $builder
-            // general settings
-            ->add('settings__endpoint', TextType::class, [
-                'label' => 'Endpoint',
-                'data' => $this->settingRepository->get('perscom.endpoint'),
-            ])
-            ->add('settings__perscom_id', TextType::class, [
-                'label' => 'PERSCOM ID',
-                'data' => $this->settingRepository->get('perscom.perscom_id'),
-                'help' => 'Can be found on your PERSCOM dashboard, under "System" > "Settings".',
-            ])
-            ->add('settings__api_key', PasswordType::class, [
-                'label' => 'API Key',
-                'attr' => [
-                    'value' => $this->settingRepository->get('perscom.api_key'),
-                ],
-                'help' => 'Create a new API key for forumify on your PERSCOM dashboard, under "System" > "API" > "Keys". Remember to add all scopes!',
-            ])
-            // activity tracker
-            ->add('activity_tracker__status_to_track', ChoiceType::class, [
-                'label' => 'Status to track',
-                'multiple' => true,
-                'choices' => $statusChoices,
-                'data' => $this->settingRepository->getJson('perscom.activity_tracker.status_to_track')
-            ])
-            ->add('activity_tracker__time_until_inactive', NumberType::class, [
-                'label' => 'Days until inactive',
-                'data' => $this->settingRepository->get('perscom.activity_tracker.time_until_inactive')
-            ])
-            ->add('activity_tracker__inactive_status', ChoiceType::class, [
-                'label' => 'Inactive status',
-                'choices' => $statusChoices,
-                'data' => $this->settingRepository->get('perscom.activity_tracker.inactive_status')
-            ]);
+    private function getFormChoices(): array
+    {
+        $forms = $this->perscomFactory
+            ->getPerscom()
+            ->forms()
+            ->all(limit: 100)
+            ->json('data') ?? [];
+
+        return $this->toChoiceArray($forms);
+    }
+
+    private function toChoiceArray(array $options): array
+    {
+        $choices = ['None' => null];
+        foreach ($options as $option) {
+            $choices[$option['name']] = $option['id'];
+        }
+        return $choices;
     }
 }

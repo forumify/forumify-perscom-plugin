@@ -1,0 +1,9 @@
+doctrine:
+    orm:
+        mappings:
+            perscom:
+                is_bundle: false
+                type: attribute
+                dir: '%kernel.project_dir%/vendor/forumify/forumify-perscom-plugin/src/Perscom/Entity'
+                prefix: Forumify\PerscomPlugin\Perscom\Entity
+                alias: PerscomEntity

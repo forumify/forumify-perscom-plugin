@@ -6,19 +6,19 @@
         {% embed '@Forumify/components/tabs.html.twig' %}
             {% block tabs %}
                 <button type="button" class="btn-link" data-tab-id="settings">{{ 'perscom.settings.tab_settings'|trans }}</button>
-                <button type="button" class="btn-link" data-tab-id="activity-tracker">{{ 'perscom.settings.tab_activity_tracker'|trans }}</button>
+                <button type="button" class="btn-link" data-tab-id="enlistment">{{ 'perscom.settings.tab_enlistment'|trans }}</button>
             {% endblock %}
             {% block tabpanels %}
                 <div id="settings">
                     <p class="alert alert-info mb-6 text-small"><i class="ph ph-info"></i> {{ 'perscom.settings.license_requirement'|trans }}</p>
-                    {{ form_row(form.settings__endpoint) }}
-                    {{ form_row(form.settings__perscom_id) }}
-                    {{ form_row(form.settings__api_key) }}
+                    {{ form_row(form.perscom__endpoint) }}
+                    {{ form_row(form.perscom__perscom_id) }}
+                    {{ form_row(form.perscom__api_key) }}
                 </div>
-                <div id="activity-tracker">
-                    {{ form_row(form.activity_tracker__status_to_track) }}
-                    {{ form_row(form.activity_tracker__time_until_inactive) }}
-                    {{ form_row(form.activity_tracker__inactive_status) }}
+                <div id="enlistment">
+                    {{ form_row(form.perscom__enlistment__status) }}
+                    {{ form_row(form.perscom__enlistment__form) }}
+                    {{ form_row(form.perscom__enlistment__forum) }}
                 </div>
             {% endblock %}
         {% endembed %}

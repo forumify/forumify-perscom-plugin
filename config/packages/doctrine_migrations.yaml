@@ -1,0 +1,3 @@
+doctrine_migrations:
+    migrations_paths:
+        'ForumifyPerscomPluginMigrations': '%kernel.project_dir%/vendor/forumify/forumify-perscom-plugin/migrations'
