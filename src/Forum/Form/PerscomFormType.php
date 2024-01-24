@@ -64,7 +64,7 @@ class PerscomFormType extends AbstractType
             }
 
             if ($type === DateType::class || $type === DateTimeType::class) {
-                $fieldOptions['years'] = range(1900, (int)(new \DateTime())->format('Y'));
+                $fieldOptions['widget'] = 'single_text';
             }
 
             $builder->add($field['key'], $type, $fieldOptions);

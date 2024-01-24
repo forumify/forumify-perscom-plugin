@@ -122,11 +122,19 @@ class PerscomEnlistService
         $form = $this->getEnlistmentForm();
         foreach ($form['fields'] as $field) {
             $label = $field['name'];
-            $value = $submission[$field['key']];
+            $value = $submission[$field['key']] ?? '';
 
-            $content[] = "*$label*\n\n$value";
+            $value = match ($field['type']) {
+                'boolean' => $value ? 'Yes': 'No',
+                'date' => (new \DateTime($value))->format('Y-m-d'),
+                'datetime-local' => (new \DateTime($value))->format('Y-m-d H:i:s'),
+                'select' => $field['options'][$value] ?? '',
+                default => $value,
+            };
+
+            $content[] = "#### $label\n\n$value";
         }
 
-        return implode("\n\n\n\n", $content);
+        return implode("\n\n", $content);
     }
 }

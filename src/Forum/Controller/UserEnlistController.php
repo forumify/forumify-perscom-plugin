@@ -7,6 +7,7 @@ namespace Forumify\PerscomPlugin\Forum\Controller;
 use Forumify\Core\Entity\User;
 use Forumify\PerscomPlugin\Forum\Form\Enlistment;
 use Forumify\PerscomPlugin\Forum\Form\EnlistmentType;
+use Forumify\PerscomPlugin\Perscom\Entity\EnlistmentTopic;
 use Forumify\PerscomPlugin\Perscom\Repository\EnlistmentTopicRepository;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomEnlistService;
@@ -33,11 +34,12 @@ class UserEnlistController extends AbstractController
         $user = $this->getUser();
         $enlistmentForm = $perscomEnlistService->getEnlistmentForm();
 
-        $enlistmentTopic = $enlistmentTopicRepository->findOneBy(['user' => $user]);
+        /** @var EnlistmentTopic|null $enlistmentTopic */
+        $enlistmentTopic = $enlistmentTopicRepository->findOneBy(['user' => $user], ['submissionId' => 'DESC']);
         if ($enlistmentTopic !== null && $request->get('force_new') === null) {
             return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
                 'successMessage' => $enlistmentForm['success_message'] ?? '',
-                'enlistmentTopic' => $enlistmentTopic
+                'enlistmentTopic' => $enlistmentTopic,
             ]);
         }
 
