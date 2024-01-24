@@ -2,9 +2,11 @@
 {% block title_page %}{{ 'perscom.enlistment.enlist'|trans }}{% endblock %}
 {% block body %}
     <div class="box">
-        <div class="mb-4">
-            {{ instructions|markdown }}
-        </div>
+        {% if instructions is not empty %}
+            <div class="mb-10">
+                {% include '@Forumify/components/markdown.html.twig' with { content: instructions } only %}
+            </div>
+        {% endif %}
         {{ form_start(form) }}
         {{ form_widget(form) }}
         <div class="flex justify-center items-center gap-2">

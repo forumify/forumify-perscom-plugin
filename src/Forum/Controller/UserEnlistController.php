@@ -36,11 +36,16 @@ class UserEnlistController extends AbstractController
 
         /** @var EnlistmentTopic|null $enlistmentTopic */
         $enlistmentTopic = $enlistmentTopicRepository->findOneBy(['user' => $user], ['submissionId' => 'DESC']);
+
         if ($enlistmentTopic !== null && $request->get('force_new') === null) {
-            return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
-                'successMessage' => $enlistmentForm['success_message'] ?? '',
-                'enlistmentTopic' => $enlistmentTopic,
-            ]);
+            $submission = $perscomEnlistService->getCurrentEnlistment($enlistmentTopic->getSubmissionId());
+            if (!empty($submission)) {
+                return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
+                    'successMessage' => $enlistmentForm['success_message'] ?? '',
+                    'enlistmentTopic' => $enlistmentTopic,
+                ]);
+            }
+            // The submission was deleted from PERSCOM.io, continue with the enlistment
         }
 
         $enlistment = new Enlistment();
@@ -59,7 +64,7 @@ class UserEnlistController extends AbstractController
 
         return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist.html.twig', [
             'form' => $form->createView(),
-            'instructions' => $enlistmentForm['instructions'],
+            'instructions' => $enlistmentForm['instructions'] ?? '',
         ]);
     }
 }

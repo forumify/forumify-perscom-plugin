@@ -51,6 +51,19 @@ class PerscomEnlistService
             ->json('data') ?? [];
     }
 
+    public function getCurrentEnlistment(int $submissionId): ?array
+    {
+        try {
+            return $this->perscomFactory
+                ->getPerscom()
+                ->submissions()
+                ->get($submissionId, ['statuses'])
+                ->json('data');
+        } catch (\Exception) {
+            return null;
+        }
+    }
+
     public function enlist(Enlistment $enlistment): ?EnlistmentTopic
     {
         $perscomUser = $this->getOrCreatePerscomUser($enlistment);
