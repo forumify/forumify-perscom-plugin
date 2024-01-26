@@ -33,6 +33,8 @@ class MenuBuilder implements ForumMenuBuilderInterface
 
         if ($this->perscomEnlistService->canEnlist()) {
             $perscomMenu->addItem(new MenuItem($t->trans('perscom.enlistment.enlist'), $u->generate('perscom_enlist')));
+        } else {
+            $perscomMenu->addItem(new MenuItem($t->trans('perscom.opcenter.operations_center'), $u->generate('perscom_operations_center')));
         }
 
         $menu->addItem($perscomMenu);

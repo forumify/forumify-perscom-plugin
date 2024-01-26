@@ -4,17 +4,7 @@
 {% endblock %}
 {% block body %}
     <div class="flex justify-between mb-6">
-        <div>
-            <h2 class="flex gap-4 items-center">
-                {{ user.name }}
-                {% if user.status %}
-                    {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
-                        status: user.status
-                    } only %}
-                {% endif %}
-            </h2>
-            <p class="text-subtitle">{{ user.rank.name ?? '' }}, {{ user.position.name ?? '' }}</p>
-        </div>
+        {% include '@ForumifyPerscomPlugin/frontend/user/components/header.html.twig' %}
         {% if forumAccount %}
             <a class="btn-primary" href="{{ path('forumify_forum_profile', { username: forumAccount.username }) }}">
                 {{ 'perscom.user.forum_profile'|trans }}

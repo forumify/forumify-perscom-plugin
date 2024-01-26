@@ -15,7 +15,7 @@ perscom:
         start_new: 'Start another enlistment'
     user:
         not_found: 'This user does not exist on PERSCOM.'
-        forum_profile: 'Visit forum profile'
+        forum_profile: 'Forum profile'
         rank: 'Rank'
         length_in_service: 'Length in service'
         time_in_service: 'Time in service'
@@ -42,3 +42,8 @@ perscom:
     award:
         title: 'Awards'
         no_awards: 'No awards.'
+    opcenter:
+        operations_center: 'Operations Center'
+        pfile: 'Personnel File'
+        submissions: 'Submissions'
+        newsfeed: 'Newsfeed'

@@ -1,0 +1,15 @@
+{% extends '@Forumify/components/list.html.twig' %}
+{% block row %}
+    <li class="mb-2 flex items-center justify-between">
+        <div>
+            <p class="mb-1">{{ item.form.name }}</p>
+            <p class="text-small">
+                {{ 'date_time_short'|trans({ date: item.created_at }) }}
+            </p>
+        </div>
+        {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
+            status: item.statuses[0],
+            class: 'text-small'
+        } only %}
+    </li>
+{% endblock %}
