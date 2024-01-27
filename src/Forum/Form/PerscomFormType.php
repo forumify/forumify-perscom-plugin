@@ -4,7 +4,11 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Form;
 
+use DateTime;
+use Forumify\PerscomPlugin\Perscom\Perscom;
+use RuntimeException;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
@@ -20,8 +24,9 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Traversable;
 
-class PerscomFormType extends AbstractType
+class PerscomFormType extends AbstractType implements DataMapperInterface
 {
     private const FIELD_MAP = [
         'boolean' => CheckboxType::class,
@@ -40,14 +45,14 @@ class PerscomFormType extends AbstractType
         'timezone' => TimezoneType::class,
     ];
 
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'perscom_form' => null,
         ]);
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($options['perscom_form']['fields'] ?? [] as $field) {
             $type = self::FIELD_MAP[$field['type']];
@@ -68,6 +73,29 @@ class PerscomFormType extends AbstractType
             }
 
             $builder->add($field['key'], $type, $fieldOptions);
+        }
+
+        $builder->setDataMapper($this);
+    }
+
+    /** @inheritDoc */
+    public function mapDataToForms(mixed $viewData, Traversable $forms): void
+    {
+        if (!empty($viewData)) {
+            throw new RuntimeException(self::class . ' does not accept any initial values.');
+        }
+    }
+
+    /** @inheritDoc */
+    public function mapFormsToData(Traversable $forms, mixed &$viewData): void
+    {
+        foreach ($forms as $field => $form) {
+            $value = $form->getData();
+            if ($value instanceof DateTime) {
+                $value = $value->format(Perscom::DATE_FORMAT);
+            }
+
+            $viewData[$field] = $value;
         }
     }
 }

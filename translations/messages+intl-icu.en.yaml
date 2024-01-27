@@ -47,3 +47,4 @@ perscom:
         pfile: 'Personnel File'
         submissions: 'Submissions'
         newsfeed: 'Newsfeed'
+        submission_created: 'Form submission created.'

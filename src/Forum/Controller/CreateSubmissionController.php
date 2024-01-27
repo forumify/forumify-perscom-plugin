@@ -38,7 +38,16 @@ class CreateSubmissionController extends AbstractController
         $form = $this->createForm(PerscomFormType::class, null, ['perscom_form' => $perscomForm]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            // TODO
+            $perscomFactory->getPerscom()
+                ->submissions()
+                ->create([
+                    'form_id' => $perscomForm['id'],
+                    'user_id' => $perscomUser['id'],
+                    ...$form->getData()
+                ]);
+
+            $this->addFlash('success', 'perscom.opcenter.submission_created');
+            return $this->redirectToRoute('perscom_operations_center');
         }
 
         return $this->render('@ForumifyPerscomPlugin/frontend/form/create_submission.html.twig', [

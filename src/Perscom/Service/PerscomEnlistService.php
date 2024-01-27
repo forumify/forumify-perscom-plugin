@@ -73,7 +73,7 @@ class PerscomEnlistService
             ->create([
                 'form_id' => $this->getEnlistmentForm()['id'],
                 'user_id' => $perscomUser['id'],
-                ...$this->transformFormData($enlistment),
+                ...$enlistment->additionalFormData,
             ])
             ->json('data');
 
@@ -88,20 +88,6 @@ class PerscomEnlistService
             $enlistment->firstName,
             $enlistment->lastName,
         );
-    }
-
-    private function transformFormData(Enlistment $enlistment): array
-    {
-        $formData = [];
-        foreach ($enlistment->additionalFormData as $key => $value) {
-            if ($value instanceof \DateTime) {
-                $value = $value->format(Perscom::DATE_FORMAT);
-            }
-
-            $formData[$key] = $value;
-        }
-
-        return $formData;
     }
 
     private function createEnlistmentTopic(array $perscomUser, array $submission): ?EnlistmentTopic
