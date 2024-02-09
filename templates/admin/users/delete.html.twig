@@ -1,0 +1,8 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+{% block body %}
+    {% include '@Forumify/admin/components/confirm.html.twig' with {
+        warningText: 'perscom.admin.users.delete.confirm'|trans(user),
+        confirmPath: path('perscom_admin_user_delete', { id: user.id, confirmed: 1 }),
+        cancelPath: path('perscom_admin_user_list')
+    } only %}
+{% endblock %}

@@ -4,6 +4,26 @@ perscom:
         tab_enlistment: 'Enlistment'
         title: 'PERSCOM.io Plugin Configuration'
         license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
+    admin:
+        requires_perscom_account: 'This action requires a PERSCOM account that matches your email.'
+        users:
+            not_found: 'User can not be found.'
+            list:
+                title: 'PERSCOM Users'
+                actions:
+                    service: 'New Service Record'
+                    award: 'New Award'
+                    combat: 'New Combat Record'
+                    rank: 'Promote/Demote'
+                    assignment: 'Reassign'
+                    qualification: 'New Qualification'
+                    discharge: 'Discharge'
+                    delete: 'Delete User'
+            delete:
+                confirm: 'You are about to delete {name}. This will completely remove their PERSCOM user profile.'
+                deleted: 'User deleted.'
+            record_form:
+                created: 'Record created.'
     roster:
         title: 'Roster'
         no_users: 'No users in unit.'

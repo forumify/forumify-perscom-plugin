@@ -1,0 +1,37 @@
+<div class="flex">
+    <a class="btn-link btn-icon btn-small" href="{{ path('perscom_admin_user_edit', { id: row.id }) }}">
+        <i class="ph ph-pencil-simple-line"></i>
+    </a>
+    <div {{ stimulus_controller('forumify/forumify-platform/menu') }} data-placement="bottom-end">
+        <a class="btn-link btn-icon btn-small" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
+            <i class="ph ph-caret-down"></i>
+        </a>
+        <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
+            <a class="btn-link" href="{{ path('perscom_admin_record_form', { type: 'service', id: row.id }) }}">
+                <i class="ph ph-list-dashes"></i>{{ 'perscom.admin.users.list.actions.service'|trans }}
+            </a>
+            <a class="btn-link" href="{{ path('perscom_admin_record_form', { type: 'award', id: row.id }) }}">
+                <i class="ph ph-bookmark"></i>{{ 'perscom.admin.users.list.actions.award'|trans }}
+            </a>
+            <a class="btn-link" href="{{ path('perscom_admin_record_form', { type: 'combat', id: row.id }) }}">
+                <i class="ph ph-crosshair"></i>{{ 'perscom.admin.users.list.actions.combat'|trans }}
+            </a>
+            <a class="btn-link" href="{{ path('perscom_admin_record_form', { type: 'rank', id: row.id }) }}">
+                <i class="ph ph-caret-double-up"></i>{{ 'perscom.admin.users.list.actions.rank'|trans }}
+            </a>
+            <a class="btn-link" href="{{ path('perscom_admin_record_form', { type: 'assignment', id: row.id }) }}">
+                <i class="ph ph-identification-card"></i>{{ 'perscom.admin.users.list.actions.assignment'|trans }}
+            </a>
+            <a class="btn-link" href="{{ path('perscom_admin_record_form', { type: 'qualification', id: row.id }) }}">
+                <i class="ph ph-certificate"></i>{{ 'perscom.admin.users.list.actions.qualification'|trans }}
+            </a>
+            <a class="btn-link" href="">
+                <i class="ph ph-user-circle-minus"></i>{{ 'perscom.admin.users.list.actions.discharge'|trans }}
+            </a>
+            <hr>
+            <a class="btn-link" href="{{ path('perscom_admin_user_delete', { id: row.id }) }}">
+                <i class="ph ph-x"></i>{{ 'perscom.admin.users.list.actions.delete'|trans }}
+            </a>
+        </div>
+    </div>
+</div>
