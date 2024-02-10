@@ -4,16 +4,11 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Controller;
 
-use Forumify\PerscomPlugin\Admin\Form\AwardType;
-use Forumify\PerscomPlugin\Admin\Form\QualificationType;
-use Forumify\PerscomPlugin\Admin\Form\RankType;
+use Forumify\PerscomPlugin\Admin\Form\RecordType;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
@@ -35,17 +30,35 @@ class RecordFormController extends AbstractController
         }
 
         $perscom = $perscomFactory->getPerscom();
-        $user = $perscom->users()->get($id)->json('data');
+        $user = $perscom
+            ->users()
+            ->get($id, [
+                'secondary_units',
+                'secondary_positions',
+            ])
+            ->json('data');
+
         if ($user === null) {
             $this->addFlash('error', 'perscom.admin.users.not_found');
             return $this->redirectToRoute('perscom_admin_user_list');
         }
 
-        $formBuilder = $this->createFormBuilder();
-        $formBuilder->add('text', TextareaType::class);
-        $this->addTypeFields($type, $formBuilder);
+        $data = null;
+        // prefill current assignment for easier UX
+        if ($type === 'assignment') {
+            $data = array_intersect_key($user, array_flip([
+                'specialty_id',
+                'status_id',
+                'unit_id',
+                'position_id',
+            ]));
 
-        $form = $formBuilder->getForm();
+            $data['secondary_unit_ids'] = array_map(static fn (array $unit) => $unit['id'], $user['secondary_units'] ?? []);
+            $data['secondary_position_ids'] = array_map(static fn (array $position) => $position['id'], $user['secondary_positions'] ?? []);
+        }
+
+        $form = $this->createForm(RecordType::class, $data, ['type' => $type]);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
@@ -63,32 +76,6 @@ class RecordFormController extends AbstractController
             'type' => $type,
             'user' => $user,
         ]);
-    }
-
-    private function addTypeFields(string $type, FormBuilderInterface $formBuilder): void
-    {
-        switch ($type) {
-            case 'award':
-                $formBuilder->add('award_id', AwardType::class, ['label' => 'Award']);
-                break;
-            case 'rank':
-                $formBuilder
-                    ->add('type', ChoiceType::class, [
-                        'choices' => [
-                            'Promote' => 0,
-                            'Demote' => 1,
-                        ],
-                    ])
-                    ->add('rank_id', RankType::class, ['label' => 'Rank']);
-                break;
-            case 'assignment':
-                // TODO: yeah..
-                break;
-            case 'qualification':
-                $formBuilder->add('qualification_id', QualificationType::class, ['label' => 'Qualification']);
-                break;
-            default:
-        }
     }
 
     private function saveRecord(Perscom $perscom, string $type, array $data): void
