@@ -1,3 +1,6 @@
+parameters:
+    temp_upload_dir: '%kernel.project_dir%/var/perscom/uploads/'
+
 services:
     _defaults:
         autowire: true
@@ -9,3 +12,7 @@ services:
             - '../src/**/DataFixture/'
             - '../src/**/DependencyInjection/'
             - '../src/**/Entity/'
+
+    Forumify\PerscomPlugin\Admin\Controller\UserEditController:
+        arguments:
+            $tempUploadDir: '%temp_upload_dir%'

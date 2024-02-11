@@ -1,0 +1,60 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+{% block title_page %}
+    {{ user.name }}
+{% endblock %}
+{% block body %}
+    <div class="flex justify-between">
+        <h1 class="mb-4">
+            {{ 'perscom.admin.users.edit.title'|trans({ name: user.name }) }}
+        </h1>
+        <div {{ stimulus_controller('forumify/forumify-platform/menu') }} data-placement="bottom-end">
+            <a class="btn-primary" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
+                <i class="ph ph-caret-down"></i>Quick Actions
+            </a>
+            <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
+                {% include '@ForumifyPerscomPlugin/admin/users/list/quick_actions.html.twig' %}
+            </div>
+        </div>
+    </div>
+    <div class="box">
+        {{ form_start(form) }}
+        {% embed '@Forumify/components/tabs.html.twig' %}
+            {% block tabs %}
+                <button type="button" class="btn-link" data-tab-id="general">
+                    {{ 'perscom.admin.users.edit.general'|trans }}
+                </button>
+                <button type="button" class="btn-link" data-tab-id="assignment">
+                    {{ 'perscom.admin.users.edit.assignment'|trans }}
+                </button>
+                <button type="button" class="btn-link" data-tab-id="uniform">
+                    {{ 'perscom.admin.users.edit.uniform'|trans }}
+                </button>
+            {% endblock %}
+            {% block tabpanels %}
+                <div id="general">
+                    {{ form_row(form.name) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.rank) }}
+                </div>
+                <div id="assignment">
+                    <div class="alert-warning mb-4">
+                        <p>{{ 'perscom.admin.users.edit.assignment_warning'|trans }}</p>
+                    </div>
+                    {{ form_row(form.specialty) }}
+                    {{ form_row(form.status) }}
+                    {{ form_row(form.position) }}
+                    {{ form_row(form.unit) }}
+                </div>
+                <div id="uniform">
+                    {{ form_row(form.uniform) }}
+                    {{ form_row(form.signature) }}
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="flex justify-center items-center gap-2">
+            <button type="submit" class="btn-primary">{{ 'save'|trans }}</button>
+            <a href="{{ path('perscom_admin_user_list') }}" class="btn-outlined">{{ 'cancel'|trans }}</a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

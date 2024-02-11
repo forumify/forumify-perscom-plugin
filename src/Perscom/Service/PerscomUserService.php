@@ -7,6 +7,7 @@ namespace Forumify\PerscomPlugin\Perscom\Service;
 use Forumify\Core\Entity\User;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Perscom\Data\FilterObject;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class PerscomUserService
@@ -38,15 +39,8 @@ class PerscomUserService
         $this->perscomUser = $this->perscomFactory
             ->getPerscom()
             ->users()
-            ->search([
-                'filters' => [
-                    [
-                        'field' => 'email',
-                        'operator' => 'like',
-                        'value' => $user->getEmail(),
-                    ],
-                ],
-            ])->json('data')[0] ?? null;
+            ->search(filter: [new FilterObject('email', 'like', $user->getEmail())])
+            ->json('data')[0] ?? null;
 
         return $this->perscomUser;
     }

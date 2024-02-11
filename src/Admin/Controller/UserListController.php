@@ -8,17 +8,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/users', 'user')]
-class UserController extends AbstractController
+class UserListController extends AbstractController
 {
-    #[Route('', '_list')]
-    public function list(): Response
-    {
-        return $this->render('@ForumifyPerscomPlugin/admin/users/list/list.html.twig');
-    }
-
-    #[Route('/{id}', '_edit')]
-    public function edit(): Response
+    #[Route('/users', 'user_list')]
+    public function __invoke(): Response
     {
         return $this->render('@ForumifyPerscomPlugin/admin/users/list/list.html.twig');
     }

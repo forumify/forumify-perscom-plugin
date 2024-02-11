@@ -18,7 +18,6 @@ class PerscomUserTable extends AbstractTable
     public function __construct(
         private readonly PerscomFactory $perscomFactory,
         private readonly Environment $twig,
-        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
     }
 
