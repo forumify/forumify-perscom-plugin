@@ -32,6 +32,9 @@ perscom:
                 deleted: 'User deleted.'
             record_form:
                 created: 'Record created.'
+        submissions:
+            list:
+                title: 'Form Submissions'
     roster:
         title: 'Roster'
         no_users: 'No users in unit.'

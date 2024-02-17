@@ -1,0 +1,10 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+{% block title_page %}
+    {{ 'perscom.admin.submissions.list.title'|trans }}
+{% endblock %}
+{% block body %}
+    <h2 class="mb-4">
+        {{ 'perscom.admin.submissions.list.title'|trans }}
+    </h2>
+    {{ component('PerscomSubmissionTable') }}
+{% endblock %}

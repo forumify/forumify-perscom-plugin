@@ -5,20 +5,15 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Admin\Component;
 
 use Forumify\Core\Component\Table\AbstractTable;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
-use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Twig\Environment;
 
 #[AsLiveComponent('PerscomUserTable', '@Forumify/components/table/table.html.twig')]
-class PerscomUserTable extends AbstractTable
+class PerscomUserTable extends AbstractPerscomTable
 {
-    private ?array $perscomResult = null;
-
-    public function __construct(
-        private readonly PerscomFactory $perscomFactory,
-        private readonly Environment $twig,
-    ) {
+    public function __construct(private readonly Environment $twig)
+    {
+        $this->sort = ['name' => AbstractTable::SORT_ASC];
     }
 
     protected function buildTable(): void
@@ -26,28 +21,22 @@ class PerscomUserTable extends AbstractTable
         $this
             ->addColumn('name', [
                 'field' => '[name]',
-                'searchable' => false,
-                'sortable' => false,
             ])
-            ->addColumn('rank', [
+            ->addColumn('rank__name', [
                 'field' => '[rank?][name]',
-                'searchable' => false,
-                'sortable' => false,
+                'label' => 'Rank',
             ])
-            ->addColumn('position', [
+            ->addColumn('position__name', [
                 'field' => '[position?][name]',
-                'searchable' => false,
-                'sortable' => false,
+                'label' => 'Position',
             ])
-            ->addColumn('unit', [
+            ->addColumn('unit__name', [
                 'field' => '[unit?][name]',
-                'searchable' => false,
-                'sortable' => false,
+                'label' => 'Unit',
             ])
-            ->addColumn('status', [
+            ->addColumn('status__name', [
                 'field' => '[status]',
-                'searchable' => false,
-                'sortable' => false,
+                'label' => 'Status',
                 'renderer' => fn ($status) => $status !== null
                     ? $this->twig->render('@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig', ['status' => $status])
                     : '',
@@ -60,28 +49,13 @@ class PerscomUserTable extends AbstractTable
             ]);
     }
 
-    protected function getData(int $limit, int $offset, array $search, array $sort): array
+    protected function getResource(): string
     {
-        return $this->getPerscomData()['data'] ?? [];
+        return 'users';
     }
 
-    protected function getTotalCount(array $search): int
+    protected function getInclude(): array
     {
-        return $this->getPerscomData()['meta']['total'] ?? 0;
-    }
-
-    private function getPerscomData(): array
-    {
-        if ($this->perscomResult !== null) {
-            return $this->perscomResult;
-        }
-
-        $this->perscomResult = $this->perscomFactory
-            ->getPerscom()
-            ->users()
-            ->all(['rank', 'position', 'unit', 'status'], $this->page, $this->limit)
-            ->json();
-
-        return $this->perscomResult;
+        return ['rank', 'position', 'unit', 'status'];
     }
 }
