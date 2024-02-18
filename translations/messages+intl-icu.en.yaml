@@ -35,6 +35,10 @@ perscom:
         submissions:
             list:
                 title: 'Form Submissions'
+            view:
+                title: 'Submission'
+                user: 'User'
+                status_history: 'Status History'
     roster:
         title: 'Roster'
         no_users: 'No users in unit.'

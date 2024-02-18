@@ -28,6 +28,7 @@ class Perscom extends PerscomConnection
         return [
             ...$headers,
             'X-Perscom-Notifications' => 'false',
+            'X-Perscom-Bypass-Cache' => 'true'
         ];
     }
 }

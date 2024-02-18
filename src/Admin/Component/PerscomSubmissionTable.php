@@ -49,7 +49,9 @@ class PerscomSubmissionTable extends AbstractPerscomTable
             ])
             ->addColumn('actions', [
                 'label' => '',
-                'renderer' => fn ($_, $row) => '',
+                'renderer' => fn ($_, $row) => $this->twig->render('@ForumifyPerscomPlugin/admin/submissions/list/actions.html.twig', [
+                    'submission' => $row,
+                ]),
                 'searchable' => false,
                 'sortable' => false,
             ]);
