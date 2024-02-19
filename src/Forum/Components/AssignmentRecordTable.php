@@ -14,19 +14,19 @@ class AssignmentRecordTable extends RecordTable
         $this
             ->addDateColumn()
             ->addColumn('unit', [
-                'field' => '[unit][name?]',
+                'field' => '[unit?][name?]',
                 'sortable' => false,
                 'searchable' => false,
                 'class' => 'text-left text-small',
             ])
             ->addColumn('position', [
-                'field' => '[position][name?]',
+                'field' => '[position?][name?]',
                 'sortable' => false,
                 'searchable' => false,
                 'class' => 'text-left text-small',
             ])
             ->addColumn('status', [
-                'field' => '[status][name?]',
+                'field' => '[status?][name?]',
                 'sortable' => false,
                 'searchable' => false,
                 'class' => 'text-left text-small',
@@ -35,12 +35,6 @@ class AssignmentRecordTable extends RecordTable
 
     protected function getData(int $limit, int $offset, array $search, array $sort): array
     {
-        $relevantData = array_filter($this->data, static fn (array $row) => (
-            $row['position'] !== null
-            && $row['unit'] !== null
-            && $row['status'] !== null
-        ));
-
-        return array_slice($relevantData, $offset, $limit);
+        return array_slice($this->data, $offset, $limit);
     }
 }

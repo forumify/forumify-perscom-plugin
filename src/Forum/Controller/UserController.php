@@ -35,7 +35,6 @@ class UserController extends AbstractController
                     'unit',
                     'specialty',
                     'position',
-                    'secondary_positions',
                     'service_records',
                     'award_records',
                     'rank_records',
@@ -48,6 +47,8 @@ class UserController extends AbstractController
                     'assignment_records.status',
                     'qualification_records',
                     'qualification_records.qualification',
+                    'primary_assignment_records',
+                    'secondary_assignment_records'
                 ])
                 ->json('data');
         } catch (NotFoundException) {

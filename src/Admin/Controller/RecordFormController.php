@@ -33,8 +33,8 @@ class RecordFormController extends AbstractController
         $user = $perscom
             ->users()
             ->get($id, [
-                'secondary_units',
-                'secondary_positions',
+//                'secondary_units',
+//                'secondary_positions',
             ])
             ->json('data');
 
