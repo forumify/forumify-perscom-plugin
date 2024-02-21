@@ -28,7 +28,13 @@ class UserEditController extends AbstractController
         $perscom = $perscomFactory->getPerscom();
         $user = $perscom
             ->users()
-            ->get($id, ['fields'])
+            ->get($id, [
+                'secondary_assignment_records',
+                'secondary_assignment_records.position',
+                'secondary_assignment_records.unit',
+                'secondary_assignment_records.specialty',
+                'fields',
+            ])
             ->json('data');
 
         $form = $this->createForm(UserType::class, UserData::fromArray($user));

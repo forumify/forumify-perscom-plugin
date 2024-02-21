@@ -32,12 +32,15 @@
     </div>
     <h2 class="mb-4">{{ 'perscom.admin.submissions.view.status_history'|trans }}</h2>
     <ul>
+        <li class="mb-4">
+            {% include '@Forumify/admin/components/simple_form.html.twig' %}
+        </li>
         {% for status in submission.statuses %}
             <li class="box mb-2">
                 <h4>{{ status.name }}</h4>
-                <p class="text-small mb-2">Jan 01, 2000 by unknown</p>
+                <p class="text-small mb-2">{{ 'date'|trans({ date: status.record.created_at|perscomDate }) }}</p>
                 <p>
-                    CHANGE REASON NOT IMPLEMENTED YET
+                    {{ status.record.text }}
                 </p>
             </li>
         {% endfor %}

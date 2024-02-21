@@ -32,9 +32,4 @@ class AssignmentRecordTable extends RecordTable
                 'class' => 'text-left text-small',
             ]);
     }
-
-    protected function getData(int $limit, int $offset, array $search, array $sort): array
-    {
-        return array_slice($this->data, $offset, $limit);
-    }
 }

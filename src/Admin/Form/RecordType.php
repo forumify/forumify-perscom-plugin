@@ -69,27 +69,23 @@ class RecordType extends AbstractType
     private function addAssignmentFields(FormBuilderInterface $builder): void
     {
         $builder
-            ->add('specialty_id', PerscomForm\SpecialtyType::class, [
-                'label' => 'Specialty',
+            ->add('type', ChoiceType::class, [
+                'choices' => [
+                    'Primary' => 'primary',
+                    'Secondary' => 'secondary',
+                ],
             ])
             ->add('status_id', PerscomForm\StatusType::class, [
                 'label' => 'Status',
             ])
+            ->add('specialty_id', PerscomForm\SpecialtyType::class, [
+                'label' => 'Specialty',
+            ])
             ->add('unit_id', PerscomForm\UnitType::class, [
                 'label' => 'Primary Unit',
             ])
-            ->add('secondary_unit_ids', PerscomForm\UnitType::class, [
-                'label' => 'Secondary Units',
-                'multiple' => true,
-                'required' => false,
-            ])
             ->add('position_id', PerscomForm\PositionType::class, [
                 'label' => 'Primary Position',
-            ])
-            ->add('secondary_position_ids', PerscomForm\PositionType::class, [
-                'label' => 'Secondary Positions',
-                'multiple' => true,
-                'required' => false,
             ]);
     }
 

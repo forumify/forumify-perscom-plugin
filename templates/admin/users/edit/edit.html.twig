@@ -16,7 +16,7 @@
             </div>
         </div>
     </div>
-    <div class="box">
+    <div {{ stimulus_controller('forumify/forumify-perscom-plugin/user_edit') }} class="box">
         {{ form_start(form) }}
         {% embed '@Forumify/components/tabs.html.twig' %}
             {% block tabs %}

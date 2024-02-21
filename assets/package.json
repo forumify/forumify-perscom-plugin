@@ -1,0 +1,23 @@
+{
+    "name": "@forumify/forumify-perscom-plugin",
+    "description": "Frontend assets for PERSCOM plugin",
+    "version": "0.1.0",
+    "symfony": {
+        "controllers": {
+            "user_edit": {
+                "main": "dist/user_edit_controller.js",
+                "fetch": "lazy",
+                "enabled": true,
+                "autoimport": {}
+            }
+        },
+        "importmap": {
+            "@hotwired/stimulus": "^3.0.0"
+        }
+    },
+    "dependencies": {
+    },
+    "devDependencies": {
+        "@hotwired/stimulus": "^3.0.0"
+    }
+}

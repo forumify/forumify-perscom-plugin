@@ -15,7 +15,7 @@ perscom:
                     award: 'New Award'
                     combat: 'New Combat Record'
                     rank: 'Promote/Demote'
-                    assignment: 'Reassign'
+                    assignment: 'New Assignment'
                     qualification: 'New Qualification'
                     discharge: 'Discharge'
                     delete: 'Delete User'
@@ -39,6 +39,7 @@ perscom:
                 title: 'Submission'
                 user: 'User'
                 status_history: 'Status History'
+                status_created: 'Submission status updated.'
     roster:
         title: 'Roster'
         no_users: 'No users in unit.'
