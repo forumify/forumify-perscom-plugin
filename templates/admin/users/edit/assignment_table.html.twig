@@ -1,0 +1,35 @@
+<p class="mb-2">Secondary Assignments</p>
+<table class="mb-4">
+    <tbody>
+    {% for child in form.children %}
+        {% set id = child.vars.value %}
+        {% set record = user.secondary_assignment_records|filter(r => r.id == id)|first %}
+        <tr id="assignment-record-{{ id }}">
+            <td>
+                {% if record.status %}
+                    {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
+                        status: record.status
+                    } %}
+                {% endif %}
+            </td>
+            <td>{{ record.unit ? record.unit.name : '' }}</td>
+            <td>{{ record.position ? record.position.name : '' }}</td>
+            <td>{{ record.specialty ? record.specialty.name : '' }}</td>
+            <td class="text-right">
+                {{ form_widget(child) }}
+                <button
+                    type="button"
+                    class="btn-link btn-icon btn-small"
+                    {{ stimulus_action('forumify/forumify-perscom-plugin/user_edit', 'removeAssignment', null, {
+                        toRemove: id
+                    }) }}
+                >
+                    <i class="ph ph-trash"></i>
+                </button>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+

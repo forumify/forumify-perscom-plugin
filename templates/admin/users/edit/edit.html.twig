@@ -44,6 +44,10 @@
                     {{ form_row(form.status) }}
                     {{ form_row(form.position) }}
                     {{ form_row(form.unit) }}
+                    {% include '@ForumifyPerscomPlugin/admin/users/edit/assignment_table.html.twig' with {
+                        user: user,
+                        form: form.secondaryAssignments
+                    } %}
                 </div>
                 <div id="uniform">
                     {{ form_row(form.uniform) }}

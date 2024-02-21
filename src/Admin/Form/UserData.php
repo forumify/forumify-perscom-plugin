@@ -13,15 +13,16 @@ class UserData
     private string $name;
     #[Assert\NotBlank]
     private string $email;
-    private ?int $status;
-    private ?int $rank;
-    private ?int $specialty;
-    private ?int $position;
-    private ?int $unit;
+    private ?int $status = null;
+    private ?int $rank = null;
+    private ?int $specialty = null;
+    private ?int $position = null;
+    private ?int $unit = null;
     #[Assert\Image(maxSize: '2048k')]
     private ?UploadedFile $uniform = null;
     #[Assert\Image(maxSize: '2048k')]
     private ?UploadedFile $signature = null;
+    private array $secondaryAssignments = [];
 
     public static function fromArray(array $user): static
     {
@@ -35,6 +36,12 @@ class UserData
         $data->setStatus($user['status_id']);
         $data->setPosition($user['position_id']);
         $data->setUnit($user['unit_id']);
+
+        $secondaryAssignments = array_map(
+            fn (array $record): int => $record['id'],
+            $user['secondary_assignment_records'] ?? []
+        );
+        $data->setSecondaryAssignments($secondaryAssignments);
 
         return $data;
     }
@@ -149,5 +156,15 @@ class UserData
     public function setSignature(?UploadedFile $signature): void
     {
         $this->signature = $signature;
+    }
+
+    public function getSecondaryAssignments(): array
+    {
+        return $this->secondaryAssignments;
+    }
+
+    public function setSecondaryAssignments(array $secondaryAssignments): void
+    {
+        $this->secondaryAssignments = $secondaryAssignments;
     }
 }

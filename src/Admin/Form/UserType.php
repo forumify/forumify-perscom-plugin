@@ -10,7 +10,9 @@ use Forumify\PerscomPlugin\Perscom\Form\SpecialtyType;
 use Forumify\PerscomPlugin\Perscom\Form\StatusType;
 use Forumify\PerscomPlugin\Perscom\Form\UnitType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -31,13 +33,31 @@ class UserType extends AbstractType
             ->add('name', TextType::class)
             ->add('email', TextType::class)
             ->add('rank', RankType::class, [
+                'required' => false,
                 'help' => 'perscom.admin.users.edit.rank_help'
             ])
             // assignment
-            ->add('specialty', SpecialtyType::class)
-            ->add('status', StatusType::class)
-            ->add('position', PositionType::class)
-            ->add('unit', UnitType::class)
+            ->add('specialty', SpecialtyType::class, [
+                'required' => false,
+                'disabled' => true,
+            ])
+            ->add('status', StatusType::class, [
+                'required' => false,
+                'disabled' => true,
+            ])
+            ->add('position', PositionType::class, [
+                'required' => false,
+                'disabled' => true,
+            ])
+            ->add('unit', UnitType::class, [
+                'required' => false,
+                'disabled' => true,
+            ])
+            ->add('secondaryAssignments', CollectionType::class, [
+                'entry_type' => HiddenType::class,
+                'allow_delete' => true,
+                'required' => false,
+            ])
             // uniform
             ->add('uniform', FileType::class, [
                 'required' => false,

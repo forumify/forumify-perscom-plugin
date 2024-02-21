@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Admin\Controller;
 
 use Forumify\PerscomPlugin\Admin\Form\UserData;
 use Forumify\PerscomPlugin\Admin\Form\UserType;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Perscom\Http\Resources\Users\CoverPhotoResource;
 use Perscom\Http\Resources\Users\ProfilePhotoResource;
@@ -30,14 +31,18 @@ class UserEditController extends AbstractController
             ->users()
             ->get($id, [
                 'secondary_assignment_records',
-                'secondary_assignment_records.position',
+                'secondary_assignment_records.status',
                 'secondary_assignment_records.unit',
+                'secondary_assignment_records.position',
                 'secondary_assignment_records.specialty',
                 'fields',
             ])
             ->json('data');
 
-        $form = $this->createForm(UserType::class, UserData::fromArray($user));
+        $data = UserData::fromArray($user);
+        $oldSecondaryAssignments = $data->getSecondaryAssignments();
+
+        $form = $this->createForm(UserType::class, $data);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UserData $data */
@@ -50,6 +55,13 @@ class UserEditController extends AbstractController
 
             $this->handleFileUpload($data->getSignature(), $perscom->users()->profile_photo($id));
             $this->handleFileUpload($data->getUniform(), $perscom->users()->cover_photo($id));
+
+            $this->handleSecondaryAssignmentRemovals(
+                $perscom,
+                $user['id'],
+                $oldSecondaryAssignments,
+                $data->getSecondaryAssignments()
+            );
 
             $this->addFlash('success', 'perscom.admin.users.edit.saved');
             return $this->redirectToRoute('perscom_admin_user_edit', ['id' => $id]);
@@ -75,5 +87,22 @@ class UserEditController extends AbstractController
 
         $fs = new Filesystem();
         $fs->remove($file->getPathname());
+    }
+
+    private function handleSecondaryAssignmentRemovals(
+        Perscom $perscom,
+        int $userId,
+        array $oldAssignments,
+        array $newAssignments
+    ): void {
+        $recordstoDelete = array_filter(
+            $oldAssignments,
+            static fn (int $assignmentId) => !in_array($assignmentId, $newAssignments, true)
+        );
+
+        foreach ($recordstoDelete as $recordId) {
+            // TODO: this doesn't work..
+            $perscom->users()->assignment_records($userId)->delete($recordId);
+        }
     }
 }
