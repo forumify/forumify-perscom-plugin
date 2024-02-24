@@ -32,4 +32,15 @@ class AssignmentRecordTable extends RecordTable
                 'class' => 'text-left text-small',
             ]);
     }
+
+    protected function getData(int $limit, int $offset, array $search, array $sort): array
+    {
+        $relevantData = array_filter($this->data, static fn (array $row) => (
+            $row['position'] !== null
+            || $row['unit'] !== null
+            || $row['status'] !== null
+        ));
+
+        return array_slice($relevantData, $offset, $limit);
+    }
 }

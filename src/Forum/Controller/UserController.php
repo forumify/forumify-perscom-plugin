@@ -47,7 +47,9 @@ class UserController extends AbstractController
                     'assignment_records.status',
                     'qualification_records',
                     'qualification_records.qualification',
-                    'primary_assignment_records',
+                    'secondary_assignment_records.unit',
+                    'secondary_assignment_records.position',
+                    'secondary_assignment_records.specialty',
                     'secondary_assignment_records'
                 ])
                 ->json('data');
@@ -61,12 +63,24 @@ class UserController extends AbstractController
         $lastRankRecord = reset($user['rank_records']);
         $tig = $lastRankRecord !== false ? (new DateTime($lastRankRecord['created_at']))->diff($now) : null;
 
+        $secondaryAssignments = array_map(static function (array $record) {
+            $data = [
+                $record['unit']['name'] ?? '',
+                $record['position']['name'] ?? '',
+                $record['speciality']['name'] ?? '',
+                $record['status']['name'] ?? '',
+            ];
+
+            return implode(' | ', array_filter($data));
+        }, $user['secondary_assignment_records'] ?? []);
+
         $forumUser = $userRepository->findOneBy(['email' => $user['email']]);
         return $this->render('@ForumifyPerscomPlugin/frontend/user/user.html.twig', [
             'user' => $user,
             'forumAccount' => $forumUser,
             'tis' => $tis,
             'tig' => $tig,
+            'secondaryAssignments' => $secondaryAssignments,
         ]);
     }
 }
