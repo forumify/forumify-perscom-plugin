@@ -50,7 +50,7 @@ class UserController extends AbstractController
                     'secondary_assignment_records.unit',
                     'secondary_assignment_records.position',
                     'secondary_assignment_records.specialty',
-                    'secondary_assignment_records'
+                    'secondary_assignment_records',
                 ])
                 ->json('data');
         } catch (NotFoundException) {
@@ -63,24 +63,41 @@ class UserController extends AbstractController
         $lastRankRecord = reset($user['rank_records']);
         $tig = $lastRankRecord !== false ? (new DateTime($lastRankRecord['created_at']))->diff($now) : null;
 
-        $secondaryAssignments = array_map(static function (array $record) {
+        $secondaryAssignments = $this->transformSecondaryAssignments($user);
+
+        return $this->render('@ForumifyPerscomPlugin/frontend/user/user.html.twig', [
+            'forumAccount' => $userRepository->findOneBy(['email' => $user['email']]),
+            'secondaryAssignments' => $secondaryAssignments,
+            'user' => $user,
+            'tis' => $tis,
+            'tig' => $tig,
+        ]);
+    }
+
+    private function transformSecondaryAssignments(array $user): array
+    {
+        $records = $user['secondary_assignment_records'] ?? [];
+
+        $grouped = [];
+        foreach ($records as $record) {
+            $unitId = $record['unit']['id'] ?? null;
+            if ($unitId === null) {
+                continue;
+            }
+
+            if (!isset($grouped[$unitId])) {
+                $grouped[$unitId] = $record['unit'];
+            }
+
             $data = [
-                $record['unit']['name'] ?? '',
                 $record['position']['name'] ?? '',
                 $record['speciality']['name'] ?? '',
                 $record['status']['name'] ?? '',
             ];
 
-            return implode(' | ', array_filter($data));
-        }, $user['secondary_assignment_records'] ?? []);
+            $grouped[$unitId]['records'][] = implode(' | ', array_filter($data));
+        }
 
-        $forumUser = $userRepository->findOneBy(['email' => $user['email']]);
-        return $this->render('@ForumifyPerscomPlugin/frontend/user/user.html.twig', [
-            'user' => $user,
-            'forumAccount' => $forumUser,
-            'tis' => $tis,
-            'tig' => $tig,
-            'secondaryAssignments' => $secondaryAssignments,
-        ]);
+        return $grouped;
     }
 }

@@ -1,4 +1,3 @@
-<img class="mb-4" width="100%" height="auto" src="{{ user.profile_photo_url }}">
 <div class="card mb-4">
     <div class="card-title">{{ 'perscom.user.assignment'|trans }}</div>
     <div class="card-body">
@@ -30,12 +29,20 @@
         </div>
     </div>
 </div>
+<img class="mb-4" width="100%" height="auto" src="{{ user.profile_photo_url }}">
 <div class="card mb-4">
     <div class="card-title">{{ 'perscom.user.secondary_positions'|trans }}</div>
     <div class="card-body">
         <ul class="text-small flex flex-col gap-2">
-            {% for assignment in secondaryAssignments %}
-                <li>{{ assignment }}</li>
+            {% for unit in secondaryAssignments %}
+                <li>
+                    <h3>{{ unit.name }}</h3>
+                    <ul class="ml-2">
+                        {% for record in unit.records %}
+                            <li>{{ record }}</li>
+                        {% endfor %}
+                    </ul>
+                </li>
             {% else %}
                 <li>{{ 'perscom.user.no_secondary_positions'|trans }}</li>
             {% endfor %}

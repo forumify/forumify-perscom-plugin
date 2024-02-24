@@ -40,21 +40,7 @@ class RecordFormController extends AbstractController
             return $this->redirectToRoute('perscom_admin_user_list');
         }
 
-        $data = null;
-        // prefill current assignment for easier UX
-        if ($type === 'assignment') {
-            $data = array_intersect_key($user, array_flip([
-                'specialty_id',
-                'status_id',
-                'unit_id',
-                'position_id',
-            ]));
-
-            $data['secondary_unit_ids'] = array_map(static fn (array $unit) => $unit['id'], $user['secondary_units'] ?? []);
-            $data['secondary_position_ids'] = array_map(static fn (array $position) => $position['id'], $user['secondary_positions'] ?? []);
-        }
-
-        $form = $this->createForm(RecordType::class, $data, ['type' => $type]);
+        $form = $this->createForm(RecordType::class, null, ['type' => $type]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

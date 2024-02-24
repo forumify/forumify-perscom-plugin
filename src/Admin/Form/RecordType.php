@@ -77,15 +77,17 @@ class RecordType extends AbstractType
             ])
             ->add('status_id', PerscomForm\StatusType::class, [
                 'label' => 'Status',
+                'required' => false,
             ])
             ->add('specialty_id', PerscomForm\SpecialtyType::class, [
                 'label' => 'Specialty',
+                'required' => false,
             ])
             ->add('unit_id', PerscomForm\UnitType::class, [
-                'label' => 'Primary Unit',
+                'label' => 'Unit',
             ])
             ->add('position_id', PerscomForm\PositionType::class, [
-                'label' => 'Primary Position',
+                'label' => 'Position',
             ]);
     }
 
