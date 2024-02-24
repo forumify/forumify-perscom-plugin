@@ -95,14 +95,12 @@ class UserEditController extends AbstractController
         array $oldAssignments,
         array $newAssignments
     ): void {
-        $recordstoDelete = array_filter(
-            $oldAssignments,
-            static fn (int $assignmentId) => !in_array($assignmentId, $newAssignments, true)
-        );
-
-        foreach ($recordstoDelete as $recordId) {
-            // TODO: this doesn't work..
-            $perscom->users()->assignment_records($userId)->delete($recordId);
+        foreach ($oldAssignments as $recordId) {
+            if (!in_array((string)$recordId, $newAssignments, true)) {
+                $perscom->users()
+                    ->assignment_records($userId)
+                    ->delete($recordId);
+            }
         }
     }
 }

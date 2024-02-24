@@ -74,6 +74,7 @@ class RecordType extends AbstractType
                     'Primary' => 'primary',
                     'Secondary' => 'secondary',
                 ],
+                'placeholder' => 'Select a type',
             ])
             ->add('status_id', PerscomForm\StatusType::class, [
                 'label' => 'Status',

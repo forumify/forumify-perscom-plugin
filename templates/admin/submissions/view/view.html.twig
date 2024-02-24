@@ -8,42 +8,44 @@
             class: 'text-small'
         } only %}
     </h1>
-    <div class="box mb-6">
-        <div class="mb-2">
-            <p class="text-bold">{{ 'perscom.admin.submissions.view.user'|trans }}</p>
-            <p>{{ submission.user.name }}</p>
-        </div>
-        {% for field in submission.form.fields %}
-            <div class="mb-2">
-                <p class="text-bold">{{ field.name }}</p>
-                {% set value = submission[field.key] is defined ? submission[field.key] : '' %}
-                <p>
-                    {% if field.type is same as 'date' %}
-                        {% set value = value|perscomDate %}
-                        {% if value %}
-                            {{ 'date'|trans({ date: value }) }}
-                        {% endif %}
-                    {% else %}
-                        {{ value }}
-                    {% endif %}
-                </p>
+    <div class="flex gap-4">
+        <div class="w-50">
+            <div class="box">
+                <div class="mb-2">
+                    <p class="text-bold">{{ 'perscom.admin.submissions.view.user'|trans }}</p>
+                    <p>{{ submission.user.name }}</p>
+                </div>
+                {% for field in submission.form.fields %}
+                    <div class="mb-2">
+                        <p class="text-bold">{{ field.name }}</p>
+                        {% set value = submission[field.key] is defined ? submission[field.key] : '' %}
+                        <p>
+                            {% if field.type is same as 'date' %}
+                                {% set value = value|perscomDate %}
+                                {% if value %}
+                                    {{ 'date'|trans({ date: value }) }}
+                                {% endif %}
+                            {% else %}
+                                {{ value }}
+                            {% endif %}
+                        </p>
+                    </div>
+                {% endfor %}
             </div>
-        {% endfor %}
-    </div>
-    <h2 class="mb-4">{{ 'perscom.admin.submissions.view.status_history'|trans }}</h2>
-    <ul>
-        <li class="mb-4">
-            {% include '@Forumify/admin/components/simple_form.html.twig' %}
-        </li>
-        {% for status in submission.statuses %}
-            <li class="box mb-2">
-                <h4>{{ status.name }}</h4>
-                <p class="text-small mb-2">{{ 'date'|trans({ date: status.record.created_at|perscomDate }) }}</p>
-                <p>
-                    {{ status.record.text }}
-                </p>
+        </div>
+        <ul class="w-50">
+            <li class="mb-4">
+                {% include '@Forumify/admin/components/simple_form.html.twig' %}
             </li>
-        {% endfor %}
-    </ul>
-
+            {% for status in submission.statuses %}
+                <li class="box mb-2">
+                    <h4>{{ status.name }}</h4>
+                    <p class="text-small mb-2">{{ 'date'|trans({ date: status.record.updated_at|perscomDate }) }}</p>
+                    <p>
+                        {{ status.record.text }}
+                    </p>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}

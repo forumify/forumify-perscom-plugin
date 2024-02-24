@@ -29,6 +29,8 @@ class SubmissionController extends AbstractController
             ->get($id, ['form', 'form.fields', 'user', 'statuses', 'statuses.record'])
             ->json('data');
 
+        usort($submission['statuses'], static fn ($a, $b) => $b['updated_at'] <=> $a['updated_at']);
+
         $form = $this->createForm(SubmissionStatusType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

@@ -57,6 +57,16 @@ class PerscomSubmissionTable extends AbstractPerscomTable
             ]);
     }
 
+    protected function getData(int $limit, int $offset, array $search, array $sort): array
+    {
+        $data = parent::getData($limit, $offset, $search, $sort);
+        foreach ($data as &$row) {
+            usort($row['statuses'], static fn ($a, $b) => $b['updated_at'] <=> $a['updated_at']);
+        }
+
+        return $data;
+    }
+
     protected function getResource(): string
     {
         return 'submissions';
