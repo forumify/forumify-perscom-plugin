@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Admin\Controller;
 
 use Forumify\PerscomPlugin\Admin\Form\SubmissionStatusType;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Perscom\Data\ResourceObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,8 +24,8 @@ class SubmissionController extends AbstractController
     #[Route('/{id}', 'view')]
     public function view(PerscomFactory $perscomFactory, int $id, Request $request): Response
     {
-        $submission = $perscomFactory
-            ->getPerscom()
+        $perscom = $perscomFactory->getPerscom();
+        $submission = $perscom
             ->submissions()
             ->get($id, ['form', 'form.fields', 'user', 'statuses', 'statuses.record'])
             ->json('data');
@@ -36,7 +37,11 @@ class SubmissionController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $statusRecord = $form->getData();
 
-            // TODO: update the status
+            $resource = new ResourceObject((int)$statusRecord['status'], ['text' => $statusRecord['text']]);
+            $perscom
+                ->submissions()
+                ->statuses($id)
+                ->attach($resource);
 
             $this->addFlash('success', 'perscom.admin.submissions.view.status_created');
             return $this->redirectToRoute('perscom_admin_submission_view', ['id' => $id]);

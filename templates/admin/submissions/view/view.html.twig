@@ -13,7 +13,9 @@
             <div class="box">
                 <div class="mb-2">
                     <p class="text-bold">{{ 'perscom.admin.submissions.view.user'|trans }}</p>
-                    <p>{{ submission.user.name }}</p>
+                    <a href="{{ path('perscom_admin_user_edit', { id: submission.user.id }) }}">
+                        {{ submission.user.name }}
+                    </a>
                 </div>
                 {% for field in submission.form.fields %}
                     <div class="mb-2">
