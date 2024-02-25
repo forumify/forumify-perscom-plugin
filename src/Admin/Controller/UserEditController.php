@@ -42,7 +42,7 @@ class UserEditController extends AbstractController
         $data = UserData::fromArray($user);
         $oldSecondaryAssignments = $data->getSecondaryAssignments();
 
-        $form = $this->createForm(UserType::class, $data);
+        $form = $this->createForm(UserType::class, $data, ['user' => $user]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var UserData $data */

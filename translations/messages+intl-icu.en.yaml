@@ -28,6 +28,7 @@ perscom:
                 assignment: 'Assignment'
                 assignment_warning: 'To modify the assignment, create a new primary assignment record. Use "New Assignment" in "Quick Actions" to create a new assignment record.'
                 uniform: 'Uniform'
+                no_secondary_assignments: 'This user has no secondary assignments.'
             delete:
                 confirm: 'You are about to delete {name}. This will completely remove their PERSCOM user profile.'
                 deleted: 'User deleted.'

@@ -23,11 +23,14 @@ class UserType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => UserData::class,
+            'user' => null,
         ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $user = $options['user'] ?? null;
+
         $builder
             // general
             ->add('name', TextType::class)
@@ -55,15 +58,22 @@ class UserType extends AbstractType
             ])
             ->add('secondaryAssignments', CollectionType::class, [
                 'entry_type' => HiddenType::class,
+                'label' => false,
                 'allow_delete' => true,
                 'required' => false,
             ])
             // uniform
             ->add('uniform', FileType::class, [
                 'required' => false,
+                'attr' => [
+                    'preview' => $user['cover_photo_url'] ?? null
+                ],
             ])
             ->add('signature', FileType::class, [
                 'required' => false,
+                'attr' => [
+                    'preview' => $user['profile_photo_url'] ?? null
+                ],
             ]);
     }
 }

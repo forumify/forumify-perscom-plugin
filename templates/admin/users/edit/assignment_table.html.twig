@@ -28,6 +28,12 @@
                 </button>
             </td>
         </tr>
+    {% else %}
+        <tr>
+            <td class="text-small">
+                {{ 'perscom.admin.users.edit.no_secondary_assignments'|trans }}
+            </td>
+        </tr>
     {% endfor %}
     </tbody>
 </table>
