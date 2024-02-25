@@ -4,6 +4,7 @@ perscom:
         tab_enlistment: 'Enlistment'
         title: 'PERSCOM.io Plugin Configuration'
         license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
+        automations: 'Automations'
     admin:
         requires_perscom_account: 'This action requires a PERSCOM account that matches your email.'
         users:

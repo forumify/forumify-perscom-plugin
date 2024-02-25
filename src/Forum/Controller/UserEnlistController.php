@@ -13,6 +13,7 @@ use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomEnlistService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
 class UserEnlistController extends AbstractController
@@ -23,7 +24,7 @@ class UserEnlistController extends AbstractController
         PerscomFactory $perscomFactory,
         EnlistmentTopicRepository $enlistmentTopicRepository,
         Request $request,
-    ) {
+    ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
         if (!$perscomEnlistService->canEnlist()) {
             $this->addFlash('error', 'perscom.enlistment.not_eligible');

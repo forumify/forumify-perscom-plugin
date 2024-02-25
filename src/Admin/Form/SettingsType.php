@@ -4,15 +4,11 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
-use Forumify\Core\Repository\SettingRepository;
-use Forumify\Forum\Entity\Forum;
+use Forumify\Core\Repository\RoleRepository;
 use Forumify\Forum\Repository\ForumRepository;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\DateIntervalType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -22,18 +18,12 @@ class SettingsType extends AbstractType
     public function __construct(
         private readonly PerscomFactory $perscomFactory,
         private readonly ForumRepository $forumRepository,
+        private readonly RoleRepository $roleRepository,
     ) {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $statusChoices = $this->getStatusChoices();
-        $formChoices = $this->getFormChoices();
-        $forumChoices = [];
-        foreach ($this->forumRepository->findAll() as $forum) {
-            $forumChoices[$forum->getTitle()] = $forum->getId();
-        }
-
         $builder
             // general settings
             ->add('perscom__endpoint', TextType::class, [
@@ -53,19 +43,27 @@ class SettingsType extends AbstractType
                 'label' => 'Eligible Status',
                 'help' => 'Only users in these statuses can start the enlistment process. Users who do not have a PERSCOM account yet will always be allowed to enlist.',
                 'multiple' => true,
-                'choices' => $statusChoices,
+                'choices' => $this->getStatusChoices(),
                 'required' => false,
             ])
             ->add('perscom__enlistment__form', ChoiceType::class, [
                 'label' => 'Enlistment Form',
                 'help' => 'The form to use for enlistments, by default, all required fields to create a PERSCOM user are already added by this plugin.',
-                'choices' => $formChoices,
+                'choices' => $this->getFormChoices(),
             ])
             ->add('perscom__enlistment__forum', ChoiceType::class, [
                 'label' => 'Target Forum',
-                'help' => 'The forum in which to post enlistments.',
+                'help' => 'Automatically post a topic containing the enlistment to this forum.',
                 'required' => false,
-                'choices' => $forumChoices,
+                'choices' => $this->getForumChoices(),
+                'placeholder' => 'Do not create enlistment topics'
+            ])
+            ->add('perscom__enlistment__role', ChoiceType::class, [
+                'label' => 'User Role',
+                'help' => 'Automatically assign this role to the user upon creating an enlistment.',
+                'required' => false,
+                'choices' => $this->getRoleChoices(),
+                'placeholder' => 'Do not assign a role'
             ]);
     }
 
@@ -89,6 +87,34 @@ class SettingsType extends AbstractType
             ->json('data') ?? [];
 
         return $this->toChoiceArray($forms);
+    }
+
+    private function getForumChoices(): array
+    {
+        $choices = $this->forumRepository
+            ->createQueryBuilder('f')
+            ->select('f.id', 'f.title')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_combine(
+            array_column($choices, 'title'),
+            array_column($choices, 'id'),
+        );
+    }
+
+    private function getRoleChoices(): array
+    {
+        $choices = $this->roleRepository
+            ->createQueryBuilder('r')
+            ->select('r.id', 'r.title')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_combine(
+            array_column($choices, 'title'),
+            array_column($choices, 'id'),
+        );
     }
 
     private function toChoiceArray(array $options): array

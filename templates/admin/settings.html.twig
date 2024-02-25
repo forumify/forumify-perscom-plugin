@@ -18,7 +18,9 @@
                 <div id="enlistment">
                     {{ form_row(form.perscom__enlistment__status) }}
                     {{ form_row(form.perscom__enlistment__form) }}
+                    <h2 class="mb-2">{{ 'perscom.settings.automations'|trans }}</h2>
                     {{ form_row(form.perscom__enlistment__forum) }}
+                    {{ form_row(form.perscom__enlistment__role) }}
                 </div>
             {% endblock %}
         {% endembed %}

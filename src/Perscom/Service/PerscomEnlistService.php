@@ -11,9 +11,11 @@ use Forumify\Forum\Repository\ForumRepository;
 use Forumify\Forum\Service\CreateTopicService;
 use Forumify\PerscomPlugin\Perscom\Entity\EnlistmentTopic;
 use Forumify\PerscomPlugin\Forum\Form\Enlistment;
+use Forumify\PerscomPlugin\Perscom\Event\UserEnlistedEvent;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\EnlistmentTopicRepository;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class PerscomEnlistService
 {
@@ -24,6 +26,7 @@ class PerscomEnlistService
         private readonly ForumRepository $forumRepository,
         private readonly CreateTopicService $createTopicService,
         private readonly EnlistmentTopicRepository $enlistmentTopicRepository,
+        private readonly EventDispatcherInterface $eventDispatcher,
     ) {
     }
 
@@ -77,6 +80,7 @@ class PerscomEnlistService
             ])
             ->json('data');
 
+        $this->eventDispatcher->dispatch(new UserEnlistedEvent($perscomUser, $submission));
         return $this->createEnlistmentTopic($perscomUser, $submission);
     }
 

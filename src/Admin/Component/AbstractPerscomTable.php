@@ -84,6 +84,10 @@ abstract class AbstractPerscomTable extends AbstractTable
         $filter = [];
 
         foreach ($this->search as $column => $value) {
+            if (empty($value)) {
+                continue;
+            }
+
             $field = str_replace('__', '.', $column);
             $filter[] = new FilterObject($field, 'like', "%$value%", 'and');
         }
