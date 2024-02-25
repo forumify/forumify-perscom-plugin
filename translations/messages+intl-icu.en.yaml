@@ -41,6 +41,24 @@ perscom:
                 user: 'User'
                 status_history: 'Status History'
                 status_created: 'Submission status updated.'
+        awards:
+            list:
+                title: 'Awards'
+        positions:
+            list:
+                title: 'Positions'
+        qualifications:
+            list:
+                title: 'Qualifications'
+        units:
+            list:
+                title: 'Units'
+        statuses:
+            list:
+                title: 'Statuses'
+        specialties:
+            list:
+                title: 'Specialties'
     roster:
         title: 'Roster'
         no_users: 'No users in unit.'
