@@ -37,6 +37,8 @@ class UserController extends AbstractController
                     'position',
                     'service_records',
                     'award_records',
+                    'award_records.award',
+                    'award_records.award.image',
                     'rank_records',
                     'rank_records.rank',
                     'rank_records.rank.image',

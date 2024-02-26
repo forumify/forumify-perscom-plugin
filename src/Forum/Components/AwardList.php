@@ -24,17 +24,17 @@ class AwardList extends AbstractList
             return $this->result;
         }
 
-        $ranks = $this->perscomFactory
+        $awards = $this->perscomFactory
             ->getPerscom()
             ->awards()
             ->all(['image'], $this->page, $this->size)
             ->json();
 
         $this->result = new ListResult(
-            $ranks['data'],
+            $awards['data'],
             $this->page,
             $this->size,
-            $ranks['meta']['total'],
+            $awards['meta']['total'],
         );
 
         return $this->result;
