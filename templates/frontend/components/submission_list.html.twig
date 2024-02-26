@@ -7,10 +7,13 @@
                 {{ 'date_time_short'|trans({ date: item.created_at }) }}
             </p>
         </div>
-        {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
-            status: item.statuses[0],
-            class: 'text-small'
-        } only %}
+        {% set status = item.statuses|first %}
+        {% if status %}
+            {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
+                status: status,
+                class: 'text-small'
+            } only %}
+        {% endif %}
     </li>
 {% endblock %}
 {% block empty %}
