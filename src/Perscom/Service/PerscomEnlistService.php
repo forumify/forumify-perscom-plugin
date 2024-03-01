@@ -119,7 +119,7 @@ class PerscomEnlistService
 
     private function formSubmissionToMarkdown(array $submission): string
     {
-        $content = [];
+        $content = '';
 
         /** @var array $form */
         $form = $this->getEnlistmentForm();
@@ -135,9 +135,9 @@ class PerscomEnlistService
                 default => $value,
             };
 
-            $content[] = "#### $label\n\n$value";
+            $content .= "<h5>$label</h5><p>$value</p>";
         }
 
-        return implode("\n\n", $content);
+        return $content;
     }
 }
