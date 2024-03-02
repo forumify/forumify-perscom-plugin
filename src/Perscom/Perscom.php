@@ -24,9 +24,8 @@ class Perscom extends PerscomConnection
 
     protected function defaultHeaders(): array
     {
-        $headers = parent::defaultHeaders();
         return [
-            ...$headers,
+            'X-Perscom-Id' => $this->perscomId,
             'X-Perscom-Notifications' => 'false',
             'X-Perscom-Bypass-Cache' => 'true'
         ];
