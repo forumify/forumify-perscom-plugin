@@ -18,6 +18,7 @@ class QualificationRecordTable extends RecordTable
                 'sortable' => false,
                 'searchable' => false,
                 'class' => 'text-left text-small',
-            ]);
+            ])
+            ->addDocumentColumn(true, 'qualification');
     }
 }

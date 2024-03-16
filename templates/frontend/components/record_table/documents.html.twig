@@ -1,0 +1,44 @@
+{% if record.document is defined and record.document %}
+    {% embed '@Forumify/components/modal.html.twig' %}
+        {% block modalOpenButton %}
+            <button class="btn-link btn-icon btn-small"><i class="ph ph-certificate"></i></button>
+        {% endblock %}
+        {% block modalContent %}
+            <div class="card">
+                <div class="card-title">
+                    {{ 'perscom.user.document'|trans }}
+                </div>
+                <div class="card-body text-left">
+                    {% if item is not null and item.image %}
+                        <div class="text-center mb-6">
+                            <img width="25%" height="auto" src="{{ item.image.image_url }}" alt="">
+                        </div>
+                    {% endif %}
+                    {{ record.document.content|rich }}
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endif %}
+{% if showRecordText and record.text %}
+    {% embed '@Forumify/components/modal.html.twig' %}
+        {% block modalOpenButton %}
+            <button class="btn-link btn-icon btn-small"><i class="ph ph-file-text"></i></button>
+        {% endblock %}
+        {% block modalContent %}
+            <div class="card">
+                <div class="card-title">
+                    {{ 'perscom.user.text'|trans }}
+                </div>
+                <div class="card-body text-left">
+                    {% if item is not null and item.image %}
+                        <div class="text-center mb-6">
+                            <img width="25%" height="auto" src="{{ item.image.image_url }}" alt="">
+                        </div>
+                    {% endif %}
+                    {{ record.text|rich }}
+                </div>
+            </div>
+        {% endblock %}
+    {% endembed %}
+{% endif %}
