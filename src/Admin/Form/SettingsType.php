@@ -43,13 +43,13 @@ class SettingsType extends AbstractType
                 'label' => 'Eligible Status',
                 'help' => 'Only users in these statuses can start the enlistment process. Users who do not have a PERSCOM account yet will always be allowed to enlist.',
                 'multiple' => true,
-                'choices' => $this->getStatusChoices(),
+                'choices' => $this->safe($this->getStatusChoices(...)),
                 'required' => false,
             ])
             ->add('perscom__enlistment__form', ChoiceType::class, [
                 'label' => 'Enlistment Form',
                 'help' => 'The form to use for enlistments, by default, all required fields to create a PERSCOM user are already added by this plugin.',
-                'choices' => $this->getFormChoices(),
+                'choices' => $this->safe($this->getFormChoices(...)),
             ])
             ->add('perscom__enlistment__forum', ChoiceType::class, [
                 'label' => 'Target Forum',
@@ -124,5 +124,14 @@ class SettingsType extends AbstractType
             $choices[$option['name']] = $option['id'];
         }
         return $choices;
+    }
+
+    private function safe(callable $fn): array
+    {
+        try {
+            return $fn();
+        } catch (\Exception) {
+        }
+        return [];
     }
 }

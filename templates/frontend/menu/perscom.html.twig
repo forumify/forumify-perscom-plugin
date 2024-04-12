@@ -1,0 +1,13 @@
+{% embed '@Forumify/frontend/menu/collection.html.twig' with { placement: 'bottom-start' } %}
+    {% block menuItems %}
+        <a class="btn-link" href="{{ path('perscom_roster') }}">{{ 'perscom.roster.title'|trans }}</a>
+        <a class="btn-link" href="{{ path('perscom_awards') }}">{{ 'perscom.award.title'|trans }}</a>
+        <a class="btn-link" href="{{ path('perscom_ranks') }}">{{ 'perscom.rank.title'|trans }}</a>
+
+        {% if canEnlist %}
+            <a class="btn-link" href="{{ path('perscom_enlist') }}">{{ 'perscom.enlistment.enlist'|trans }}</a>
+        {% else %}
+            <a class="btn-link" href="{{ path('perscom_operations_center') }}">{{ 'perscom.opcenter.operations_center'|trans }}</a>
+        {% endif %}
+    {% endblock %}
+{% endembed %}

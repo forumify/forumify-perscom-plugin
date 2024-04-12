@@ -36,13 +36,17 @@ class PerscomUserService
             return $this->perscomUser;
         }
 
-        $this->perscomUser = $this->perscomFactory
-            ->getPerscom()
-            ->users()
-            ->search(filter: [new FilterObject('email', 'like', $user->getEmail())])
-            ->json('data')[0] ?? null;
+        try {
+            $this->perscomUser = $this->perscomFactory
+                ->getPerscom()
+                ->users()
+                ->search(filter: [new FilterObject('email', 'like', $user->getEmail())])
+                ->json('data')[0] ?? null;
 
-        return $this->perscomUser;
+            return $this->perscomUser;
+        } catch (\Exception) {
+            return null;
+        }
     }
 
     public function createUser(string $firstName, string $lastName)
