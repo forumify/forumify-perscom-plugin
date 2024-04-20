@@ -1,4 +1,4 @@
-{% if record.document is defined and record.document %}
+{% if record.document_parsed is defined and record.document_parsed %}
     {% embed '@Forumify/components/modal.html.twig' %}
         {% block modalOpenButton %}
             <button class="btn-link btn-icon btn-small"><i class="ph ph-certificate"></i></button>
@@ -14,7 +14,7 @@
                             <img width="25%" height="auto" src="{{ item.image.image_url }}" alt="">
                         </div>
                     {% endif %}
-                    {{ record.document.content|rich }}
+                    {{ record.document_parsed|rich }}
                 </div>
             </div>
         {% endblock %}

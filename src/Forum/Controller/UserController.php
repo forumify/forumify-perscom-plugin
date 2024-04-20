@@ -39,20 +39,16 @@ class UserController extends AbstractController
                     'award_records',
                     'award_records.award',
                     'award_records.award.image',
-                    'award_records.document',
                     'rank_records',
                     'rank_records.rank',
                     'rank_records.rank.image',
-                    'rank_records.document',
                     'combat_records',
                     'assignment_records',
                     'assignment_records.position',
                     'assignment_records.unit',
                     'assignment_records.status',
-                    'assignment_records.document',
                     'qualification_records',
                     'qualification_records.qualification',
-                    'qualification_records.document',
                     'secondary_assignment_records.unit',
                     'secondary_assignment_records.position',
                     'secondary_assignment_records.specialty',
@@ -60,7 +56,7 @@ class UserController extends AbstractController
                 ])
                 ->json('data');
         } catch (NotFoundException) {
-            throw new NotFoundHttpException($translator->trans('perscom.user.not_found'));
+            throw $this->createNotFoundException($translator->trans('perscom.user.not_found'));
         }
 
         $now = new DateTime();

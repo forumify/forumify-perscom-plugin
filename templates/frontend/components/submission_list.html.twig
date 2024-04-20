@@ -2,7 +2,39 @@
 {% block row %}
     <li class="mb-2 flex items-center justify-between">
         <div>
-            <p class="mb-1">{{ item.form.name }}</p>
+            {% embed '@Forumify/components/modal.html.twig' %}
+                {% block modalOpenButton %}
+                    <a>{{ item.form.name }}</a>
+                {% endblock %}
+                {% block modalContent %}
+                    <div class="box">
+                        <div class="mb-4">
+                            <h2>
+                                {{ item.form.name }}
+                                {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
+                                    status: item.statuses[0],
+                                    class: 'text-small'
+                                } only %}
+                            </h2>
+                            {% include '@ForumifyPerscomPlugin/components/perscom_form.html.twig' with {
+                                submission: item
+                            } %}
+                        </div>
+                        <h3>{{ 'perscom.opcenter.status_history'|trans }}</h3>
+                        <ul>
+                            {% for status in item.statuses %}
+                                <li class="mb-2">
+                                    <h4 class="mb-0">{{ status.name }}</h4>
+                                    <p class="text-small mb-2">{{ 'date'|trans({ date: status.record.updated_at|perscomDate }) }}</p>
+                                    <p>
+                                        {{ status.record.text }}
+                                    </p>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endblock %}
+            {% endembed %}
             <p class="text-small">
                 {{ 'date_time_short'|trans({ date: item.created_at }) }}
             </p>
