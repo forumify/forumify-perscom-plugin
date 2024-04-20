@@ -1,0 +1,16 @@
+{% for field in submission.form.fields %}
+    <div class="mb-2">
+        <p class="text-bold">{{ field.name }}</p>
+        {% set value = submission[field.key] is defined ? submission[field.key] : '' %}
+        <p>
+            {% if field.type is same as 'date' %}
+                {% set value = value|perscomDate %}
+                {% if value %}
+                    {{ 'date'|trans({ date: value }) }}
+                {% endif %}
+            {% else %}
+                {{ value }}
+            {% endif %}
+        </p>
+    </div>
+{% endfor %}

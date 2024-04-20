@@ -21,7 +21,6 @@
     {% embed '@Forumify/components/tabs.html.twig' %}
         {% block tabs %}
             <button class="btn-link" data-tab-id="submissions">{{ 'perscom.opcenter.submissions'|trans }}</button>
-            <button class="btn-link" data-tab-id="newsfeed">{{ 'perscom.opcenter.newsfeed'|trans }}</button>
         {% endblock %}
         {% block tabpanels %}
             <div id="submissions" class="flex gap-4">
@@ -37,7 +36,6 @@
                     {% endfor %}
                 </div>
             </div>
-            <div id="newsfeed">NOT IMPLEMENTED</div>
         {% endblock %}
     {% endembed %}
 {% endblock %}

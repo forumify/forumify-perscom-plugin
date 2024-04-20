@@ -8,6 +8,7 @@ use Forumify\Core\Component\List\AbstractList;
 use Forumify\Core\Component\List\ListResult;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Perscom\Data\FilterObject;
+use Perscom\Data\SortObject;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
@@ -29,13 +30,14 @@ class SubmissionList extends AbstractList
             return $this->result;
         }
 
-        // TODO: these params don't exist yet limit somehow.
-
         $submissions = $this->perscomFactory->getPerscom()
             ->submissions()
             ->search(
-                filter: [new FilterObject('user_id', '=', $this->userId)],
-                include: ['statuses', 'form'],
+                sort: new SortObject('created_at', 'desc'),
+                filter: new FilterObject('user_id', '=', $this->userId),
+                include: ['statuses', 'statuses.record', 'form', 'form.fields'],
+                page: $this->page,
+                limit: $this->size,
             )
             ->json();
 

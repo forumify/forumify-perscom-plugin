@@ -106,3 +106,4 @@ perscom:
         submissions: 'Submissions'
         newsfeed: 'Newsfeed'
         submission_created: 'Form submission created.'
+        status_history: 'Status history'
