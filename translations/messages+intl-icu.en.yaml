@@ -107,3 +107,7 @@ perscom:
         newsfeed: 'Newsfeed'
         submission_created: 'Form submission created.'
         status_history: 'Status history'
+    notification:
+        submission_status_updated:
+            title: 'Submission status updated'
+            description: 'Your {form} is now {status}.'

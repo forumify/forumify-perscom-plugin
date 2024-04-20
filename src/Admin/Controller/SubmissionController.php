@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Controller;
 
-use Forumify\PerscomPlugin\Admin\Form\SubmissionStatusType;
+use Forumify\PerscomPlugin\Admin\Form\StatusRecord;
+use Forumify\PerscomPlugin\Admin\Form\StatusRecordType;
+use Forumify\PerscomPlugin\Admin\Service\SubmissionStatusUpdateService;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
-use Perscom\Data\ResourceObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,8 +23,12 @@ class SubmissionController extends AbstractController
     }
 
     #[Route('/{id}', 'view')]
-    public function view(PerscomFactory $perscomFactory, int $id, Request $request): Response
-    {
+    public function view(
+        PerscomFactory $perscomFactory,
+        SubmissionStatusUpdateService $submissionStatusUpdateService,
+        int $id,
+        Request $request
+    ): Response {
         $perscom = $perscomFactory->getPerscom();
         $submission = $perscom
             ->submissions()
@@ -32,16 +37,14 @@ class SubmissionController extends AbstractController
 
         usort($submission['statuses'], static fn ($a, $b) => $b['updated_at'] <=> $a['updated_at']);
 
-        $form = $this->createForm(SubmissionStatusType::class);
+        $record = new StatusRecord();
+        $record->submission = $submission;
+        $form = $this->createForm(StatusRecordType::class, $record);
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $statusRecord = $form->getData();
-
-            $resource = new ResourceObject((int)$statusRecord['status'], ['text' => $statusRecord['text']]);
-            $perscom
-                ->submissions()
-                ->statuses($id)
-                ->attach($resource);
+            $submissionStatusUpdateService->updateStatus($statusRecord);
 
             $this->addFlash('success', 'perscom.admin.submissions.view.status_created');
             return $this->redirectToRoute('perscom_admin_submission_view', ['id' => $id]);
@@ -49,7 +52,7 @@ class SubmissionController extends AbstractController
 
         return $this->render('@ForumifyPerscomPlugin/admin/submissions/view/view.html.twig', [
             'submission' => $submission,
-            'form' => $form->createView()
+            'form' => $form->createView(),
         ]);
     }
 }

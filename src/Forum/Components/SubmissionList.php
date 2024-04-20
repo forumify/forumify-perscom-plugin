@@ -42,8 +42,7 @@ class SubmissionList extends AbstractList
             ->json();
 
         $this->result = new ListResult(
-        // TODO: sort using API once it's a thing
-            array_reverse(array_map($this->transform(...), $submissions['data'])),
+            array_map($this->transform(...), $submissions['data']),
             $this->page,
             $this->size,
             $submissions['meta']['total']

@@ -1,0 +1,26 @@
+{% extends '@Forumify/emails/base.html.twig' %}
+{% block title %}
+    {{ 'perscom.notification.submission_status_updated.title'|trans }}
+{% endblock %}
+{% block body %}
+    <h2>
+        {{ 'perscom.notification.submission_status_updated.title'|trans }}
+    </h2>
+    <hr>
+    <div class="content-block">
+        <p>
+            {{ 'perscom.notification.submission_status_updated.description'|trans({
+                form: form,
+                status: status,
+            }) }}
+        </p>
+        {% if text is not empty %}
+            <p>{{ text }}</p>
+        {% endif %}
+    </div>
+    <hr>
+    {% include '@Forumify/emails/components/button.html.twig' with {
+        href: path('perscom_operations_center', { viewSubmission: submissionId }),
+        label: 'perscom.opcenter.operations_center'|trans,
+    } only %}
+{% endblock %}

@@ -23,7 +23,13 @@ abstract class AbstractPerscomEntityType extends AbstractType
     {
         $perscom = $this->perscomFactory->getPerscom();
         $entities = $this->getResource($perscom)
-            ->all(limit: 1000)
+            ->search(
+                null,
+                $this->getSorting(),
+                $this->getFilters(),
+                $this->getIncludes(),
+                limit: 1000
+            )
             ->json('data') ?? [];
 
         $choiceLabelField = $this->getLabelField();
@@ -48,6 +54,21 @@ abstract class AbstractPerscomEntityType extends AbstractType
     protected function getIdField(): string
     {
         return 'id';
+    }
+
+    protected function getFilters(): ?array
+    {
+       return null;
+    }
+
+    protected function getSorting(): ?array
+    {
+        return null;
+    }
+
+    protected function getIncludes(): array
+    {
+        return [];
     }
 
     public function getParent(): string

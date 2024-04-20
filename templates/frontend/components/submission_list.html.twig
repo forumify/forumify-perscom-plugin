@@ -22,7 +22,7 @@
                         </div>
                         <h3>{{ 'perscom.opcenter.status_history'|trans }}</h3>
                         <ul>
-                            {% for status in item.statuses %}
+                            {% for status in item.statuses|sort((a, b) => b.updated_at <=> a.updated_at) %}
                                 <li class="mb-2">
                                     <h4 class="mb-0">{{ status.name }}</h4>
                                     <p class="text-small mb-2">{{ 'date'|trans({ date: status.record.updated_at|perscomDate }) }}</p>
