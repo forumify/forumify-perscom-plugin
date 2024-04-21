@@ -21,7 +21,7 @@ class SubmissionStatusUpdateService
     ) {
     }
 
-    public function updateStatus(StatusRecord $statusRecord): void
+    public function createStatusRecord(StatusRecord $statusRecord): void
     {
         $resource = new ResourceObject($statusRecord->status, ['text' => $statusRecord->text]);
         $this->perscomFactory

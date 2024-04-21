@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Admin\Form;
 
 use Forumify\PerscomPlugin\Perscom\Form as PerscomForm;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -39,10 +40,19 @@ class RecordType extends AbstractType
                 // no-op
         }
 
-        $builder->add('text', TextareaType::class, [
-            'required' => false,
-            'empty_data' => '',
-        ]);
+        $builder
+            ->add('text', TextareaType::class, [
+                'required' => false,
+                'empty_data' => '',
+            ])
+            ->add('document_id', PerscomForm\DocumentType::class, [
+                'label' => 'Document',
+                'required' => false,
+            ])
+            ->add('sendNotification', CheckboxType::class, [
+                'required' => false,
+                'data' => true,
+            ]);
     }
 
     private function addAwardFields(FormBuilderInterface $builder): void

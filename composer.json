@@ -7,7 +7,7 @@
     "require": {
         "php": ">=8.2",
         "forumify/forumify-platform": "*",
-        "deschutesdesigngroupllc/perscom-php-sdk": "dev-master"
+        "deschutesdesigngroupllc/perscom-php-sdk": "^1.0.12"
     },
     "repositories": [
         {

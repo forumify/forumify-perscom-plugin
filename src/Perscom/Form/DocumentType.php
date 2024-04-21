@@ -6,17 +6,11 @@ namespace Forumify\PerscomPlugin\Perscom\Form;
 
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Perscom\Contracts\ResourceContract;
-use Perscom\Data\SortObject;
 
-class AwardType extends AbstractPerscomEntityType
+class DocumentType extends AbstractPerscomEntityType
 {
     protected function getResource(Perscom $perscom): ResourceContract
     {
-        return $perscom->awards();
-    }
-
-    protected function getSorting(): ?array
-    {
-        return [new SortObject('name')];
+        return $perscom->documents();
     }
 }

@@ -111,3 +111,26 @@ perscom:
         submission_status_updated:
             title: 'Submission status updated'
             description: 'Your {form} is now {status}.'
+        service_record:
+            title: 'A service record was added to your profile'
+            description: '{text}'
+        award_record:
+            title: 'You received a new award'
+            description: 'You received the {award}.'
+        combat_record:
+            title: 'A combat record was added to your profile'
+            description: '{text}'
+        rank_record:
+            title: 'You received a new rank'
+            description: >-
+                {type, select,
+                    0       {You were promoted to {rank}.}
+                    1       {You were demoted to {rank}.}
+                    other   {}
+                }
+        assignment_record:
+            title: 'You received a new position'
+            description: 'You were assigned to {position} in {unit}.'
+        qualification_record:
+            title: 'You received a new qualification'
+            description: 'You are now qualified for {qualification}'

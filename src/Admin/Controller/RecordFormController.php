@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Admin\Controller;
 
 use Forumify\PerscomPlugin\Admin\Form\RecordType;
+use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
@@ -19,6 +20,7 @@ class RecordFormController extends AbstractController
     public function __invoke(
         PerscomFactory $perscomFactory,
         PerscomUserService $perscomUserService,
+        RecordService $recordService,
         Request $request,
         int $id,
         string $type
@@ -48,10 +50,10 @@ class RecordFormController extends AbstractController
             $data['user_id'] = $id;
             $data['author_id'] = $author['id'];
 
-            $this->saveRecord($perscom, $type, $data);
+            $recordService->createRecord($type, $data);
 
             $this->addFlash('success', 'perscom.admin.users.record_form.created');
-            return $this->redirectToRoute('perscom_admin_user_list');
+            return $this->redirectToRoute('perscom_admin_user_edit', ['id' => $id]);
         }
 
         return $this->render('@ForumifyPerscomPlugin/admin/users/record_form.html.twig', [
@@ -61,18 +63,4 @@ class RecordFormController extends AbstractController
         ]);
     }
 
-    private function saveRecord(Perscom $perscom, string $type, array $data): void
-    {
-        $userResource = $perscom->users();
-        $recordResource = match ($type) {
-            'service' => $userResource->service_records(...),
-            'award' => $userResource->award_records(...),
-            'combat' => $userResource->combat_records(...),
-            'rank' => $userResource->rank_records(...),
-            'assignment' => $userResource->assignment_records(...),
-            'qualification' => $userResource->qualification_records(...),
-        };
-
-        $recordResource($data['user_id'])->create($data);
-    }
 }

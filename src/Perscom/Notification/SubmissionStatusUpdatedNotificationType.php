@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Perscom\Notification;
 
 use Forumify\Core\Entity\Notification;
 use Forumify\Core\Notification\AbstractEmailNotificationType;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -16,6 +17,7 @@ class SubmissionStatusUpdatedNotificationType extends AbstractEmailNotificationT
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly Packages $packages,
     ) {
     }
 
@@ -40,7 +42,7 @@ class SubmissionStatusUpdatedNotificationType extends AbstractEmailNotificationT
 
     public function getImage(Notification $notification): string
     {
-        return '';
+        return $this->packages->getUrl('bundles/forumifyperscomplugin/images/perscom.png');
     }
 
     public function getUrl(Notification $notification): string

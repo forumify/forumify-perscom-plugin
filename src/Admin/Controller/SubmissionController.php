@@ -44,7 +44,7 @@ class SubmissionController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $statusRecord = $form->getData();
-            $submissionStatusUpdateService->updateStatus($statusRecord);
+            $submissionStatusUpdateService->createStatusRecord($statusRecord);
 
             $this->addFlash('success', 'perscom.admin.submissions.view.status_created');
             return $this->redirectToRoute('perscom_admin_submission_view', ['id' => $id]);
