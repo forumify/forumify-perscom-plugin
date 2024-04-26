@@ -14,7 +14,7 @@ class DateExtension extends AbstractExtension
     public function getFilters(): array
     {
         return [
-            new TwigFilter('perscomDate', $this->perscomDate(...))
+            new TwigFilter('perscom_date', $this->perscomDate(...))
         ];
     }
 

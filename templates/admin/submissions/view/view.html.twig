@@ -27,7 +27,7 @@
             {% for status in submission.statuses %}
                 <li class="box mb-2">
                     <h4>{{ status.name }}</h4>
-                    <p class="text-small mb-2">{{ 'date'|trans({ date: status.record.updated_at|perscomDate }) }}</p>
+                    <p class="text-small mb-2">{{ 'date'|trans({ date: status.record.updated_at|perscom_date }) }}</p>
                     <p>
                         {{ status.record.text }}
                     </p>

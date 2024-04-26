@@ -25,7 +25,7 @@
                             {% for status in item.statuses|sort((a, b) => b.updated_at <=> a.updated_at) %}
                                 <li class="mb-2">
                                     <h4 class="mb-0">{{ status.name }}</h4>
-                                    <p class="text-small mb-2">{{ 'date'|trans({ date: status.record.updated_at|perscomDate }) }}</p>
+                                    <p class="text-small mb-2">{{ 'date'|trans({ date: status.record.updated_at|perscom_date }) }}</p>
                                     <p>
                                         {{ status.record.text }}
                                     </p>
