@@ -27,7 +27,6 @@ class Perscom extends PerscomConnection
         return [
             'X-Perscom-Id' => $this->perscomId,
             'X-Perscom-Notifications' => 'false',
-            'X-Perscom-Bypass-Cache' => 'true'
         ];
     }
 }
