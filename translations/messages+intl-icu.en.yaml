@@ -60,6 +60,8 @@ perscom:
         specialties:
             list:
                 title: 'Specialties'
+        configuration:
+            title: 'Configuration'
     roster:
         title: 'Roster'
         no_users: 'No users in unit.'

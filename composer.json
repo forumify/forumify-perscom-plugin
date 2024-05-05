@@ -1,9 +1,9 @@
 {
     "name": "forumify/forumify-perscom-plugin",
-    "type": "symfony-bundle",
+    "type": "forumify-plugin",
     "keywords": ["symfony-ux"],
     "license": "OSL-3.0",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "require": {
         "php": ">=8.2",
         "forumify/forumify-platform": "*",
@@ -25,5 +25,8 @@
             "symfony/flex": false,
             "symfony/runtime": false
         }
+    },
+    "extra": {
+        "forumify-plugin-class": "Forumify\\PerscomPlugin\\ForumifyPerscomPlugin"
     }
 }

@@ -20,6 +20,7 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
         $u = $this->urlGenerator->generate(...);
 
         $menu->addItem(new Menu('PERSCOM', ['icon' => 'ph ph-shield-chevron'], [
+            new MenuItem('Configuration', $u('perscom_admin_configuration'), ['icon' => 'ph ph-wrench']),
             new MenuItem('Users', $u('perscom_admin_user_list'), ['icon' => 'ph ph-users']),
             new MenuItem('Submissions', $u('perscom_admin_submission_list'), ['icon' => 'ph ph-table']),
             new Menu('Organization', ['icon' => 'ph ph-buildings'], [

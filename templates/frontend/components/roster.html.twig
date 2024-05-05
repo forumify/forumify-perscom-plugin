@@ -1,0 +1,47 @@
+<div {{ attributes }}>
+    <div class="tablist" role="tablist">
+        {% for group in this.groups %}
+            <button
+                class="btn-link"
+                role="tab"
+                data-action="live#action"
+                data-live-action-param="selectGroup"
+                data-live-group-id-param="{{ group.id }}"
+            >
+                {{ group.name }}
+            </button>
+        {% endfor %}
+    </div>
+    <div data-loading>
+        <div class="flex justify-center">
+            {% include '@Forumify/components/loader.html.twig' %}
+        </div>
+    </div>
+    <div data-loading="hide">
+        {% set group = this.group %}
+        {% if group is not empty %}
+            <ul id="group-{{ group.id }}">
+                {% for unit in group.units %}
+                    {% if unit.users is not empty %}
+                        <li class="card mb-4">
+                            <div class="card-title">{{ unit.name }}</div>
+                            <ul class="card-body">
+                                {% for user in unit.users %}
+                                    <li class="text-small">
+                                        <a href="{{ path('perscom_user', { id: user.id }) }}" class="btn-link w-100">
+                                            {% include '@ForumifyPerscomPlugin/frontend/roster/components/soldier_row.html.twig' with {
+                                                soldier: user
+                                            } only %}
+                                        </a>
+                                    </li>
+                                {% else %}
+                                    <li class="text-small mb1">{{ 'perscom.roster.no_users'|trans }}</li>
+                                {% endfor %}
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
+</div>

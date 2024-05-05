@@ -1,0 +1,25 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+{% block body %}
+    <h1 class="mb-4">{{ 'perscom.settings.title'|trans }}</h1>
+    {{ form_start(form) }}
+    <div class="box">
+        {% embed '@Forumify/components/tabs.html.twig' %}
+            {% block tabs %}
+                <button type="button" class="btn-link" data-tab-id="enlistment">{{ 'perscom.settings.tab_enlistment'|trans }}</button>
+            {% endblock %}
+            {% block tabpanels %}
+                <div id="enlistment">
+                    {{ form_row(form.perscom__enlistment__status) }}
+                    {{ form_row(form.perscom__enlistment__form) }}
+                    <h2 class="mb-2">{{ 'perscom.settings.automations'|trans }}</h2>
+                    {{ form_row(form.perscom__enlistment__forum) }}
+                    {{ form_row(form.perscom__enlistment__role) }}
+                </div>
+            {% endblock %}
+        {% endembed %}
+        <div class="flex justify-center items-center gap-2">
+            <button type="submit" class="btn-primary">{{ 'save'|trans }}</button>
+        </div>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}
