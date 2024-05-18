@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Admin\Component;
 
 use Forumify\Core\Component\Table\AbstractTable;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Twig\Environment;
@@ -15,8 +16,14 @@ class PerscomSubmissionTable extends AbstractPerscomTable
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly Environment $twig,
+        private readonly RequestStack $requestStack,
     ) {
         $this->sort = ['created_at' => AbstractTable::SORT_DESC];
+
+        $formSearch = $this->requestStack->getCurrentRequest()?->get('form');
+        if ($formSearch !== null) {
+            $this->search = ['form__name' => $formSearch];
+        }
     }
 
     protected function buildTable(): void
