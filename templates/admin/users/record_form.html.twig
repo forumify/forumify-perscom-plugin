@@ -2,6 +2,6 @@
 {% block body %}
     {% include '@Forumify/admin/components/simple_form.html.twig' with {
         cancelPath: path('perscom_admin_user_list'),
-        title: ('perscom.admin.users.list.actions.' ~ type)|trans ~ ' - ' ~ user.name
+        title: ('perscom.admin.users.list.actions.' ~ type)|trans
     } %}
 {% endblock %}

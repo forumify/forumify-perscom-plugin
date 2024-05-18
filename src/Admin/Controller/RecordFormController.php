@@ -16,13 +16,12 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RecordFormController extends AbstractController
 {
-    #[Route('/users/{id}/create-record/{type}', 'record_form')]
+    #[Route('/users/create-record/{type}', 'record_form')]
     public function __invoke(
         PerscomFactory $perscomFactory,
         PerscomUserService $perscomUserService,
         RecordService $recordService,
         Request $request,
-        int $id,
         string $type
     ): Response {
         $author = $perscomUserService->getLoggedInPerscomUser();
@@ -31,36 +30,27 @@ class RecordFormController extends AbstractController
             return $this->redirectToRoute('perscom_admin_user_list');
         }
 
-        $perscom = $perscomFactory->getPerscom();
-        $user = $perscom
-            ->users()
-            ->get($id)
-            ->json('data');
+        $data = ['author_id' => $author['id']];
 
-        if ($user === null) {
-            $this->addFlash('error', 'perscom.admin.users.not_found');
-            return $this->redirectToRoute('perscom_admin_user_list');
-        }
+        $userIds = $request->get('users', '');
+        $userIds = array_filter(explode(',', $userIds));
+        $data['users'] = $userIds;
 
-        $form = $this->createForm(RecordType::class, null, ['type' => $type]);
+        $form = $this->createForm(RecordType::class, $data, ['type' => $type]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
-            $data['user_id'] = $id;
-            $data['author_id'] = $author['id'];
 
             $recordService->createRecord($type, $data);
 
             $this->addFlash('success', 'perscom.admin.users.record_form.created');
-            return $this->redirectToRoute('perscom_admin_user_edit', ['id' => $id]);
+            return $this->redirectToRoute('perscom_admin_user_list');
         }
 
         return $this->render('@ForumifyPerscomPlugin/admin/users/record_form.html.twig', [
             'form' => $form->createView(),
             'type' => $type,
-            'user' => $user,
         ]);
     }
-
 }

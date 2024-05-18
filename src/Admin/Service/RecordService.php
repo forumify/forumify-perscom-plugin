@@ -16,12 +16,16 @@ class RecordService
         private readonly PerscomFactory $perscomFactory,
         private readonly NotificationService $notificationService,
         private readonly UserRepository $userRepository,
-    ) { }
+    ) {
+    }
 
     public function createRecord(string $type, array $data): void
     {
         $sendNotification = $data['sendNotification'] ?? false;
         unset($data['sendNotification']);
+
+        $userIds = $data['users'] ?? [];
+        unset($data['users']);
 
         $userResource = $this->perscomFactory->getPerscom()->users();
         $recordResource = match ($type) {
@@ -33,9 +37,12 @@ class RecordService
             'qualification' => $userResource->qualification_records(...),
         };
 
-        $data = $recordResource($data['user_id'])->create($data)->json()['data'];
-        if ($sendNotification) {
-            $this->sendNotification($recordResource, $type, $data);
+        foreach ($userIds as $userId) {
+            $data['user_id'] = (int)$userId;
+            $response = $recordResource($data['user_id'])->create($data)->json()['data'];
+            if ($sendNotification) {
+                $this->sendNotification($recordResource, $type, $response);
+            }
         }
     }
 

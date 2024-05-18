@@ -34,6 +34,7 @@ perscom:
                 deleted: 'User deleted.'
             record_form:
                 created: 'Record created.'
+            quick_actions: 'Quick Actions'
         submissions:
             list:
                 title: 'Form Submissions'

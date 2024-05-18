@@ -9,7 +9,7 @@
         </h1>
         <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'bottom-end' }) }}>
             <a class="btn-primary" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
-                <i class="ph ph-caret-down"></i>Quick Actions
+                <i class="ph ph-plus"></i>{{ 'perscom.admin.users.quick_actions'|trans }}
             </a>
             <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
                 {% include '@ForumifyPerscomPlugin/admin/users/list/quick_actions.html.twig' %}
