@@ -3,21 +3,25 @@
 {% block body %}
     <div class="flex justify-between mb-4">
         {% include '@ForumifyPerscomPlugin/frontend/user/components/header.html.twig' %}
-        <a class="btn-primary" href="{{ path('perscom_user', { id: user.id }) }}">
-            {{ 'perscom.opcenter.pfile'|trans }}
-        </a>
+        {% block opcenter_actions %}
+            <a class="btn-primary" href="{{ path('perscom_user', { id: user.id }) }}">
+                {{ 'perscom.opcenter.pfile'|trans }}
+            </a>
+        {% endblock %}
     </div>
-    {% for announcement in announcements %}
-        {%- set class -%}
-            {%- if announcement.color is same as 'failure' -%}alert-error{%- endif -%}
-            {%- if announcement.color is same as 'warning' -%}alert-warning{%- endif -%}
-            {%- if announcement.color is same as 'info' -%}alert-info{%- endif -%}
-        {%- endset -%}
-        <div class="{{ class }} mb-4">
-            <h3 class="mb-2">{{ announcement.title }}</h3>
-            {{ announcement.content|raw }}
-        </div>
-    {% endfor %}
+    {% block opcenter_announcements %}
+        {% for announcement in announcements %}
+            {%- set class -%}
+                {%- if announcement.color is same as 'failure' -%}alert-error{%- endif -%}
+                {%- if announcement.color is same as 'warning' -%}alert-warning{%- endif -%}
+                {%- if announcement.color is same as 'info' -%}alert-info{%- endif -%}
+            {%- endset -%}
+            <div class="{{ class }} mb-4">
+                <h3 class="mb-2">{{ announcement.title }}</h3>
+                {{ announcement.content|raw }}
+            </div>
+        {% endfor %}
+    {% endblock %}
     {% embed '@Forumify/components/tabs.html.twig' %}
         {% block tabs %}
             <button class="btn-link" data-tab-id="submissions">{{ 'perscom.opcenter.submissions'|trans }}</button>
