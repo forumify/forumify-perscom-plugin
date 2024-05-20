@@ -17,7 +17,7 @@ class AwardRecordTable extends RecordTable
                 'field' => '[award?][name]',
                 'searchable' => false,
                 'sortable' => false,
-                'class' => 'flex items-center text-small',
+                'class' => 'text-small',
                 'renderer' => $this->renderAward(...),
             ])
             ->addDocumentColumn(true, 'award');
@@ -26,8 +26,8 @@ class AwardRecordTable extends RecordTable
     private function renderAward(string $awardName, array $record): string
     {
         $imgUrl = $record['award']['image']['image_url'] ?? null;
-        $image = $imgUrl ? "<img src='$imgUrl' width='100%' height='auto'>" : '';
+        $image = $imgUrl ? "<img src='$imgUrl' width='100%' height='auto' style='max-width: 24px; max-height: 24px;'>" : '';
 
-        return "<div class='mr-1 flex justify-center items-center' style='width: 24px; height: 24px'>$image</div>" . $awardName;
+        return "<div class='w-100 flex items-center gap-2'>$image $awardName</div>";
     }
 }
