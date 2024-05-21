@@ -2,7 +2,7 @@
     <a class="btn-link btn-icon btn-small" href="{{ path('perscom_admin_user_edit', { id: row.id }) }}">
         <i class="ph ph-pencil-simple-line"></i>
     </a>
-    <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'bottom-end' }) }}>
+    <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'bottom-end', hideAdornment: true }) }}>
         <a class="btn-link btn-icon btn-small" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
             <i class="ph ph-caret-down"></i>
         </a>
