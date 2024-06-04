@@ -6,7 +6,7 @@ namespace Forumify\PerscomPlugin\Perscom\Service;
 
 use Forumify\Core\Entity\User;
 use Forumify\Core\Repository\SettingRepository;
-use Forumify\Forum\Form\NewTopic;
+use Forumify\Forum\Form\TopicData;
 use Forumify\Forum\Repository\ForumRepository;
 use Forumify\Forum\Service\CreateTopicService;
 use Forumify\PerscomPlugin\Perscom\Entity\EnlistmentTopic;
@@ -106,7 +106,7 @@ class PerscomEnlistService
             return null;
         }
 
-        $newTopic = new NewTopic();
+        $newTopic = new TopicData();
         $newTopic->setTitle("New enlistment from \"{$perscomUser['name']}\"");
         $newTopic->setContent($this->formSubmissionToMarkdown($submission));
 
