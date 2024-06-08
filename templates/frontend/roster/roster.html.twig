@@ -1,4 +1,4 @@
 {% extends '@Forumify/frontend/base.html.twig' %}
 {% block body %}
-    {{ component('PerscomRoster', { groups: groups }) }}
+    {{ component('Forumify\\Perscom\\Roster', { loading: 'defer', groups: groups }) }}
 {% endblock %}

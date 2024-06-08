@@ -45,3 +45,15 @@
         {% endif %}
     </div>
 </div>
+{% macro placeholder(props) %}
+    <div class="tablist" role="tablist">
+        {% for group in props.groups %}
+            <button class="btn-link" role="tab" disabled>
+                {{ group.name }}
+            </button>
+        {% endfor %}
+    </div>
+    <div class="flex justify-center">
+        {% include '@Forumify/components/loader.html.twig' %}
+    </div>
+{% endmacro %}

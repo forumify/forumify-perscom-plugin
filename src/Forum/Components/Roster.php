@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Perscom\Data\ScopeObject;
 use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -12,7 +13,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent('PerscomRoster', '@ForumifyPerscomPlugin/frontend/components/roster.html.twig')]
+#[AsLiveComponent('Forumify\Perscom\Roster', '@ForumifyPerscomPlugin/frontend/components/roster.html.twig')]
 class Roster
 {
     use DefaultActionTrait;
@@ -40,25 +41,29 @@ class Roster
             return [];
         }
 
-        $group = $this->perscomFactory
+        $groups = $this->perscomFactory
             ->getPerscom()
             ->groups()
-            ->get($groupId, [
-                'units',
-                'units.users',
-                'units.users.position',
-                'units.users.rank',
-                'units.users.rank.image',
-                'units.users.status',
-                'units.secondary_assignment_records',
-                'units.secondary_assignment_records.position',
-                'units.secondary_assignment_records.user',
-                'units.secondary_assignment_records.user.rank',
-                'units.secondary_assignment_records.user.rank.image',
-                'units.secondary_assignment_records.user.status',
-            ])
+            ->search(
+                scope: new ScopeObject('orderForRoster', [$groupId]),
+                include: [
+                    'units',
+                    'units.users',
+                    'units.users.position',
+                    'units.users.rank',
+                    'units.users.rank.image',
+                    'units.users.status',
+                    'units.secondary_assignment_records',
+                    'units.secondary_assignment_records.position',
+                    'units.secondary_assignment_records.user',
+                    'units.secondary_assignment_records.user.rank',
+                    'units.secondary_assignment_records.user.rank.image',
+                    'units.secondary_assignment_records.user.status',
+                ]
+            )
             ->json('data') ?? [];
 
+        $group = reset($groups) ?: [];
         return $this->mergeSecondaryUnitsIntoPrimary($group);
     }
 

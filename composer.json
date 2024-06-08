@@ -6,14 +6,8 @@
     "require": {
         "php": ">=8.2",
         "forumify/forumify-platform": "*",
-        "deschutesdesigngroupllc/perscom-php-sdk": "^1.0.12"
+        "deschutesdesigngroupllc/perscom-php-sdk": "2.0"
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../forumify-platform"
-        }
-    ],
     "autoload": {
         "psr-4": {
             "Forumify\\PerscomPlugin\\": "src/"
