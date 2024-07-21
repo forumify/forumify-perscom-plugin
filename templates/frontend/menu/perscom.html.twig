@@ -1,5 +1,6 @@
-{% embed '@Forumify/frontend/menu/collection.html.twig' with { placement: 'bottom-start' } %}
-    {% block menuItems %}
+{% embed '@Forumify/components/menu.html.twig' with { placement: 'bottom-start' } %}
+    {% block button_text %}{{ name }}{% endblock %}
+    {% block menu_items %}
         <a class="btn-link" href="{{ path('perscom_roster') }}">{{ 'perscom.roster.title'|trans }}</a>
         <a class="btn-link" href="{{ path('perscom_awards') }}">{{ 'perscom.award.title'|trans }}</a>
         <a class="btn-link" href="{{ path('perscom_ranks') }}">{{ 'perscom.rank.title'|trans }}</a>

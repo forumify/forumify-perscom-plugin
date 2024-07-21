@@ -7,14 +7,14 @@
         <h1>
             {{ 'perscom.admin.users.edit.title'|trans({ name: user.name }) }}
         </h1>
-        <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'bottom-end' }) }}>
-            <a class="btn-primary" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
+        {% embed '@Forumify/components/menu.html.twig' with { placement: 'bottom-end', buttonClass: 'btn-primary' } %}
+            {% block button_text %}
                 <i class="ph ph-plus"></i>{{ 'perscom.admin.users.quick_actions'|trans }}
-            </a>
-            <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
+            {% endblock %}
+            {% block menu_items %}
                 {% include '@ForumifyPerscomPlugin/admin/users/list/quick_actions.html.twig' %}
-            </div>
-        </div>
+            {% endblock %}
+        {% endembed %}
     </div>
     <div {{ stimulus_controller('forumify/forumify-perscom-plugin/user_edit') }} class="box">
         {{ form_start(form) }}
