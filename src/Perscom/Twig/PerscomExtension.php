@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Perscom\Twig;
 
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Perscom\Data\FilterObject;
+use Perscom\Data\ScopeObject;
 use Perscom\Data\SortObject;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
@@ -29,6 +30,7 @@ class PerscomExtension extends AbstractExtension
         return [
             new TwigFilter('perscom_filter', $this->createFilter(...)),
             new TwigFilter('perscom_sort', $this->createSort(...)),
+            new TwigFilter('perscom_scope', $this->createScope(...)),
         ];
     }
 
@@ -47,6 +49,14 @@ class PerscomExtension extends AbstractExtension
         return new SortObject(
             $sort['field'],
             $sort['direction'] ?? 'asc',
+        );
+    }
+
+    private function createScope(array $scope): ScopeObject
+    {
+        return new ScopeObject(
+            $scope['name'],
+            $scope['parameters'] ?? [],
         );
     }
 }
