@@ -5,14 +5,16 @@
 {% block body %}
     <div class="flex justify-between items-center mb-4">
         <h2 class="mb-0">{{ 'perscom.admin.users.list.title'|trans }}</h2>
-        <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'bottom-end' }) }}>
-            <a class="btn-primary" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
-                <i class="ph ph-plus"></i>{{ 'perscom.admin.users.quick_actions'|trans }}
-            </a>
-            <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
-                {% include '@ForumifyPerscomPlugin/admin/users/list/quick_actions.html.twig' %}
+        {% if is_granted('perscom-io.admin.users.assign_records') %}
+            <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'bottom-end' }) }}>
+                <a class="btn-primary" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
+                    <i class="ph ph-plus"></i>{{ 'perscom.admin.users.quick_actions'|trans }}
+                </a>
+                <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
+                    {% include '@ForumifyPerscomPlugin/admin/users/list/quick_actions.html.twig' %}
+                </div>
             </div>
-        </div>
+        {% endif %}
     </div>
     {{ component('PerscomUserTable') }}
 {% endblock %}

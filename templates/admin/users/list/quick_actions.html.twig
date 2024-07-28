@@ -1,23 +1,25 @@
-{% set recordParams = user is defined ? { users: user.id } : {} %}
-<a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'service' })) }}">
-    <i class="ph ph-list-dashes"></i>{{ 'perscom.admin.users.list.actions.service'|trans }}
-</a>
-<a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'award' })) }}">
-    <i class="ph ph-medal-military"></i>{{ 'perscom.admin.users.list.actions.award'|trans }}
-</a>
-<a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'combat' })) }}">
-    <i class="ph ph-crosshair"></i>{{ 'perscom.admin.users.list.actions.combat'|trans }}
-</a>
-<a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'rank' })) }}">
-    <i class="ph ph-caret-double-up"></i>{{ 'perscom.admin.users.list.actions.rank'|trans }}
-</a>
-<a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'assignment' })) }}">
-    <i class="ph ph-identification-card"></i>{{ 'perscom.admin.users.list.actions.assignment'|trans }}
-</a>
-<a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'qualification' })) }}">
-    <i class="ph ph-certificate"></i>{{ 'perscom.admin.users.list.actions.qualification'|trans }}
-</a>
-{% if user is defined %}
+{% if is_granted('perscom-io.admin.users.assign_records') %}
+    {% set recordParams = user is defined ? { users: user.id } : {} %}
+    <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'service' })) }}">
+        <i class="ph ph-list-dashes"></i>{{ 'perscom.admin.users.list.actions.service'|trans }}
+    </a>
+    <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'award' })) }}">
+        <i class="ph ph-medal-military"></i>{{ 'perscom.admin.users.list.actions.award'|trans }}
+    </a>
+    <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'combat' })) }}">
+        <i class="ph ph-crosshair"></i>{{ 'perscom.admin.users.list.actions.combat'|trans }}
+    </a>
+    <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'rank' })) }}">
+        <i class="ph ph-caret-double-up"></i>{{ 'perscom.admin.users.list.actions.rank'|trans }}
+    </a>
+    <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'assignment' })) }}">
+        <i class="ph ph-identification-card"></i>{{ 'perscom.admin.users.list.actions.assignment'|trans }}
+    </a>
+    <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'qualification' })) }}">
+        <i class="ph ph-certificate"></i>{{ 'perscom.admin.users.list.actions.qualification'|trans }}
+    </a>
+{% endif %}
+{% if user is defined and is_granted('perscom-io.admin.users.manage') %}
     <hr>
     <a class="btn-link" href="{{ path('perscom_admin_user_delete', { id: user.id }) }}">
         <i class="ph ph-x"></i>{{ 'perscom.admin.users.list.actions.delete'|trans }}

@@ -6,11 +6,13 @@ namespace Forumify\PerscomPlugin\Admin\Component;
 
 use Forumify\Core\Component\Table\AbstractTable;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Twig\Environment;
 
 #[AsLiveComponent('PerscomSubmissionTable', '@Forumify/components/table/table.html.twig')]
+#[IsGranted('perscom-io.admin.submissions.view')]
 class PerscomSubmissionTable extends AbstractPerscomTable
 {
     public function __construct(

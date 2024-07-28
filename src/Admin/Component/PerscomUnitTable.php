@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Component;
 
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
 #[AsLiveComponent('PerscomUnitTable', '@Forumify/components/table/table.html.twig')]
+#[IsGranted('perscom-io.admin.organization.view')]
 class PerscomUnitTable extends AbstractPerscomTable
 {
     protected function buildTable(): void

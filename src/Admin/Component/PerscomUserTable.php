@@ -5,10 +5,12 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Admin\Component;
 
 use Forumify\Core\Component\Table\AbstractTable;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Twig\Environment;
 
 #[AsLiveComponent('PerscomUserTable', '@Forumify/components/table/table.html.twig')]
+#[IsGranted('perscom-io.admin.users.view')]
 class PerscomUserTable extends AbstractPerscomTable
 {
     public function __construct(private readonly Environment $twig)

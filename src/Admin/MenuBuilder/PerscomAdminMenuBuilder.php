@@ -9,6 +9,7 @@ use Forumify\Admin\MenuBuilder\AdminMenuBuilderInterface;
 use Forumify\Core\MenuBuilder\Menu;
 use Forumify\Core\MenuBuilder\MenuItem;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
@@ -26,17 +27,17 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
     {
         $u = $this->urlGenerator->generate(...);
 
-        $submissionMenu = new Menu('Submissions', ['icon' => 'ph ph-table']);
+        $submissionMenu = new Menu('Submissions', ['icon' => 'ph ph-table', 'permission' => 'perscom-io.admin.submissions.view']);
         $submissionMenu->addItem(new MenuItem('View All', $u('perscom_admin_submission_list')));
         foreach ($this->getSubmissionForms() as $form) {
             $submissionMenu->addItem(new MenuItem($form, $u('perscom_admin_submission_list', ['form' => $form])));
         }
 
-        $menu->addItem(new Menu('PERSCOM', ['icon' => 'ph ph-shield-chevron'], [
-            new MenuItem('Configuration', $u('perscom_admin_configuration'), ['icon' => 'ph ph-wrench']),
-            new MenuItem('Users', $u('perscom_admin_user_list'), ['icon' => 'ph ph-users']),
+        $menu->addItem(new Menu('PERSCOM', ['icon' => 'ph ph-shield-chevron', 'permission' => 'perscom-io.admin.view'], [
+            new MenuItem('Configuration', $u('perscom_admin_configuration'), ['icon' => 'ph ph-wrench', 'permission' => 'perscom-io.admin.configuration.manage']),
+            new MenuItem('Users', $u('perscom_admin_user_list'), ['icon' => 'ph ph-users', 'permission' => 'perscom-io.admin.users.view']),
             $submissionMenu,
-            new Menu('Organization', ['icon' => 'ph ph-buildings'], [
+            new Menu('Organization', ['icon' => 'ph ph-buildings', 'permission' => 'perscom-io.admin.organization.view'], [
                 new MenuItem('Units', $u('perscom_admin_unit_list')),
                 new MenuItem('Positions', $u('perscom_admin_position_list')),
                 new MenuItem('Specialties', $u('perscom_admin_specialty_list')),

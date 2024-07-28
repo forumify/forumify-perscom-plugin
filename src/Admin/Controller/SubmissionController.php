@@ -12,8 +12,10 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/submissions', 'submission_')]
+#[IsGranted('perscom-io.admin.submissions.view')]
 class SubmissionController extends AbstractController
 {
     #[Route('', 'list')]
@@ -43,6 +45,8 @@ class SubmissionController extends AbstractController
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $this->denyAccessUnlessGranted('perscom-io.admin.submissions.assign_statuses');
+
             $statusRecord = $form->getData();
             $submissionStatusUpdateService->createStatusRecord($statusRecord);
 

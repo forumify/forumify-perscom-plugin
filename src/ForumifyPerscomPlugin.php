@@ -19,4 +19,28 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
             'perscom_admin_settings',
         );
     }
+
+    public function getPermissions(): array
+    {
+        return [
+            'admin' => [
+                'view',
+                'configuration' => [
+                    'manage',
+                ],
+                'users' => [
+                    'view',
+                    'manage',
+                    'assign_records',
+                ],
+                'submissions' => [
+                    'view',
+                    'assign_statuses',
+                ],
+                'organization' => [
+                    'view',
+                ],
+            ],
+        ];
+    }
 }

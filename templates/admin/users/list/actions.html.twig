@@ -1,15 +1,19 @@
 <div class="flex">
-    <a class="btn-link btn-icon btn-small" href="{{ path('perscom_admin_user_edit', { id: row.id }) }}">
-        <i class="ph ph-pencil-simple-line"></i>
-    </a>
-    {% embed '@Forumify/components/menu.html.twig' with {
-        placement: 'bottom-end',
-        hideAdornment: true,
-        buttonClass: 'btn-link btn-icon btn-small'
-    } %}
-        {% block button_text %}<i class="ph ph-caret-down"></i>{% endblock %}
-        {% block menu_items %}
-            {% include '@ForumifyPerscomPlugin/admin/users/list/quick_actions.html.twig' with { user: row } %}
-        {% endblock %}
-    {% endembed %}
+    {% if is_granted('perscom-io.admin.users.manage') %}
+        <a class="btn-link btn-icon btn-small" href="{{ path('perscom_admin_user_edit', { id: row.id }) }}">
+            <i class="ph ph-pencil-simple-line"></i>
+        </a>
+    {% endif %}
+    {% if is_granted('perscom-io.admin.users.manage') or is_granted('perscom-io.admin.users.assign_records') %}
+        {% embed '@Forumify/components/menu.html.twig' with {
+            placement: 'bottom-end',
+            hideAdornment: true,
+            buttonClass: 'btn-link btn-icon btn-small'
+        } %}
+            {% block button_text %}<i class="ph ph-caret-down"></i>{% endblock %}
+            {% block menu_items %}
+                {% include '@ForumifyPerscomPlugin/admin/users/list/quick_actions.html.twig' with { user: row } %}
+            {% endblock %}
+        {% endembed %}
+    {% endif %}
 </div>
