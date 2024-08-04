@@ -34,7 +34,10 @@ class UserType extends AbstractType
         $builder
             // general
             ->add('name', TextType::class)
-            ->add('email', TextType::class)
+            ->add('email', TextType::class, [
+                'disabled' => true,
+                'help' => 'perscom.admin.users.edit.email_help'
+            ])
             ->add('rank', RankType::class, [
                 'required' => false,
                 'help' => 'perscom.admin.users.edit.rank_help'
