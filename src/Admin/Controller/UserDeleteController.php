@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('perscom-io.admin.users.manage')]
+#[IsGranted('perscom-io.admin.users.delete')]
 class UserDeleteController extends AbstractController
 {
     #[Route('users/{id}/delete', 'user_delete')]

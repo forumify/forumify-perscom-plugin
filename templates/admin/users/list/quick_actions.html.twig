@@ -19,7 +19,7 @@
         <i class="ph ph-certificate"></i>{{ 'perscom.admin.users.list.actions.qualification'|trans }}
     </a>
 {% endif %}
-{% if user is defined and is_granted('perscom-io.admin.users.manage') %}
+{% if user is defined and is_granted('perscom-io.admin.users.delete') %}
     <hr>
     <a class="btn-link" href="{{ path('perscom_admin_user_delete', { id: user.id }) }}">
         <i class="ph ph-x"></i>{{ 'perscom.admin.users.list.actions.delete'|trans }}
