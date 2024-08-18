@@ -23,10 +23,12 @@ class AwardRecordTable extends RecordTable
             ->addDocumentColumn(true, 'award');
     }
 
-    private function renderAward(string $awardName, array $record): string
+    private function renderAward(?string $awardName, array $record): string
     {
         $imgUrl = $record['award']['image']['image_url'] ?? null;
         $image = $imgUrl ? "<img src='$imgUrl' width='100%' height='auto' style='max-width: 24px; max-height: 24px;'>" : '';
+        
+        $awardName = $awardName ?? 'Unknown';
 
         return "<div class='w-100 flex items-center gap-2'>$image $awardName</div>";
     }
