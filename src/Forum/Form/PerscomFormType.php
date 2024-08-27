@@ -60,6 +60,7 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
             $fieldOptions = [
                 'label' => $field['name'],
                 'help' => $field['help'],
+                'help_html' => true,
                 'required' => $field['required'],
                 'disabled' => $field['readonly'],
             ];

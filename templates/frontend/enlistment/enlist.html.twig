@@ -3,8 +3,8 @@
 {% block body %}
     <div class="box">
         {% if instructions is not empty %}
-            <div class="mb-10">
-                {{ instructions|nl2br }}
+            <div class="mb-6 rich-text">
+                {{ instructions|perscom_markdown }}
             </div>
         {% endif %}
         {{ form_start(form) }}
