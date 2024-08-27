@@ -3,6 +3,11 @@
 {% block body %}
     <h1 class="mb-6">{{ perscomForm.name }}</h1>
     <div class="box">
+        {% if perscomForm.instructions %}
+            <div class="rich-text mb-6">
+                {{ perscomForm.instructions|perscom_markdown }}
+            </div>
+        {% endif %}
         {{ form_start(form) }}
         {{ form_widget(form) }}
         <div class="flex justify-center gap-4">
