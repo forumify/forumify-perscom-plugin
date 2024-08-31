@@ -4,7 +4,7 @@
     <div class="box">
         {% if instructions is not empty %}
             <div class="mb-6 rich-text">
-                {{ instructions|perscom_markdown }}
+                {{ instructions|perscom_text }}
             </div>
         {% endif %}
         {{ form_start(form) }}

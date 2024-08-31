@@ -18,7 +18,7 @@
             {%- endset -%}
             <div class="{{ class }} mb-4">
                 <h3 class="mb-2">{{ announcement.title }}</h3>
-                {{ announcement.content|raw }}
+                {{ announcement.content|perscom_text }}
             </div>
         {% endfor %}
     {% endblock %}

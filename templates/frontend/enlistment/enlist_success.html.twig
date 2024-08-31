@@ -3,7 +3,7 @@
 {% block body %}
     <div class="box">
         {% if successMessage is not empty %}
-            <p class="mb-2">{{ successMessage }}</p>
+            <p class="mb-2">{{ successMessage|perscom_text }}</p>
         {% endif %}
         <p class="mb-4">
             {{ 'perscom.enlistment.pending'|trans }}

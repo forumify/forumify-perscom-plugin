@@ -5,7 +5,7 @@
     <div class="box">
         {% if perscomForm.instructions %}
             <div class="rich-text mb-6">
-                {{ perscomForm.instructions|perscom_markdown }}
+                {{ perscomForm.instructions|perscom_text }}
             </div>
         {% endif %}
         {{ form_start(form) }}
