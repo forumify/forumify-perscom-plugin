@@ -8,6 +8,7 @@ use Forumify\PerscomPlugin\Perscom\Form as PerscomForm;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -29,6 +30,10 @@ class RecordType extends AbstractType
             ->add('users', PerscomForm\UserType::class, [
                 'multiple' => true,
                 'autocomplete' => true,
+            ])
+            ->add('created_at', DateType::class, [
+                'widget' => 'single_text',
+                'required' => false,
             ]);
 
         switch ($options['type']) {

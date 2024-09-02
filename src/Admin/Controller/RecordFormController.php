@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Controller;
 
+use DateTime;
 use Forumify\PerscomPlugin\Admin\Form\RecordType;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Perscom;
@@ -37,12 +38,14 @@ class RecordFormController extends AbstractController
         $userIds = $request->get('users', '');
         $userIds = array_filter(explode(',', $userIds));
         $data['users'] = $userIds;
+        $data['created_at'] = new DateTime();
 
         $form = $this->createForm(RecordType::class, $data, ['type' => $type]);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $data = $form->getData();
+            $data['created_at'] = $data['created_at']->format(Perscom::DATE_FORMAT);
 
             $recordService->createRecord($type, $data);
 
