@@ -14,7 +14,7 @@ class PerscomFactory
     {
     }
 
-    public function getPerscom(): Perscom
+    public function getPerscom(bool $bypassCache = false): Perscom
     {
         if ($this->perscom !== null) {
             return $this->perscom;
@@ -24,6 +24,7 @@ class PerscomFactory
             (string)$this->settingRepository->get('perscom.endpoint'),
             (string)$this->settingRepository->get('perscom.api_key'),
             (string)$this->settingRepository->get('perscom.perscom_id'),
+            $bypassCache,
         );
         return $this->perscom;
     }

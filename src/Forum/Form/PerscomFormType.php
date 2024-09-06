@@ -49,12 +49,17 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
     {
         $resolver->setDefaults([
             'perscom_form' => null,
+            'allowed_types' => [],
         ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($options['perscom_form']['fields'] ?? [] as $field) {
+            if (!empty($options['allowed_types']) && !in_array($field['type'], $options['allowed_types'], true)) {
+                continue;
+            }
+
             $type = self::FIELD_MAP[$field['type']];
 
             $fieldOptions = [
@@ -62,7 +67,7 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
                 'help' => $field['help'],
                 'help_html' => true,
                 'required' => $field['required'],
-                'disabled' => $field['readonly'],
+                'disabled' => $options['disabled'] || $field['readonly'],
             ];
 
             if ($type === ChoiceType::class) {
@@ -82,8 +87,14 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
     /** @inheritDoc */
     public function mapDataToForms(mixed $viewData, Traversable $forms): void
     {
-        if (!empty($viewData)) {
-            throw new RuntimeException(self::class . ' does not accept any initial values.');
+        foreach ($forms as $field => $form) {
+            if ($form->getConfig()->getDataClass()) {
+                continue;
+            }
+
+            if ($viewData[$field] ?? false) {
+                $form->setData($viewData[$field]);
+            }
         }
     }
 

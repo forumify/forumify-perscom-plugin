@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
+use Forumify\PerscomPlugin\Forum\Form\PerscomFormType;
 use Forumify\PerscomPlugin\Perscom\Form\PositionType;
 use Forumify\PerscomPlugin\Perscom\Form\RankType;
 use Forumify\PerscomPlugin\Perscom\Form\SpecialtyType;
@@ -37,15 +38,29 @@ class UserType extends AbstractType
             ->add('name', TextType::class)
             ->add('email', TextType::class, [
                 'disabled' => true,
-                'help' => 'perscom.admin.users.edit.email_help'
+                'help' => 'perscom.admin.users.edit.email_help',
             ])
             ->add('rank', RankType::class, [
                 'required' => false,
-                'help' => 'perscom.admin.users.edit.rank_help'
+                'help' => 'perscom.admin.users.edit.rank_help',
             ])
             ->add('createdAt', DateType::class, [
                 'widget' => 'single_text',
-                'help' => 'perscom.admin.users.edit.created_at_help'
+                'help' => 'perscom.admin.users.edit.created_at_help',
+            ])
+            ->add('customFields', PerscomFormType::class, [
+                'help' => 'perscom.admin.users.edit.custom_fields_help',
+                'perscom_form' => $user,
+                'disabled' => true,
+                'allowed_types' => [
+                    'boolean',
+                    'email',
+                    'number',
+                    'password',
+                    'select',
+                    'text',
+                    'textarea',
+                ],
             ])
             // assignment
             ->add('specialty', SpecialtyType::class, [
@@ -74,13 +89,13 @@ class UserType extends AbstractType
             ->add('uniform', FileType::class, [
                 'required' => false,
                 'attr' => [
-                    'preview' => $user['cover_photo_url'] ?? null
+                    'preview' => $user['cover_photo_url'] ?? null,
                 ],
             ])
             ->add('signature', FileType::class, [
                 'required' => false,
                 'attr' => [
-                    'preview' => $user['profile_photo_url'] ?? null
+                    'preview' => $user['profile_photo_url'] ?? null,
                 ],
             ]);
     }

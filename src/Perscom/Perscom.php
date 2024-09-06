@@ -12,8 +12,12 @@ class Perscom extends PerscomConnection
 {
     public const DATE_FORMAT = 'Y-m-d\TH:i:s.u\Z';
 
-    public function __construct(private readonly string $endpoint, string $apiKey, string $perscomId)
-    {
+    public function __construct(
+        private readonly string $endpoint,
+        string $apiKey,
+        string $perscomId,
+        private readonly bool $bypassCache = false,
+    ) {
         parent::__construct($apiKey, $perscomId);
     }
 
@@ -24,9 +28,15 @@ class Perscom extends PerscomConnection
 
     protected function defaultHeaders(): array
     {
-        return [
-            'X-Perscom-Id' => $this->perscomId,
+        $headers = [
+            ...parent::defaultHeaders(),
             'X-Perscom-Notifications' => 'false',
         ];
+
+        if ($this->bypassCache) {
+            $headers['X-Perscom-Bypass-Cache'] = true;
+        }
+
+        return $headers;
     }
 }

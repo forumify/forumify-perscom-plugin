@@ -26,6 +26,7 @@ class UserData
     #[Assert\Image(maxSize: '2048k')]
     private ?UploadedFile $signature = null;
     private array $secondaryAssignments = [];
+    private array $customFields = [];
 
     public static function fromArray(array $user): static
     {
@@ -47,12 +48,23 @@ class UserData
         );
         $data->setSecondaryAssignments($secondaryAssignments);
 
+        $customFields = [];
+        foreach ($user['fields'] as $field) {
+            $key = $field['key'];
+
+            if (isset($user[$key])) {
+                $customFields[$key] = $user[$key];
+            }
+        }
+        $data->setCustomFields($customFields);
+
         return $data;
     }
 
     public function toUpdateArray(array $original): array
     {
         $new = [
+            ...$this->getCustomFields(),
             'name' => $this->getName(),
             'email' => $this->getEmail(),
             'status_id' => $this->getStatus(),
@@ -181,5 +193,15 @@ class UserData
     public function setSecondaryAssignments(array $secondaryAssignments): void
     {
         $this->secondaryAssignments = $secondaryAssignments;
+    }
+
+    public function getCustomFields(): array
+    {
+        return $this->customFields;
+    }
+
+    public function setCustomFields(array $customFields): void
+    {
+        $this->customFields = $customFields;
     }
 }
