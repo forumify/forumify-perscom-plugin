@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
+use DateTime;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -13,6 +15,7 @@ class UserData
     private string $name;
     #[Assert\NotBlank]
     private string $email;
+    private DateTime $createdAt;
     private ?int $status = null;
     private ?int $rank = null;
     private ?int $specialty = null;
@@ -31,6 +34,7 @@ class UserData
         $data->setName($user['name']);
         $data->setEmail($user['email']);
         $data->setRank($user['rank_id']);
+        $data->setCreatedAt(new DateTime($user['created_at']));
 
         $data->setSpecialty($user['specialty_id']);
         $data->setStatus($user['status_id']);
@@ -56,6 +60,7 @@ class UserData
             'specialty_id' => $this->getSpecialty(),
             'position_id' => $this->getPosition(),
             'unit_id' => $this->getUnit(),
+            'created_at' => $this->getCreatedAt()->format(Perscom::DATE_FORMAT),
         ];
 
         $updated = [];
@@ -86,6 +91,16 @@ class UserData
     public function setEmail(string $email): void
     {
         $this->email = $email;
+    }
+
+    public function getCreatedAt(): DateTime
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(DateTime $createdAt): void
+    {
+        $this->createdAt = $createdAt;
     }
 
     public function getStatus(): ?int

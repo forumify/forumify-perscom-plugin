@@ -11,6 +11,7 @@ use Forumify\PerscomPlugin\Perscom\Form\StatusType;
 use Forumify\PerscomPlugin\Perscom\Form\UnitType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
+use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -41,6 +42,10 @@ class UserType extends AbstractType
             ->add('rank', RankType::class, [
                 'required' => false,
                 'help' => 'perscom.admin.users.edit.rank_help'
+            ])
+            ->add('createdAt', DateType::class, [
+                'widget' => 'single_text',
+                'help' => 'perscom.admin.users.edit.created_at_help'
             ])
             // assignment
             ->add('specialty', SpecialtyType::class, [
