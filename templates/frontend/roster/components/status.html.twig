@@ -1,3 +1,6 @@
-<span class="p-2 text-black {{ class|default('text-extra-small') }}" style="border-radius: 100px; background-color: {{ status.bg_color }}; color: {{ status.text_color }};">
+<span class="p-2 text-black {{ class|default('text-extra-small') }}" style="
+    border-radius: 100px;
+    background-color: {{ status.color }};
+    color: {{ status.color|perscom_text_color }}">
     {{ status.name }}
 </span>

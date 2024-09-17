@@ -1,6 +1,6 @@
 {% extends '@Forumify/frontend/base.html.twig' %}
 {% block title_page %}
-    {{ user.rank.abbreviation }} {{ user.name }}
+    {% if user.rank %}{{ user.rank.abbreviation }} {% endif %}{{ user.name }}
 {% endblock %}
 {% block body %}
     <div class="flex justify-between mb-6">

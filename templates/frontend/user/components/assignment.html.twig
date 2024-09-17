@@ -29,7 +29,9 @@
         </div>
     </div>
 </div>
-<img class="mb-4" width="100%" height="auto" src="{{ user.profile_photo_url }}">
+{% if user.profile_photo_url and 'ui-avatars.com' not in user.profile_photo_url %}
+    <img class="mb-4" width="100%" height="auto" src="{{ user.profile_photo_url }}">
+{% endif %}
 <div class="card mb-4">
     <div class="card-title">{{ 'perscom.user.secondary_positions'|trans }}</div>
     <div class="card-body">
