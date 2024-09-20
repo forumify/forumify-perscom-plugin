@@ -12,7 +12,6 @@ use Forumify\Forum\Service\CreateTopicService;
 use Forumify\PerscomPlugin\Perscom\Entity\EnlistmentTopic;
 use Forumify\PerscomPlugin\Forum\Form\Enlistment;
 use Forumify\PerscomPlugin\Perscom\Event\UserEnlistedEvent;
-use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\EnlistmentTopicRepository;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;

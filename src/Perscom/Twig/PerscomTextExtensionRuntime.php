@@ -16,8 +16,12 @@ class PerscomTextExtensionRuntime implements RuntimeExtensionInterface
     {
     }
 
-    public function convert(string $input): string
+    public function convert(?string $input): string
     {
+        if ($input === null) {
+            return '';
+        }
+
         $converter = new CommonMarkConverter([
             'allow_unsafe_links' => false,
             'max_nesting_level' => 50,

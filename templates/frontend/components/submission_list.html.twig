@@ -11,10 +11,13 @@
                         <div class="mb-4">
                             <h2>
                                 {{ item.form.name }}
-                                {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
-                                    status: item.statuses[0],
-                                    class: 'text-small'
-                                } only %}
+                                {% set status = item.statuses|first %}
+                                {% if status %}
+                                    {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
+                                        status: item.statuses[0],
+                                        class: 'text-small'
+                                    } only %}
+                                {% endif %}
                             </h2>
                             {% include '@ForumifyPerscomPlugin/components/submission.html.twig' with {
                                 submission: item
