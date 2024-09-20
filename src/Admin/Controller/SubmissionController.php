@@ -37,7 +37,7 @@ class SubmissionController extends AbstractController
             ->get($id, ['form', 'form.fields', 'user', 'statuses', 'statuses.record'])
             ->json('data');
 
-        usort($submission['statuses'], static fn ($a, $b) => $b['updated_at'] <=> $a['updated_at']);
+        usort($submission['statuses'], static fn ($a, $b) => $b['record']['updated_at'] <=> $a['record']['updated_at']);
 
         $record = new StatusRecord();
         $record->submission = $submission;

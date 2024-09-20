@@ -53,6 +53,7 @@ class SubmissionList extends AbstractList
 
     private function transform(array $submission): array
     {
+        usort($submission['statuses'], static fn ($a, $b) => $b['record']['updated_at'] <=> $a['record']['updated_at']);
         return [
             ...$submission,
             'created_at' => new \DateTime($submission['created_at']),

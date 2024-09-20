@@ -70,7 +70,7 @@ class PerscomSubmissionTable extends AbstractPerscomTable
     {
         $data = parent::getData($limit, $offset, $search, $sort);
         foreach ($data as &$row) {
-            usort($row['statuses'], static fn ($a, $b) => $b['updated_at'] <=> $a['updated_at']);
+            usort($row['statuses'], static fn ($a, $b) => $b['record']['updated_at'] <=> $a['record']['updated_at']);
         }
 
         return $data;
@@ -83,6 +83,6 @@ class PerscomSubmissionTable extends AbstractPerscomTable
 
     protected function getInclude(): array
     {
-        return ['user', 'form', 'statuses'];
+        return ['user', 'form', 'statuses', 'statuses.record'];
     }
 }
