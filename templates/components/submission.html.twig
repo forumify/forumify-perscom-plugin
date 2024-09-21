@@ -6,7 +6,7 @@
             {% if field.type is same as 'date' %}
                 {% set value = value|perscom_date %}
                 {% if value %}
-                    {{ 'date'|trans({ date: value }) }}
+                    {{ value|format_date }}
                 {% endif %}
             {% else %}
                 {{ value }}
