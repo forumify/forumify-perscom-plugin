@@ -18,13 +18,9 @@ class SettingsType extends AbstractType
             ->add('perscom__endpoint', TextType::class, [
                 'label' => 'Endpoint',
             ])
-            ->add('perscom__perscom_id', TextType::class, [
-                'label' => 'PERSCOM ID',
-                'help' => 'Can be found on your PERSCOM dashboard, under "System" > "Settings".',
-            ])
             ->add('perscom__api_key', PasswordType::class, [
                 'label' => 'API Key',
-                'help' => 'Create a new API key for forumify on your PERSCOM dashboard, under "System" > "API" > "Keys". Remember to add all scopes!',
+                'help' => 'Create a new API key for forumify on your PERSCOM dashboard, under "Integrations" > "API Keys". Select "All scopes" to allow the API key to access every resource.',
                 'required' => false,
             ]);
     }
