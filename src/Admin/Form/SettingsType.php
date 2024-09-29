@@ -21,7 +21,7 @@ class SettingsType extends AbstractType
             ->add('perscom__perscom_id', TextType::class, [
                 'label' => 'PERSCOM ID',
                 'required' => false,
-                'help' => 'Can be found on your PERSCOM dashboard. This is not required.',
+                'help' => 'Can be found on your PERSCOM dashboard. This is optional. Your PERSCOM ID can be resolved using your API Key.',
             ])
             ->add('perscom__api_key', PasswordType::class, [
                 'label' => 'API Key',
