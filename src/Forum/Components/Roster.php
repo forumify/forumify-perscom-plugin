@@ -41,18 +41,12 @@ class Roster
             return [];
         }
 
-        $groups = $this->perscomFactory
+        $group = $this->perscomFactory
             ->getPerscom()
-            ->groups()
-            ->search(
-                scope: new ScopeObject('orderForRoster', [$groupId]),
+            ->roster()
+            ->group(
+                id: $groupId,
                 include: [
-                    'units',
-                    'units.users',
-                    'units.users.position',
-                    'units.users.rank',
-                    'units.users.rank.image',
-                    'units.users.status',
                     'units.secondary_assignment_records',
                     'units.secondary_assignment_records.position',
                     'units.secondary_assignment_records.user',
@@ -63,7 +57,6 @@ class Roster
             )
             ->json('data') ?? [];
 
-        $group = reset($groups) ?: [];
         return $this->mergeSecondaryUnitsIntoPrimary($group);
     }
 
