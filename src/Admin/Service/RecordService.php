@@ -11,6 +11,8 @@ use Forumify\Core\Repository\UserRepository;
 use Forumify\Core\Twig\Extension\MenuRuntime;
 use Forumify\PerscomPlugin\Perscom\Notification\NewRecordNotificationType;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Perscom\Data\FilterObject;
+use Perscom\Data\ResourceObject;
 use Symfony\Contracts\Cache\CacheInterface;
 
 class RecordService
@@ -31,8 +33,58 @@ class RecordService
         $userIds = $data['users'] ?? [];
         unset($data['users']);
 
-        $userResource = $this->perscomFactory->getPerscom()->users();
+        $records = [];
+        foreach ($userIds as $userId) {
+            $records[] = new ResourceObject(null, [
+                'user_id' => $userId,
+                ...$data,
+            ]);
+        }
+
+        $perscom = $this->perscomFactory->getPerscom();
         $recordResource = match ($type) {
+            'service' => $perscom->serviceRecords(),
+            'award' => $perscom->awardRecords(),
+            'combat' => $perscom->combatRecords(),
+            'rank' => $perscom->rankRecords(),
+            'assignment' => $perscom->assignmentRecords(),
+            'qualification' => $perscom->qualificationRecords()
+        };
+        $responses = $recordResource->batchCreate($records)->json('data');
+
+        $userIds = array_column($responses, 'user_id');
+        $users = $perscom
+            ->users()
+            ->search(filter: new FilterObject('id', 'in', $userIds))
+            ->json('data');
+        $users = array_combine(array_column($users, 'id'), array_column($users, 'email'));
+
+        foreach ($responses as $response) {
+            $email = $users[$response['user_id']] ?? null;
+            if ($email === null) {
+                continue;
+            }
+
+            $user = $this->userRepository->findOneBy(['email' => $email]);
+            if ($user === null) {
+                continue;
+            }
+
+            if ($sendNotification) {
+                $this->sendNotification($type, $user, $response);
+            }
+
+            if ($type === 'assignment') {
+                $this->cache->delete(MenuRuntime::createMenuCacheKey($user));
+            }
+        }
+    }
+
+    private function sendNotification(string $type, User $user, array $data): void
+    {
+        // TODO: it'd be great if we could bulk fetch these, or add the includes to the original batchCreate request
+        $userResource = $this->perscomFactory->getPerscom()->users();
+        $resource = match ($type) {
             'service' => $userResource->service_records(...),
             'award' => $userResource->award_records(...),
             'combat' => $userResource->combat_records(...),
@@ -40,28 +92,6 @@ class RecordService
             'assignment' => $userResource->assignment_records(...),
             'qualification' => $userResource->qualification_records(...),
         };
-
-        foreach ($userIds as $userId) {
-            $data['user_id'] = (int)$userId;
-            $response = $recordResource($data['user_id'])->create($data)->json()['data'];
-            if ($sendNotification) {
-                $this->sendNotification($recordResource, $type, $response);
-            }
-
-            if ($type === 'assignment') {
-                $user = $this->getUserByEmail($data);
-                $this->cache->delete(MenuRuntime::createMenuCacheKey($user));
-            }
-        }
-    }
-
-    private function sendNotification(callable $resource, string $type, array $data): void
-    {
-        $user = $this->getUserByEmail($data);
-        if ($user === null) {
-            return;
-        }
-
         $includes = $this->getIncludesForType($type);
         $data = $resource($data['user_id'])
             ->get($data['id'], $includes)
@@ -91,20 +121,5 @@ class RecordService
             'qualification' => ['qualification'],
             default => [],
         };
-    }
-
-    private function getUserByEmail(array $data): ?User
-    {
-        $userEmail = $data['user']['email'] ?? null;
-        if (empty($userEmail)) {
-            // some records include the user email, some don't
-            $userEmail = $this->perscomFactory
-                ->getPerscom()
-                ->users()
-                ->get($data['user_id'])
-                ->json()['data']['email'] ?? null;
-        }
-
-        return $this->userRepository->findOneBy(['email' => $userEmail]);
     }
 }
