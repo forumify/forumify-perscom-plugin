@@ -6,7 +6,7 @@
     "require": {
         "php": ">=8.2",
         "forumify/forumify-platform": "^0.3.0",
-        "deschutesdesigngroupllc/perscom-php-sdk": "2.0",
+        "deschutesdesigngroupllc/perscom-php-sdk": "^2.0",
         "league/commonmark": "^2.5"
     },
     "autoload": {
