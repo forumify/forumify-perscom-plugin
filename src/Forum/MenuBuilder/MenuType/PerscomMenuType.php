@@ -22,7 +22,7 @@ class PerscomMenuType extends AbstractMenuType
         return 'perscom';
     }
 
-    protected function render(MenuItem $item): string
+    public function render(MenuItem $item): string
     {
         return $this->twig->render('@ForumifyPerscomPlugin/frontend/menu/perscom.html.twig', [
             'name' => $item->getName(),
