@@ -25,21 +25,16 @@
     {% embed '@Forumify/components/tabs.html.twig' %}
         {% block tabs %}
             <button class="btn-link" data-tab-id="submissions">{{ 'perscom.opcenter.submissions'|trans }}</button>
+            {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
+                <button class="btn-link" data-tab-id="operations">{{ 'perscom.opcenter.operations'|trans }}</button>
+            {% endif %}
         {% endblock %}
         {% block tabpanels %}
-            <div id="submissions" class="flex gap-4">
-                <div class="w-70">
-                    {{ component('SubmissionList', { userId: user.id }) }}
-                </div>
-                <div class="w-30 flex flex-col gap-2">
-                    {% for form in forms %}
-                        <a href="{{ path('perscom_form_submission_create', { formId: form.id }) }}" class="btn-outlined w-100 justify-start">
-                            <i class="ph ph-arrow-elbow-down-right"></i>
-                            {{ form.name }}
-                        </a>
-                    {% endfor %}
-                </div>
-            </div>
+            {% include '@ForumifyPerscomPlugin/frontend/operations_center/tabs/submissions.html.twig' %}
+            {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
+                {% include '@ForumifyPerscomPlugin/frontend/operations_center/tabs/operations.html.twig' %}
+
+            {% endif %}
         {% endblock %}
     {% endembed %}
 {% endblock %}

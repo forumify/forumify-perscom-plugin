@@ -41,6 +41,11 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                 'organization' => [
                     'view',
                 ],
+                'operations' => [
+                    'view',
+                    'manage',
+                    'delete',
+                ]
             ],
         ];
     }

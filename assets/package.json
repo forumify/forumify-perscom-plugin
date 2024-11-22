@@ -4,6 +4,12 @@
     "version": "0.1.0",
     "symfony": {
         "controllers": {
+            "aar_form": {
+                "main": "dist/aar_form_controller.js",
+                "fetch": "lazy",
+                "enabled": true,
+                "autoimport": {}
+            },
             "user_edit": {
                 "main": "dist/user_edit_controller.js",
                 "fetch": "lazy",

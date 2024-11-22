@@ -9,6 +9,7 @@ use Forumify\Admin\MenuBuilder\AdminMenuBuilderInterface;
 use Forumify\Core\MenuBuilder\Menu;
 use Forumify\Core\MenuBuilder\MenuItem;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\Plugin\Service\PluginVersionChecker;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -20,6 +21,7 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly PerscomFactory $perscomFactory,
         private readonly CacheInterface $cache,
+        private readonly PluginVersionChecker $pluginVersionChecker,
     ) {
     }
 
@@ -33,19 +35,29 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
             $submissionMenu->addItem(new MenuItem($form, $u('perscom_admin_submission_list', ['form' => $form])));
         }
 
-        $menu->addItem(new Menu('PERSCOM', ['icon' => 'ph ph-shield-chevron', 'permission' => 'perscom-io.admin.view'], [
+        $perscomMenu = new Menu('PERSCOM', ['icon' => 'ph ph-shield-chevron', 'permission' => 'perscom-io.admin.view'], [
             new MenuItem('Configuration', $u('perscom_admin_configuration'), ['icon' => 'ph ph-wrench', 'permission' => 'perscom-io.admin.configuration.manage']),
             new MenuItem('Users', $u('perscom_admin_user_list'), ['icon' => 'ph ph-users', 'permission' => 'perscom-io.admin.users.view']),
             $submissionMenu,
-            new Menu('Organization', ['icon' => 'ph ph-buildings', 'permission' => 'perscom-io.admin.organization.view'], [
-                new MenuItem('Units', $u('perscom_admin_unit_list')),
-                new MenuItem('Positions', $u('perscom_admin_position_list')),
-                new MenuItem('Specialties', $u('perscom_admin_specialty_list')),
-                new MenuItem('Statuses', $u('perscom_admin_status_list')),
-                new MenuItem('Awards', $u('perscom_admin_award_list')),
-                new MenuItem('Qualifications', $u('perscom_admin_qualification_list')),
-            ]),
+        ]);
+
+        if ($this->pluginVersionChecker->isVersionInstalled('forumify/forumify-perscom-plugin', 'premium')) {
+            $perscomMenu->addItem(new MenuItem('Operations', $u('perscom_admin_operations_list'), [
+                'icon' => 'ph ph-airplane-takeoff',
+                'permission' => 'perscom-io.admin.operations.view',
+            ]));
+        }
+
+        $perscomMenu->addItem(new Menu('Organization', ['icon' => 'ph ph-buildings', 'permission' => 'perscom-io.admin.organization.view'], [
+            new MenuItem('Units', $u('perscom_admin_unit_list')),
+            new MenuItem('Positions', $u('perscom_admin_position_list')),
+            new MenuItem('Specialties', $u('perscom_admin_specialty_list')),
+            new MenuItem('Statuses', $u('perscom_admin_status_list')),
+            new MenuItem('Awards', $u('perscom_admin_award_list')),
+            new MenuItem('Qualifications', $u('perscom_admin_qualification_list')),
         ]));
+
+        $menu->addItem($perscomMenu);
     }
 
     private function getSubmissionForms(): array

@@ -1,0 +1,46 @@
+{% extends '@Forumify/frontend/base.html.twig' %}
+{% block title_page %}
+    {{ mission.title }}
+{% endblock %}
+{% block body %}
+    <div class="breadcrumbs text-small">
+        <a href="{{ path('perscom_operations_center') }}">{{ 'perscom.opcenter.operations_center'|trans }}</a> &gt;
+        <a href="{{ path('perscom_operations_view', { slug: mission.operation.slug }) }}">{{ mission.operation.title }}</a> &gt;
+        {{ mission.title }}
+    </div>
+    <div class="mb-8 flex justify-between">
+        <div>
+            <h1 class="mb-0">{{ mission.title }}</h1>
+            <div class="flex items-center gap-2 text-small">
+                {{ 'perscom.mission.mission_by'|trans }}
+                {% include '@Forumify/components/avatar.html.twig' with { user: mission.createdBy, className: 'avatar-xs' } only %}
+                <span class="flex items-baseline gap-2">
+                    {% include '@Forumify/components/username.html.twig' with { user: mission.createdBy } only %}
+                    {{ mission.createdAt|format_date }}
+                </span>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            {% if can('manage_missions', mission.operation) %}
+                <a class="btn-link btn-icon" href="{{ path('perscom_missions_edit', { id: mission.id }) }}">
+                    <i class="ph ph-pencil-simple-line"></i>
+                </a>
+            {% endif %}
+            {% if can('create_after_action_reports', mission.operation) %}
+                <a class="btn-primary" href="{{ path('perscom_aar_create', { mission: mission.id }) }}">
+                    {{ 'perscom.aar.create'|trans }}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+    <div class="mb-4">
+        <h3>{{ 'perscom.mission.aars'|trans }}</h3>
+        {{ component('Perscom\\AfterActionReportList', { mission: mission }) }}
+    </div>
+    <div>
+        <h3>{{ 'perscom.mission.mission'|trans }}</h3>
+        <div class="box">
+            {{ mission.briefing|rich }}
+        </div>
+    </div>
+{% endblock %}

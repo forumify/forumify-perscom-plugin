@@ -66,6 +66,11 @@ perscom:
                 title: 'Specialties'
         configuration:
             title: 'Configuration'
+        operation:
+            crud:
+                single: 'Operation'
+                plural: 'Operations'
+            description_help: 'Brief description that is shown on the operation list page.'
     roster:
         title: 'Roster'
         no_users: 'No users in unit.'
@@ -113,6 +118,35 @@ perscom:
         newsfeed: 'Newsfeed'
         submission_created: 'Form submission created.'
         status_history: 'Status history'
+        operations: 'Operations'
+        no_operations: 'No operations.'
+        no_missions: 'This operation has no missions yet. Come back later to see mission briefings.'
+    operation:
+        missions: 'Missions'
+        operation: 'Operation'
+    mission:
+        create: 'New Mission'
+        edit: 'Edit Mission'
+        created: 'Mission created.'
+        edited: 'Mission modified.'
+        no_aars: 'This mission has no after action reports yet.'
+        aars: 'After Action Reports'
+        mission: 'Mission'
+        mission_by: 'Mission by'
+    aar:
+        title: 'After Action Report'
+        create: 'New After Action Report'
+        edit: 'Edit After Action Report'
+        created: 'After Action Report submitted.'
+        edited: 'After Action Report modified.'
+        attendance:
+            title: 'Attendance'
+            user: 'User'
+        already_exists: 'An after action report for this unit has already been recorded.'
+        report: 'Report'
+        aar_by: 'After Action Report by'
+        delete: 'You are about to delete the after action report for {unit} in {mission}. If combat records were assigned, these will not be removed.'
+        deleted: 'After Action Report deleted.'
     notification:
         submission_status_updated:
             title: 'Submission status updated'
