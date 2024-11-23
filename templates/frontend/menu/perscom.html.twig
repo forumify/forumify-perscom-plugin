@@ -1,3 +1,4 @@
+{% set isPremium = plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
 {% embed '@Forumify/components/menu.html.twig' with { placement: 'bottom-start' } %}
     {% block button_text %}{{ name }}{% endblock %}
     {% block menu_items %}
@@ -5,6 +6,9 @@
         <a class="btn-link" href="{{ path('perscom_awards') }}">{{ 'perscom.award.title'|trans }}</a>
         <a class="btn-link" href="{{ path('perscom_ranks') }}">{{ 'perscom.rank.title'|trans }}</a>
 
+        {% if setting('perscom.operations.show_in_menu') %}
+            <a class="btn-link" href="{{ path('perscom_operations_list') }}">{{ 'perscom.opcenter.operations'|trans }}</a>
+        {% endif %}
         {% if canEnlist %}
             <a class="btn-link" href="{{ path('perscom_enlist') }}">{{ 'perscom.enlistment.enlist'|trans }}</a>
         {% else %}

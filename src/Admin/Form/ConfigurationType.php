@@ -10,6 +10,7 @@ use Forumify\PerscomPlugin\Perscom\Form\PerscomFormType;
 use Forumify\PerscomPlugin\Perscom\Form\StatusType;
 use Forumify\Plugin\Service\PluginVersionChecker;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -53,7 +54,12 @@ class ConfigurationType extends AbstractType
             ]);
 
         if ($this->pluginVersionChecker->isVersionInstalled('forumify/forumify-perscom-plugin', 'premium')) {
-
+            $builder
+                ->add('perscom__operations__show_in_menu', CheckboxType::class, [
+                    'label' => 'Show in menu',
+                    'help' => 'Add "Operations" to the PERSCOM menu. Turn this on if you want to show off your operations to guests or users who do not have access to the operations center.',
+                    'required' => false,
+                ]);
         }
     }
 

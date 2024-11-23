@@ -28,7 +28,6 @@ class ConfigurationController extends AbstractController
         SettingRepository $settingRepository,
         CacheInterface $cache
     ): Response {
-        $oldEnlistmentStatus = $settingRepository->get('perscom.enlistment.status');
         $form = $this->createForm(ConfigurationType::class, $settingRepository->toFormData('perscom'));
 
         $form->handleRequest($request);
@@ -36,12 +35,9 @@ class ConfigurationController extends AbstractController
             $data = $form->getData();
             $settingRepository->handleFormData($data);
 
-            $newEnlistmentStatus = $settingRepository->get('perscom.enlistment.status');
-            if ($oldEnlistmentStatus !== $newEnlistmentStatus) {
-                try {
-                    $cache->invalidateTags([MenuRuntime::MENU_CACHE_TAG]);
-                } catch (InvalidArgumentException) {
-                }
+            try {
+                $cache->invalidateTags([MenuRuntime::MENU_CACHE_TAG]);
+            } catch (InvalidArgumentException) {
             }
 
             return $this->redirectToRoute('perscom_admin_configuration');

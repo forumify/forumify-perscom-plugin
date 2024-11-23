@@ -20,6 +20,7 @@
                 </div>
                 {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
                     <div id="operations">
+                        {{ form_row(form.perscom__operations__show_in_menu) }}
                     </div>
                 {% endif %}
             {% endblock %}
