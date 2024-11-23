@@ -23,10 +23,6 @@
             </p>
         </div>
         <div class="flex gap-2">
-            {{ component('SubscribeButton', {
-                entityId: operation.id,
-                subscriptionType: constant('Forumify\\PerscomPlugin\\Perscom\\Notification\\MissionCreatedNotificationType::TYPE')
-            }) }}
             {% if can('manage_missions', operation) %}
                 <a class="btn-primary" href="{{ path('perscom_missions_create', { operation: operation.id }) }}">
                     <i class="ph ph-plus"></i>
@@ -35,12 +31,14 @@
             {% endif %}
         </div>
     </div>
-    <div class="mb-4">
-        <h3>{{ 'perscom.operation.missions'|trans }}</h3>
-        {{ component('Perscom\\MissionList', { operation: operation }) }}
-    </div>
+    {% if can('view_missions', operation) %}
+        <div class="mb-4">
+            <h3>{{ 'perscom.operation.missions'|trans }}</h3>
+            {{ component('Perscom\\MissionList', { operation: operation }) }}
+        </div>
+    {% endif %}
     <div>
-        <h3>{{ 'perscom.operation.operation' }}</h3>
+        <h3>{{ 'perscom.operation.operation'|trans }}</h3>
         <div class="box">
             {{ operation.content|rich }}
         </div>

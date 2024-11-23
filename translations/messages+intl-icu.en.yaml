@@ -2,6 +2,7 @@ perscom:
     settings:
         tab_settings: 'Settings'
         tab_enlistment: 'Enlistment'
+        tab_operations: 'Operations'
         title: 'PERSCOM.io Plugin Configuration'
         license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
         automations: 'Automations'
@@ -129,10 +130,14 @@ perscom:
         edit: 'Edit Mission'
         created: 'Mission created.'
         edited: 'Mission modified.'
+        delete: 'You are about to delete mission {mission}. If there are any after action reports, these will be deleted too.'
+        deleted: 'Mission deleted.'
         no_aars: 'This mission has no after action reports yet.'
         aars: 'After Action Reports'
         mission: 'Mission'
         mission_by: 'Mission by'
+        start: 'Starts at'
+        end: 'Ends at'
     aar:
         title: 'After Action Report'
         create: 'New After Action Report'
@@ -174,3 +179,7 @@ perscom:
         qualification_record:
             title: 'You received a new qualification'
             description: 'You are now qualified for {qualification}'
+        mission_created:
+            title: 'A new mission was posted in operation {operation}'
+            description: 'Details regarding mission {mission} were posted.'
+            view_mission: 'View Mission'

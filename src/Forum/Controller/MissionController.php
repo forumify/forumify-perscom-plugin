@@ -9,6 +9,7 @@ use Forumify\PerscomPlugin\Forum\Form\MissionType;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\OperationRepository;
+use Forumify\PerscomPlugin\Perscom\Service\MissionService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,6 +23,7 @@ class MissionController extends AbstractController
     public function __construct(
         private readonly OperationRepository $operationRepository,
         private readonly MissionRepository $missionRepository,
+        private readonly MissionService $missionService,
     ) {
     }
 
@@ -30,7 +32,7 @@ class MissionController extends AbstractController
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $mission->getOperation(),
-            'permission' => 'view',
+            'permission' => 'view_missions',
         ]);
 
         return $this->render('@ForumifyPerscomPlugin/frontend/mission/mission.html.twig', [
@@ -70,13 +72,35 @@ class MissionController extends AbstractController
         return $this->handleMissionForm($mission, false, $request);
     }
 
+    #[Route('/{id<\d+>}/delete', 'delete')]
+    public function delete(Mission $mission, Request $request): Response
+    {
+        $operation = $mission->getOperation();
+        $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
+            'entity' => $operation,
+            'permission' => 'manage_missions',
+        ]);
+
+        if (!$request->get('confirmed')) {
+            return $this->render('@ForumifyPerscomPlugin/frontend/mission/delete.html.twig', [
+                'mission' => $mission,
+            ]);
+        }
+
+        $operationSlug = $mission->getOperation()->getSlug();
+        $this->missionRepository->remove($mission);
+
+        $this->addFlash('success', 'perscom.mission.deleted');
+        return $this->redirectToRoute('perscom_operations_view', ['slug' => $operationSlug]);
+    }
+
     private function handleMissionForm(Mission $mission, bool $isNew, Request $request): Response
     {
         $form = $this->createForm(MissionType::class, $mission);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $mission = $form->getData();
-            $this->missionRepository->save($mission);
+            $this->missionService->createOrUpdate($mission, $isNew);
 
             $this->addFlash('success', $isNew ? 'perscom.mission.created' : 'perscom.mission.edited');
             return $this->redirectToRoute('perscom_missions_view', [

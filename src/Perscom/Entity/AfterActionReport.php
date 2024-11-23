@@ -35,6 +35,7 @@ class AfterActionReport
     private array $attendance;
 
     #[ORM\ManyToOne(targetEntity: Mission::class, fetch: 'EXTRA_LAZY', inversedBy: 'afterActionReports')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Mission $mission;
 
     public function getUnitId(): int

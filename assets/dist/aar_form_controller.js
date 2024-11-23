@@ -25,6 +25,7 @@ export default class extends Controller {
     fetch(this.fetchUnitUriValue.replace('id', newUnitId))
       .then((res) => res.json())
       .then((users) => this._addAttendanceToForm(users))
+      .then(this._setAttendance.bind(this))
       .finally(this._endLoading.bind(this))
   }
 
@@ -67,6 +68,24 @@ export default class extends Controller {
       attendanceForm,
       attendanceInput,
     );
+    return attendanceForm;
+  }
+
+  _setAttendance(attendanceForm) {
+    const attendanceInput = this.element.querySelector('#after_action_report_attendanceJson');
+    if (!attendanceInput.value) {
+      return;
+    }
+
+    const attendance = JSON.parse(attendanceInput.value);
+    Object.keys(attendance).forEach((state) => {
+      attendance[state].forEach((userId) => {
+        const input = attendanceForm.querySelector(`input[name="attendance[${userId}]"][value="${state}"]`);
+        if (input !== null) {
+          input.checked = true;
+        }
+      });
+    });
   }
 
   _handleFormSubmit(event) {

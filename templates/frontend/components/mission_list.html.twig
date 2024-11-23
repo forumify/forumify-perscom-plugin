@@ -7,7 +7,7 @@
                 <div class="flex justify-between">
                     <h4 class="mb-0 text-subtitle">{{ mission.title }}</h4>
                     <div class="flex items-center gap-2 text-small">
-                        {{ mission.createdAt|format_date }}
+                        {{ mission.start|format_date(true) }}
                     </div>
                 </div>
             </li>

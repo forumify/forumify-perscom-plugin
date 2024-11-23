@@ -19,17 +19,25 @@ class AfterActionReportType extends AbstractType
         $resolver->setDefaults([
             'data_class' => AfterActionReport::class,
             'allow_extra_fields' => true,
+            'is_new' => true,
         ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        $isNew = $options['is_new'];
+        $attendance = !$isNew
+            ? json_encode($options['data']->getAttendance(), JSON_THROW_ON_ERROR)
+            : null;
+
         $builder
             ->add('unitId', UnitType::class, [
                 'label' => 'Unit',
+                'disabled' => !$isNew,
             ])
             ->add('attendanceJson', HiddenType::class, [
                 'mapped' => false,
+                'data' => $attendance,
             ])
             ->add('report', RichTextEditorType::class);
     }

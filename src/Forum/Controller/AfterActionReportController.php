@@ -8,14 +8,14 @@ use Forumify\Core\Entity\User;
 use Forumify\Core\Security\VoterAttribute;
 use Forumify\PerscomPlugin\Forum\Form\AfterActionReportType;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
+use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
+use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
 use Forumify\Plugin\Attribute\PluginVersion;
-use JsonException;
 use Perscom\Data\FilterObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -29,6 +29,7 @@ class AfterActionReportController extends AbstractController
         private readonly AfterActionReportRepository $afterActionReportRepository,
         private readonly MissionRepository $missionRepository,
         private readonly PerscomFactory $perscomFactory,
+        private readonly AfterActionReportService $afterActionReportService,
     ) {
     }
 
@@ -70,7 +71,7 @@ class AfterActionReportController extends AbstractController
         unset($list);
 
         foreach ($attendance as &$list) {
-            array_filter($list);
+            $list = array_filter($list);
             $this->sortUsers($list);
 
             foreach ($list as $k => $user) {
@@ -86,7 +87,7 @@ class AfterActionReportController extends AbstractController
         return $this->render('@ForumifyPerscomPlugin/frontend/aar/aar.html.twig', [
             'aar' => $aar,
             'attendance' => $attendance,
-            'attendanceStates' => ['present', 'excused', 'absent'],
+            'attendanceStates' => $this->afterActionReportService->getAttendanceStates(),
         ]);
     }
 
@@ -152,26 +153,20 @@ class AfterActionReportController extends AbstractController
 
     private function handleAfterActionReportForm(AfterActionReport $aar, bool $isNew, Request $request): Response
     {
-        $form = $this->createForm(AfterActionReportType::class, $aar);
+        $form = $this->createForm(AfterActionReportType::class, $aar, ['is_new' => $isNew]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             /** @var AfterActionReport $aar */
             $aar = $form->getData();
+            $attendance = $form->get('attendanceJson')->getData();
 
-            $existingAar = $this->afterActionReportRepository->findBy([
-                'mission' => $aar->getMission(),
-                'unitId' => $aar->getUnitId(),
-            ]);
-
-            if (empty($existingAar)) {
-                $this->preSaveAAR($aar, $form);
-                $this->afterActionReportRepository->save($aar);
-
+            try {
+                $this->afterActionReportService->createOrUpdate($aar, $attendance, $isNew);
                 $this->addFlash('success', $isNew ? 'perscom.aar.created' : 'perscom.aar.edited');
                 return $this->redirectToRoute('perscom_aar_view', ['id' => $aar->getId()]);
+            } catch (AfterActionReportAlreadyExistsException) {
+                $this->addFlash('error', 'perscom.aar.already_exists');
             }
-
-            $this->addFlash('error', 'perscom.aar.already_exists');
         }
 
         return $this->render('@ForumifyPerscomPlugin/frontend/aar/form.html.twig', [
@@ -180,27 +175,8 @@ class AfterActionReportController extends AbstractController
             'cancelPath' => $isNew
                 ? $this->generateUrl('perscom_missions_view', ['id' => $aar->getMission()->getId()])
                 : $this->generateUrl('perscom_aar_view', ['id' => $aar->getId()]),
-            'attendanceStatus' => ['present', 'excused', 'absent'],
+            'attendanceStatus' => $this->afterActionReportService->getAttendanceStates(),
         ]);
-    }
-
-    private function preSaveAAR(AfterActionReport $aar, FormInterface $form): void
-    {
-        try {
-            $attendance = json_decode($form->get('attendanceJson')->getData(), true, 512, JSON_THROW_ON_ERROR);
-        } catch (JsonException) {
-            $attendance = [];
-        }
-        $aar->setAttendance($attendance);
-
-        $unit = $this->perscomFactory
-            ->getPerscom()
-            ->units()
-            ->get($aar->getUnitId())
-            ->json('data');
-
-        $aar->setUnitName($unit['name']);
-        $aar->setUnitPosition($unit['order'] ?? 100);
     }
 
     #[Route('/unit/{id}', 'unit')]

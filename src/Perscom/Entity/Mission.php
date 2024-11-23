@@ -35,12 +35,21 @@ class Mission
     #[ORM\Column(type: 'datetime', nullable: true)]
     private ?DateTime $end;
 
-    #[ORM\ManyToOne(targetEntity: Operation::class, inversedBy: 'missions')]
+    #[ORM\ManyToOne(targetEntity: Operation::class, fetch: 'EXTRA_LAZY', inversedBy: 'missions')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Operation $operation;
 
     #[ORM\OneToMany(mappedBy: 'mission', targetEntity: AfterActionReport::class, cascade: ['persist', 'remove'])]
     private Collection $afterActionReports;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $sendNotification;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $createCombatRecords;
+
+    #[ORM\Column(nullable: true)]
+    private ?string $combatRecordText = null;
 
     public function __construct()
     {
@@ -108,5 +117,35 @@ class Mission
     public function setAfterActionReports(Collection $afterActionReports): void
     {
         $this->afterActionReports = $afterActionReports;
+    }
+
+    public function isSendNotification(): bool
+    {
+        return $this->sendNotification;
+    }
+
+    public function setSendNotification(bool $sendNotification): void
+    {
+        $this->sendNotification = $sendNotification;
+    }
+
+    public function isCreateCombatRecords(): bool
+    {
+        return $this->createCombatRecords;
+    }
+
+    public function setCreateCombatRecords(bool $createCombatRecords): void
+    {
+        $this->createCombatRecords = $createCombatRecords;
+    }
+
+    public function getCombatRecordText(): ?string
+    {
+        return $this->combatRecordText;
+    }
+
+    public function setCombatRecordText(?string $combatRecordText): void
+    {
+        $this->combatRecordText = $combatRecordText;
     }
 }

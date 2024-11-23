@@ -30,6 +30,7 @@ class MissionList extends AbstractDoctrineList
     {
         return $this->missionRepository->createQueryBuilder('m')
             ->where('m.operation = :operation')
+            ->orderBy('m.start', 'DESC')
             ->setParameter('operation', $this->operation);
     }
 

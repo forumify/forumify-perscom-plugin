@@ -6,6 +6,9 @@
         {% embed '@Forumify/components/tabs.html.twig' %}
             {% block tabs %}
                 <button type="button" class="btn-link" data-tab-id="enlistment">{{ 'perscom.settings.tab_enlistment'|trans }}</button>
+                {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
+                    <button type="button" class="btn-link" data-tab-id="operations">{{ 'perscom.settings.tab_operations'|trans }}</button>
+                {% endif %}
             {% endblock %}
             {% block tabpanels %}
                 <div id="enlistment">
@@ -15,6 +18,10 @@
                     {{ form_row(form.perscom__enlistment__forum) }}
                     {{ form_row(form.perscom__enlistment__role) }}
                 </div>
+                {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
+                    <div id="operations">
+                    </div>
+                {% endif %}
             {% endblock %}
         {% endembed %}
         <div class="flex justify-center items-center gap-2">

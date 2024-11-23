@@ -8,8 +8,10 @@ use Forumify\Core\Repository\RoleRepository;
 use Forumify\Forum\Repository\ForumRepository;
 use Forumify\PerscomPlugin\Perscom\Form\PerscomFormType;
 use Forumify\PerscomPlugin\Perscom\Form\StatusType;
+use Forumify\Plugin\Service\PluginVersionChecker;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ConfigurationType extends AbstractType
@@ -17,6 +19,7 @@ class ConfigurationType extends AbstractType
     public function __construct(
         private readonly ForumRepository $forumRepository,
         private readonly RoleRepository $roleRepository,
+        private readonly PluginVersionChecker $pluginVersionChecker,
     ) {
     }
 
@@ -48,6 +51,10 @@ class ConfigurationType extends AbstractType
                 'choices' => $this->getRoleChoices(),
                 'placeholder' => 'Do not assign a role',
             ]);
+
+        if ($this->pluginVersionChecker->isVersionInstalled('forumify/forumify-perscom-plugin', 'premium')) {
+
+        }
     }
 
     private function getForumChoices(): array
