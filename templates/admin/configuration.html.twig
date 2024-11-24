@@ -8,6 +8,7 @@
                 <button type="button" class="btn-link" data-tab-id="enlistment">{{ 'perscom.settings.tab_enlistment'|trans }}</button>
                 {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
                     <button type="button" class="btn-link" data-tab-id="operations">{{ 'perscom.settings.tab_operations'|trans }}</button>
+                    <button type="button" class="btn-link" data-tab-id="report-in">{{ 'perscom.settings.tab_report_in'|trans }}</button>
                 {% endif %}
             {% endblock %}
             {% block tabpanels %}
@@ -21,6 +22,13 @@
                 {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
                     <div id="operations">
                         {{ form_row(form.perscom__operations__show_in_menu) }}
+                    </div>
+                    <div id="report-in">
+                        {{ form_row(form.perscom__report_in__enabled) }}
+                        {{ form_row(form.perscom__report_in__enabled_status) }}
+                        {{ form_row(form.perscom__report_in__period) }}
+                        {{ form_row(form.perscom__report_in__warning_period) }}
+                        {{ form_row(form.perscom__report_in__failure_status) }}
                     </div>
                 {% endif %}
             {% endblock %}

@@ -3,6 +3,9 @@
         {{ component('SubmissionList', { userId: user.id }) }}
     </div>
     <div class="w-30 flex flex-col gap-2">
+        {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') and setting('perscom.report_in.enabled') %}
+            {{ component('Perscom\\ReportInButton') }}
+        {% endif %}
         {% for form in forms %}
             <a href="{{ path('perscom_form_submission_create', { formId: form.id }) }}" class="btn-outlined w-100 justify-start">
                 <i class="ph ph-arrow-elbow-down-right"></i>

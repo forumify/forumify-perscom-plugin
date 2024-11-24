@@ -12,7 +12,7 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class PerscomUserService
 {
-    private ?array $perscomUser = null;
+    private array $perscomUsers = [];
 
     public function __construct(
         private readonly PerscomFactory $perscomFactory,
@@ -32,18 +32,20 @@ class PerscomUserService
 
     public function getPerscomUser(User $user): ?array
     {
-        if ($this->perscomUser !== null) {
-            return $this->perscomUser;
+        if (isset($this->perscomUsers[$user->getId()])) {
+            return $this->perscomUsers[$user->getId()];
         }
 
+        // TODO: link perscom user id to forumify user id so we can get the user by id
+        //       then it can use PERSCOM's cache, which should be much faster than a search request.
         try {
-            $this->perscomUser = $this->perscomFactory
+            $this->perscomUsers[$user->getId()] = $this->perscomFactory
                 ->getPerscom()
                 ->users()
                 ->search(filter: [new FilterObject('email', 'like', $user->getEmail())])
                 ->json('data')[0] ?? null;
 
-            return $this->perscomUser;
+            return $this->perscomUsers[$user->getId()];
         } catch (\Exception) {
             return null;
         }
