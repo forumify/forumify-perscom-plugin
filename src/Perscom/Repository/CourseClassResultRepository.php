@@ -5,15 +5,15 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Repository;
 
 use Forumify\Core\Repository\AbstractRepository;
-use Forumify\PerscomPlugin\Perscom\Entity\ReportIn;
+use Forumify\PerscomPlugin\Perscom\Entity\CourseClassResult;
 
 /**
- * @extends AbstractRepository<ReportIn>
+ * @extends AbstractRepository<CourseClassResult>
  */
-class ReportInRepository extends AbstractRepository
+class CourseClassResultRepository extends AbstractRepository
 {
     public static function getEntityClass(): string
     {
-        return ReportIn::class;
+        return CourseClassResult::class;
     }
 }

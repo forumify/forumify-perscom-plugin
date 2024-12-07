@@ -38,7 +38,7 @@ class AfterActionReportController extends AbstractController
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $aar->getMission()->getOperation(),
-            'permission' => 'create_after_action_reports',
+            'permission' => 'manage_after_action_reports',
         ]);
 
         $allUserIds = [];
@@ -101,7 +101,7 @@ class AfterActionReportController extends AbstractController
 
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $mission->getOperation(),
-            'permission' => 'create_after_action_reports',
+            'permission' => 'manage_after_action_reports',
         ]);
 
         $aar = new AfterActionReport();

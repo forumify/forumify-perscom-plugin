@@ -1,11 +1,11 @@
 <div>
-    <h2 class="flex gap-2 items-center">
+    <h1 class="mb-0 flex gap-2 items-center">
         {{ user.name }}
         {% if user.status %}
             {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
                 status: user.status
             } only %}
         {% endif %}
-    </h2>
+    </h1>
     <p class="text-subtitle">{{ user.rank.name ?? '' }}, {{ user.position.name ?? '' }}</p>
 </div>

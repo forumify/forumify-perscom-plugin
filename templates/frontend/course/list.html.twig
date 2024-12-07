@@ -1,0 +1,8 @@
+{% extends '@Forumify/frontend/base.html.twig' %}
+{% block title_page %}
+    {{ 'perscom.opcenter.courses'|trans }}
+{% endblock %}
+{% block body %}
+    <h1>{{ 'perscom.opcenter.courses'|trans }}</h1>
+    {{ component('Perscom\\CourseList\\Expanded') }}
+{% endblock %}

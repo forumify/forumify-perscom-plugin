@@ -10,7 +10,7 @@ use Forumify\Core\Repository\AbstractRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\Operation;
 
 /**
- * @template-extends AbstractRepository<Operation>
+ * @extends AbstractRepository<Operation>
  */
 class OperationRepository extends AbstractRepository
 {

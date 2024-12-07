@@ -1,0 +1,130 @@
+{% extends '@Forumify/frontend/base.html.twig' %}
+{% block title_page %}{{ class.title }}{% endblock %}
+{% block body %}
+    {% set course = class.course %}
+    <div class="breadcrumbs text-small">
+        <a href="{{ path('perscom_operations_center') }}">{{ 'perscom.opcenter.operations_center'|trans }}</a> &gt;
+        <a href="{{ path('perscom_courses_view', { slug: course.slug }) }}">{{ course.title }}</a> &gt;
+        {{ class.title }}
+    </div>
+    <div class="mb-8 flex justify-between">
+        <div>
+            <h1 class="mb-0">{{ class.title }}</h1>
+            <div class="flex items-center gap-2 text-small">
+                {{ 'perscom.course.class.created_by'|trans }}
+                {% include '@Forumify/components/avatar.html.twig' with { user: class.createdBy, className: 'avatar-xs' } only %}
+                <span class="flex items-baseline gap-2">
+                    {% include '@Forumify/components/username.html.twig' with { user: class.createdBy } only %}
+                    {{ class.createdAt|format_date }}
+                </span>
+            </div>
+        </div>
+        {% if can('manage_classes', course) %}
+            <div class="flex gap-2">
+                {% if class.result is null %}
+                    <a class="btn-primary" href="{{ path('perscom_course_class_report', { id: class.id }) }}">
+                        {{ 'perscom.course.class.new_report'|trans }}
+                    </a>
+                {% endif %}
+                <a class="btn-link btn-icon" href="{{ path('perscom_course_class_edit', { id: class.id }) }}">
+                    <i class="ph ph-pencil-simple-line"></i>
+                </a>
+                <a class="btn-link btn-icon" href="{{ path('perscom_course_class_delete', { id: class.id }) }}">
+                    <i class="ph ph-x"></i>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="flex items-start gap-4">
+        <div class="flex flex-col box" style="width: 300px">
+            {% if course.image %}
+                <img class="mb-4 rounded" src="{{ asset(course.image, 'forumify.asset') }}" style="width: 100%; height: auto">
+            {% endif %}
+            {{ component('Perscom\\CourseClassSignup', { loading: 'defer', class: class }) }}
+        </div>
+        <div class="box flex-grow">
+            <h2>{{ course.title }}</h2>
+            <div class="rich-text">
+                <p class="text-bold">{{ 'perscom.course.class.start'|trans }}</p>
+                <p>{{ class.start|format_date(true) }}</p>
+                <p class="text-bold mt-2">{{ 'perscom.course.class.end'|trans }}</p>
+                <p>{{ class.end|format_date(true) }}</p>
+                {% set qualifications = course.qualifications|perscom_course_qualifications %}
+                {% if qualifications is not empty %}
+                    <p class="text-bold mt-2">{{ 'perscom.course.qualifications'|trans }}</p>
+                    <ul>
+                        {% for qualification in qualifications %}
+                            <li>{{ qualification }}</li>
+                        {% else %}
+                            <li>{{ 'perscom.course.no_qualifications'|trans }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% set prerequisites = course|perscom_course_prerequisites %}
+                {% if prerequisites is not empty %}
+                    <p class="text-bold mt-2">{{ 'perscom.course.prerequisites'|trans }}</p>
+                    <ul>
+                        {% for prerequisite in prerequisites %}
+                            <li>{{ prerequisite }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                <p class="text-bold mt-2">{{ 'perscom.course.class.instructors'|trans }}</p>
+                <ul>
+                    {% for instructorId, instructor in class.instructors|perscom_course_users %}
+                        <li>
+                            <div class="flex items-center gap-1">
+                                {{ instructor }}
+                                {% set instructorAttended = class|perscom_course_instructor_attended(instructorId) %}
+                                {% if instructorAttended is null %}
+                                {% elseif instructorAttended %}
+                                    <i class="ph ph-check-circle" style="color: green"></i>
+                                {% else %}
+                                    <i class="ph ph-prohibit-inset" style="color: gray"></i>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                    {% if class.result is null %}
+                        {% if class.instructorSlots is null %}
+                            <li class="text-light">{{ 'perscom.course.class.open'|trans }}</li>
+                        {% elseif instructorSlots > 0 %}
+                            {% for i in 1..instructorSlots %}
+                                <li class="text-light">{{ 'perscom.course.class.open'|trans }}</li>
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                </ul>
+                <p class="text-bold mt-2">{{ 'perscom.course.class.students'|trans }}</p>
+                <ul>
+                    {% for studentId, student in class.students|perscom_course_users %}
+                        <li>
+                            <div class="flex items-center gap-1">
+                                {{ student }}
+                                {% set studentResult = class|perscom_course_student_result(studentId) %}
+                                {% if studentResult is not null %}
+                                    {% set color = {
+                                        passed: 'green',
+                                        failed: 'red',
+                                        excused: 'gray',
+                                        'no-show': 'gray',
+                                    }[studentResult] %}
+                                    | <span class="text-bold" style="color: {{ color }}">{{ studentResult|upper }}</span>
+                                {% endif %}
+                            </div>
+                        </li>
+                    {% endfor %}
+                    {% if class.result is null %}
+                        {% if class.studentSlots is null %}
+                            <li class="text-light">{{ 'perscom.course.class.open'|trans }}</li>
+                        {% elseif studentSlots > 0 %}
+                            {% for i in 1..studentSlots %}
+                                <li class="text-light">{{ 'perscom.course.class.open'|trans }}</li>
+                            {% endfor %}
+                        {% endif %}
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

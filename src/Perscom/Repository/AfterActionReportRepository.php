@@ -8,7 +8,7 @@ use Forumify\Core\Repository\AbstractRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 
 /**
- * @template-extends AbstractRepository<AfterActionReport>
+ * @extends AbstractRepository<AfterActionReport>
  */
 class AfterActionReportRepository extends AbstractRepository
 {

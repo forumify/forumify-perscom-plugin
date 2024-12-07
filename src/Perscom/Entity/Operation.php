@@ -153,7 +153,6 @@ class Operation implements AccessControlledEntityInterface
             'view_missions',
             'manage_missions',
             'view_after_action_reports',
-            'create_after_action_reports',
             'manage_after_action_reports',
         ];
     }

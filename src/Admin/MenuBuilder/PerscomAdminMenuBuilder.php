@@ -42,10 +42,15 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
         ]);
 
         if ($this->pluginVersionChecker->isVersionInstalled('forumify/forumify-perscom-plugin', 'premium')) {
-            $perscomMenu->addItem(new MenuItem('Operations', $u('perscom_admin_operations_list'), [
-                'icon' => 'ph ph-airplane-takeoff',
-                'permission' => 'perscom-io.admin.operations.view',
-            ]));
+            $perscomMenu
+                ->addItem(new MenuItem('Operations', $u('perscom_admin_operations_list'), [
+                    'icon' => 'ph ph-airplane-takeoff',
+                    'permission' => 'perscom-io.admin.operations.view',
+                ]))
+                ->addItem(new MenuItem('Courses', $u('perscom_admin_courses_list'), [
+                    'icon' => 'ph ph-graduation-cap',
+                    'permission' => 'perscom-io.admin.courses.view',
+                ]));
         }
 
         $perscomMenu->addItem(new Menu('Organization', ['icon' => 'ph ph-buildings', 'permission' => 'perscom-io.admin.organization.view'], [

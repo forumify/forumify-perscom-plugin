@@ -45,7 +45,12 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                     'view',
                     'manage',
                     'delete',
-                ]
+                ],
+                'courses' => [
+                    'view',
+                    'manage',
+                    'delete',
+                ],
             ],
         ];
     }

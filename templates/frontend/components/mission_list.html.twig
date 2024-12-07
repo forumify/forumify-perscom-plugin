@@ -4,11 +4,9 @@
         {% for mission in this.result.data %}
             <li class="flex flex-col topic-row justify-between">
                 <a class="topic-link" href="{{ path('perscom_missions_view', { id: mission.id }) }}"></a>
-                <div class="flex justify-between">
+                <div class="flex justify-between items-center">
                     <h4 class="mb-0 text-subtitle">{{ mission.title }}</h4>
-                    <div class="flex items-center gap-2 text-small">
-                        {{ mission.start|format_date(true) }}
-                    </div>
+                    <span class="text-small">{{ mission.start|format_date(true) }}</span>
                 </div>
             </li>
         {% else %}

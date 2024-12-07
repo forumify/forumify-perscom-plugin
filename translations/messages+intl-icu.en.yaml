@@ -2,8 +2,9 @@ perscom:
     settings:
         tab_settings: 'Settings'
         tab_enlistment: 'Enlistment'
-        tab_operations: 'Operations'
         tab_report_in: 'Report In'
+        tab_operations: 'Operations'
+        tab_courses: 'Courses'
         title: 'PERSCOM.io Plugin Configuration'
         license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
         automations: 'Automations'
@@ -68,6 +69,10 @@ perscom:
                 title: 'Specialties'
         configuration:
             title: 'Configuration'
+        course:
+            crud:
+                single: 'Course'
+                plural: 'Courses'
         operation:
             crud:
                 single: 'Operation'
@@ -116,13 +121,20 @@ perscom:
     opcenter:
         operations_center: 'Operations Center'
         pfile: 'Personnel File'
-        submissions: 'Submissions'
+        submissions: 'Dashboard'
         newsfeed: 'Newsfeed'
         submission_created: 'Form submission created.'
         status_history: 'Status history'
         operations: 'Operations'
         no_operations: 'No operations.'
+        missions: 'Upcoming missions'
         no_missions: 'This operation has no missions yet. Come back later to see mission briefings.'
+        no_upcoming_missions: 'No upcoming missions. Check back later.'
+        courses: 'Training & Schools'
+        no_courses: 'No courses.'
+        class_signup_open: 'Sign up'
+        class_last: 'Last ran:'
+        class_never: 'Never'
     operation:
         missions: 'Missions'
         operation: 'Operation'
@@ -137,8 +149,8 @@ perscom:
         aars: 'After Action Reports'
         mission: 'Mission'
         mission_by: 'Mission by'
-        start: 'Starts at'
-        end: 'Ends at'
+        start: 'Starts on'
+        end: 'Ends on'
     aar:
         title: 'After Action Report'
         create: 'New After Action Report'
@@ -156,6 +168,39 @@ perscom:
     report_in:
         report_in: 'Report In'
         reported_in: 'You have successfully reported in.'
+    course:
+        qualifications: 'Qualifications upon completion'
+        no_qualifications: 'N/A'
+        prerequisites: 'Prerequisites'
+        classes: 'Classes'
+        no_classes: 'This course hasn''t run yet.'
+        no_signups: 'Currently there are no classes open for registrations.'
+        class:
+            create: 'New Class'
+            created: 'Class created.'
+            edit: 'Edit Class'
+            edited: 'Class edited.'
+            delete: 'You are about to delete the class "{class}".'
+            deleted: 'Class deleted.'
+            description_help: 'Additional class specific information, equipment to bring, where to assemble,...'
+            instructors_help: 'Manually setting instructors will disregard the slot count.'
+            instructor_slots_help: 'How many instructors are allowed to sign up? Leave blank to allow unlimited, set to 0 to disable signups.'
+            students_help: 'Manually setting students will disregard the slot count.'
+            student_slots_help: 'How many students are allowed to sign up? Leave blank to allow unlimited, set to 0 to disable signups.'
+            created_by: 'Class by'
+            register_as_student: 'Register as student'
+            deregister_as_student: 'Deregister as student'
+            register_as_instructor: 'Register as instructor'
+            deregister_as_instructor: 'Deregister as instructor'
+            start: 'Starts on'
+            end: 'Ends on'
+            instructors: 'Instructors'
+            students: 'Students'
+            open: 'Open'
+            prerequisites_not_met: 'Prerequisites not met'
+            new_report: 'Submit Class Report'
+            create_report: 'New Class Report'
+            signups_closed: 'Signups are closed.'
     notification:
         submission_status_updated:
             title: 'Submission status updated'
@@ -182,7 +227,7 @@ perscom:
             description: 'You were assigned to {position} in {unit}.'
         qualification_record:
             title: 'You received a new qualification'
-            description: 'You are now qualified for {qualification}'
+            description: 'You are now qualified in {qualification}'
         mission_created:
             title: 'A new mission was posted in operation {operation}'
             description: 'Details regarding mission {mission} were posted.'

@@ -8,7 +8,7 @@ use Forumify\Core\Repository\AbstractRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
 
 /**
- * @template-extends AbstractRepository<Mission>
+ * @extends AbstractRepository<Mission>
  */
 class MissionRepository extends AbstractRepository
 {
