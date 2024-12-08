@@ -135,6 +135,7 @@ perscom:
         class_signup_open: 'Sign up'
         class_last: 'Last ran:'
         class_never: 'Never'
+        attendance: 'Attendance Sheet'
     operation:
         missions: 'Missions'
         operation: 'Operation'
@@ -240,3 +241,12 @@ perscom:
             title: 'You were marked {status}'
             description: 'You failed to report in in the last {days} days. Please report in as soon as possible!'
             action: 'Operations Center'
+    attendance_sheet:
+        generate: 'Generate Sheet'
+        loading: 'Generating attendance sheet...'
+        reset: 'Reset'
+        total_present: '# Present'
+        total_excused: '# Excused'
+        total_absent: '# Absent'
+        perc_attended: '% Attended'
+        perc_accountable: '% Accountable'

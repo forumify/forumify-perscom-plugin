@@ -27,11 +27,13 @@ class MissionType extends AbstractType
         $builder
             ->add('title')
             ->add('start', DateTimeType::class, [
-                'widget' => 'single_text'
+                'widget' => 'single_text',
+                'help' => 'Start date and time in UTC.'
             ])
             ->add('end', DateTimeType::class, [
                 'widget' => 'single_text',
                 'required' => false,
+                'help' => 'End date and time in UTC.'
             ])
             ->add('sendNotification', CheckboxType::class, [
                 'required' => false,

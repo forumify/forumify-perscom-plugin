@@ -72,7 +72,7 @@ class AfterActionReportController extends AbstractController
 
         foreach ($attendance as &$list) {
             $list = array_filter($list);
-            $this->sortUsers($list);
+            $this->afterActionReportService->sortUsers($list);
 
             foreach ($list as $k => $user) {
                 $list[$k] = [
@@ -182,21 +182,9 @@ class AfterActionReportController extends AbstractController
     #[Route('/unit/{id}', 'unit')]
     public function getUnit(int $id): JsonResponse
     {
-        $users = $this->perscomFactory
-            ->getPerscom()
-            ->units()
-            ->get($id, [
-                'users',
-                'users.rank',
-                'users.rank.image',
-                'users.position',
-                'users.specialty',
-            ])
-            ->json('data')['users'] ?? [];
+        $users = $this->afterActionReportService->findUsersByUnit($id);
 
         $response = [];
-
-        $this->sortUsers($users);
         foreach ($users as $user) {
             $response[] = [
                 'id' => $user['id'],
@@ -206,30 +194,5 @@ class AfterActionReportController extends AbstractController
         }
 
         return new JsonResponse($response);
-    }
-
-    private function sortUsers(array &$users): void
-    {
-        usort($users, static function (array $a, array $b): int {
-            $aRank = $a['rank']['order'] ?? 100;
-            $bRank = $b['rank']['order'] ?? 100;
-            if ($aRank !== $bRank) {
-                return $aRank - $bRank;
-            }
-
-            $aPos = $a['position']['order'] ?? 100;
-            $bPos = $b['position']['order'] ?? 100;
-            if ($aPos !== $bPos) {
-                return $aPos - $bPos;
-            }
-
-            $aSpec = $a['specialty']['order'] ?? 100;
-            $bSpec = $b['specialty']['order'] ?? 100;
-            if ($aSpec !== $bSpec) {
-                return $aSpec - $bSpec;
-            }
-
-            return strcmp($a['name'], $b['name']);
-        });
     }
 }

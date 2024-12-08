@@ -27,6 +27,7 @@
             <button class="btn-link" data-tab-id="submissions">{{ 'perscom.opcenter.submissions'|trans }}</button>
             {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
                 <button class="btn-link" data-tab-id="operations">{{ 'perscom.opcenter.operations'|trans }}</button>
+                <button class="btn-link" data-tab-id="attendance">{{ 'perscom.opcenter.attendance'|trans }}</button>
                 <button class="btn-link" data-tab-id="courses">{{ 'perscom.opcenter.courses'|trans }}</button>
             {% endif %}
         {% endblock %}
@@ -34,6 +35,7 @@
             {% include '@ForumifyPerscomPlugin/frontend/operations_center/tabs/submissions.html.twig' %}
             {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
                 {% include '@ForumifyPerscomPlugin/frontend/operations_center/tabs/operations.html.twig' %}
+                {% include '@ForumifyPerscomPlugin/frontend/operations_center/tabs/attendance.html.twig' %}
                 {% include '@ForumifyPerscomPlugin/frontend/operations_center/tabs/courses.html.twig' %}
             {% endif %}
         {% endblock %}
