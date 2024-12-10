@@ -2,12 +2,23 @@ perscom:
     settings:
         tab_settings: 'Settings'
         tab_enlistment: 'Enlistment'
+        tab_profile: 'Profile'
         tab_report_in: 'Report In'
         tab_operations: 'Operations'
         tab_courses: 'Courses'
         title: 'PERSCOM.io Plugin Configuration'
         license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
         automations: 'Automations'
+        profile:
+            display_name_format_help: >
+                Format to use. This code is in twig, and is given the user's PERSCOM object in context.<br/>
+                You have access to the user, their rank, position, specialty and status.<br/>
+                The following examples assume your users all use "Firstname Lastname" as their name on PERSCOM:<br/>
+                <ul class="pl-4 pt-1">
+                    <li><strong>Colonel John Doe:</strong> <code>&lbrace;&lbrace;user.rank.name&rbrace;&rbrace; &lbrace;&lbrace;user.name&rbrace;&rbrace;</code></li>
+                    <li><strong>COL J.Doe:</strong> <code>&lbrace;&lbrace;user.rank.abbreviation}} &lbrace;&lbrace;user.name|slice(0,1)}}.&lbrace;&lbrace;user.name|split(&#039; &#039;)|last}}</code></li>
+                    <li><strong>Commander Doe:</strong> <code>&lbrace;&lbrace;user.position.name&rbrace;&rbrace; &lbrace;&lbrace;user.name|split(&#039; &#039;)|last}}</code>
+                </ul>
     admin:
         requires_perscom_account: 'This action requires a PERSCOM account that matches your email.'
         users:

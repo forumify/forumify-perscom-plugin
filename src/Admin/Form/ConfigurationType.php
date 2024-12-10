@@ -54,7 +54,26 @@ class ConfigurationType extends AbstractType
                 'required' => false,
                 'choices' => $this->getRoleChoices(),
                 'placeholder' => 'Do not assign a role',
-            ]);
+            ])
+            // Profiles
+            ->add('perscom__profile__overwrite_display_names', CheckboxType::class, [
+                'label' => 'Overwrite user display names',
+                'help' => 'Automatically set a user\'s forum display name to match their PERSCOM name.',
+                'required' => false,
+            ])
+            ->add('perscom__profile__display_name_format', TextType::class, [
+                'label' => 'Display name format',
+                'help' => 'perscom.settings.profile.display_name_format_help',
+                'help_html' => true,
+                'required' => false,
+                'empty_data' => '{user.rank.abbreviation} {user.name}',
+            ])
+            ->add('perscom__profile__overwrite_signatures', CheckboxType::class, [
+                'label' => 'Overwrite user signature',
+                'help' => 'Automatically set the user\'s signature to match their PERSCOM signature.',
+                'required' => false,
+            ])
+        ;
 
         if ($this->pluginVersionChecker->isVersionInstalled('forumify/forumify-perscom-plugin', 'premium')) {
             $builder
@@ -112,7 +131,8 @@ class ConfigurationType extends AbstractType
             ->createQueryBuilder('f')
             ->select('f.id', 'f.title')
             ->getQuery()
-            ->getArrayResult();
+            ->getArrayResult()
+        ;
 
         return array_combine(
             array_column($choices, 'title'),
@@ -126,7 +146,8 @@ class ConfigurationType extends AbstractType
             ->createQueryBuilder('r')
             ->select('r.id', 'r.title')
             ->getQuery()
-            ->getArrayResult();
+            ->getArrayResult()
+        ;
 
         return array_combine(
             array_column($choices, 'title'),

@@ -11,6 +11,7 @@ use Forumify\Core\Repository\UserRepository;
 use Forumify\Core\Twig\Extension\MenuRuntime;
 use Forumify\PerscomPlugin\Perscom\Notification\NewRecordNotificationType;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Service\SyncUserService;
 use Perscom\Data\FilterObject;
 use Perscom\Data\ResourceObject;
 use Symfony\Contracts\Cache\CacheInterface;
@@ -22,6 +23,7 @@ class RecordService
         private readonly NotificationService $notificationService,
         private readonly UserRepository $userRepository,
         private readonly CacheInterface $cache,
+        private readonly SyncUserService $syncUserService,
     ) {
     }
 
@@ -77,6 +79,10 @@ class RecordService
             if ($type === 'assignment') {
                 $this->cache->delete(MenuRuntime::createMenuCacheKey($user));
             }
+        }
+
+        foreach ($userIds as $userId) {
+            $this->syncUserService->syncFromPerscom($userId);
         }
     }
 

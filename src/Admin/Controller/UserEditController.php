@@ -8,6 +8,7 @@ use Forumify\PerscomPlugin\Admin\Form\UserData;
 use Forumify\PerscomPlugin\Admin\Form\UserType;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Service\SyncUserService;
 use Perscom\Http\Resources\Users\CoverPhotoResource;
 use Perscom\Http\Resources\Users\ProfilePhotoResource;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -26,7 +27,7 @@ class UserEditController extends AbstractController
     }
 
     #[Route('users/{id}', 'user_edit')]
-    public function __invoke(PerscomFactory $perscomFactory, Request $request, int $id): Response
+    public function __invoke(PerscomFactory $perscomFactory, SyncUserService $syncUserService, Request $request, int $id): Response
     {
         $perscom = $perscomFactory->getPerscom(true);
         $user = $perscom
@@ -64,6 +65,8 @@ class UserEditController extends AbstractController
                 $oldSecondaryAssignments,
                 $data->getSecondaryAssignments()
             );
+
+            $syncUserService->syncFromPerscom($id);
 
             $this->addFlash('success', 'perscom.admin.users.edit.saved');
             return $this->redirectToRoute('perscom_admin_user_edit', ['id' => $id]);
