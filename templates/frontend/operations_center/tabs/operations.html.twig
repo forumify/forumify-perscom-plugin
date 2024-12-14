@@ -2,5 +2,5 @@
     <h2>{{ 'perscom.opcenter.missions'|trans }}</h2>
     {{ component('Perscom\\UpcomingMissionList', { loading: 'lazy' }) }}
     <h2 class="mt-4">{{ 'perscom.opcenter.operations'|trans }}</h2>
-    {{ component('Perscom\\OperationList', { size: 5, loading: 'lazy' }) }}
+    {{ component('Perscom\\OperationList', { size: 5, inOpCenter: true, loading: 'lazy' }) }}
 </div>
