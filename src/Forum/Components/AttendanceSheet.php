@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Components;
 
 use DateTime;
-use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 use Forumify\PerscomPlugin\Perscom\Form\UnitType;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
@@ -14,6 +13,7 @@ use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
@@ -21,6 +21,7 @@ use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent('Perscom\\AttendanceSheet', '@ForumifyPerscomPlugin/frontend/components/attendance_sheet.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[IsGranted('perscom-io.frontend.attendance_sheet.view')]
 class AttendanceSheet extends AbstractController
 {
     use DefaultActionTrait;
@@ -44,11 +45,11 @@ class AttendanceSheet extends AbstractController
         return $this->createFormBuilder()
             ->add('from', DateType::class, [
                 'widget' => 'single_text',
-                'data' => DateTime::createFromFormat('Y-m-d', '2024-10-01'),
+                'data' => (new DateTime())->sub(new \DateInterval('P1M')),
             ])
             ->add('to', DateType::class, [
                 'widget' => 'single_text',
-                'data' => DateTime::createFromFormat('Y-m-d', '2024-12-31'),
+                'data' => new DateTime(),
             ])
             ->add('unit', UnitType::class, [
                 'autocomplete' => true,
@@ -82,30 +83,12 @@ class AttendanceSheet extends AbstractController
             return;
         }
 
-        if ($diff > 93) {
-            $this->error = 'You have selected an invalid from/to range. It can not be larger than 3 months.';
+        if ($diff > 6 * 31) {
+            $this->error = 'You have selected an invalid from/to range. It can not be larger than 6 months.';
             return;
         }
 
-        $aarQuery = $this->aarRepository
-            ->createQueryBuilder('aar')
-            ->join('aar.mission', 'm')
-            ->where('m.start BETWEEN :from AND :to')
-            ->setParameters(['from' => $data['from'], 'to' => $data['to']])
-            ->orderBy('m.start', 'ASC')
-            ->addOrderBy('aar.unitPosition', 'ASC')
-        ;
-
-        if (!empty($data['unit'])) {
-            $aarQuery
-                ->andWhere('aar.unitId IN (:units)')
-                ->setParameter('units', $data['unit'])
-            ;
-        }
-
-        /** @var AfterActionReport[] $aars */
-        $aars = $aarQuery->getQuery()->getResult();
-
+        $aars = $this->aarRepository->findByMissionStartAndUnit($data['from'], $data['to'], $data['unit']);
         $missions = [];
         $units = [];
 
@@ -221,7 +204,7 @@ class AttendanceSheet extends AbstractController
 
     private function getMissionTotal(int $missionId, string $tState): int
     {
-        $count = null;
+        $count = 0;
         foreach ($this->sheet[$missionId] as $users) {
             foreach ($users as $state) {
                 if ($state === $tState) {

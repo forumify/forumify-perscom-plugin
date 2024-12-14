@@ -45,7 +45,7 @@ class CourseClass
      * @var array<string>
      */
     #[ORM\Column(type: 'simple_array', nullable: true)]
-    private array $instructors;
+    private array $instructors = [];
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $instructorSlots = null;
@@ -54,7 +54,7 @@ class CourseClass
      * @var array<string>
      */
     #[ORM\Column(type: 'simple_array', nullable: true)]
-    private array $students;
+    private array $students = [];
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $studentSlots = null;

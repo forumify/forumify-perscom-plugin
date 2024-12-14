@@ -69,7 +69,7 @@ class CourseClassType extends AbstractType
                 'help' => 'perscom.course.class.student_slots_help'
             ]);
 
-        if ($options['data'] !== null) {
+        if ($options['data']?->getResult()) {
             $builder->add('result', CourseClassResultType::class, [
                 'class' => $options['data']
             ]);

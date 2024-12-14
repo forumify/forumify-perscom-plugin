@@ -68,6 +68,11 @@ class ConfigurationType extends AbstractType
                 'required' => false,
                 'empty_data' => '{user.rank.abbreviation} {user.name}',
             ])
+            ->add('perscom__profile__overwrite_avatars', CheckboxType::class, [
+                'label' => 'Overwrite user avatar',
+                'help' => 'Automatically set the user\'s avatar to match their PERSCOM rank.',
+                'required' => false,
+            ])
             ->add('perscom__profile__overwrite_signatures', CheckboxType::class, [
                 'label' => 'Overwrite user signature',
                 'help' => 'Automatically set the user\'s signature to match their PERSCOM signature.',

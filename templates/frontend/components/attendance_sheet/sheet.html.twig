@@ -37,8 +37,8 @@
                     <tr>
                         <td>
                         <span class="flex items-center gap-1">
-                            {% if user.rank is defined %}
-                                {% if user.rank.image is defined %}
+                            {% if user.rank is defined and user.rank is not null %}
+                                {% if user.rank.image is defined and user.rank.image is not null %}
                                     <img width="24" height="24" src="{{ user.rank.image.image_url }}">
                                 {% endif %}
                                 {{ user.rank.abbreviation }}

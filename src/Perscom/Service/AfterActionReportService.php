@@ -13,6 +13,8 @@ use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsExcep
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use JsonException;
+use Saloon\Exceptions\Request\FatalRequestException;
+use Saloon\Exceptions\Request\RequestException;
 
 class AfterActionReportService
 {
@@ -108,17 +110,21 @@ class AfterActionReportService
 
     public function findUsersByUnit(int $unitId): array
     {
-        $users = $this->perscomFactory
-            ->getPerscom()
-            ->units()
-            ->get($unitId, [
-                'users',
-                'users.rank',
-                'users.rank.image',
-                'users.position',
-                'users.specialty',
-            ])
-            ->json('data')['users'] ?? [];
+        try {
+            $users = $this->perscomFactory
+                ->getPerscom()
+                ->units()
+                ->get($unitId, [
+                    'users',
+                    'users.rank',
+                    'users.rank.image',
+                    'users.position',
+                    'users.specialty',
+                ])
+                ->json('data')['users'] ?? [];
+        } catch (Exception) {
+            return [];
+        }
 
         $this->sortUsers($users);
         return $users;
