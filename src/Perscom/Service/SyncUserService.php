@@ -112,7 +112,7 @@ class SyncUserService
             return [null, null];
         }
 
-        return [$perscomData, $forumifyUser];
+        return [$forumifyUser, $perscomData];
     }
 
     private function getUsersFromForumify(int $userId): array
