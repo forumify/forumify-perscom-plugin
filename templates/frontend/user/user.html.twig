@@ -52,6 +52,20 @@
                     {% endif %}
                 </div>
             </div>
+            {% if setting('perscom.report_in.enabled') %}
+                <div class="card">
+                    <div class="card-title">
+                        {{ 'perscom.user.last_report_in'|trans }}
+                    </div>
+                    <div class="card-body">
+                        {% if reportInDate is not null %}
+                            {{ reportInDate|format_date }}
+                        {% else %}
+                            {{ 'perscom.user.no_report_in'|trans }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
         <div class="w-75">
             {% embed '@Forumify/components/tabs.html.twig' %}

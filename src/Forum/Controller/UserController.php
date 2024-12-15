@@ -7,26 +7,29 @@ namespace Forumify\PerscomPlugin\Forum\Controller;
 use DateTime;
 use Forumify\Core\Repository\UserRepository;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Repository\ReportInRepository;
 use Saloon\Exceptions\Request\Statuses\NotFoundException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
+    public function __construct(
+        private readonly PerscomFactory $perscomFactory,
+        private readonly UserRepository $userRepository,
+        private readonly ReportInRepository $reportInRepository,
+        private readonly TranslatorInterface $translator,
+    ) {
+    }
+
     #[Route('user/{id<\d+>}', 'user')]
-    public function __invoke(
-        int $id,
-        PerscomFactory $perscomFactory,
-        UserRepository $userRepository,
-        Request $request,
-        TranslatorInterface $translator,
-    ): Response {
+    public function __invoke(int $id, Request $request): Response
+    {
         try {
-            $user = $perscomFactory->getPerscom()
+            $user = $this->perscomFactory->getPerscom()
                 ->users()
                 ->get($id, [
                     'rank',
@@ -54,9 +57,10 @@ class UserController extends AbstractController
                     'secondary_assignment_records.specialty',
                     'secondary_assignment_records',
                 ])
-                ->json('data');
+                ->json('data')
+            ;
         } catch (NotFoundException) {
-            throw $this->createNotFoundException($translator->trans('perscom.user.not_found'));
+            throw $this->createNotFoundException($this->translator->trans('perscom.user.not_found'));
         }
 
         $now = new DateTime();
@@ -67,12 +71,16 @@ class UserController extends AbstractController
 
         $secondaryAssignments = $this->transformSecondaryAssignments($user);
 
+        $lastReportIn = $this->reportInRepository->findOneBy(['perscomUserId' => $id]);
+        $lastReportInDate = $lastReportIn?->getLastReportInDate();
+
         return $this->render('@ForumifyPerscomPlugin/frontend/user/user.html.twig', [
-            'forumAccount' => $userRepository->findOneBy(['email' => $user['email']]),
+            'forumAccount' => $this->userRepository->findOneBy(['email' => $user['email']]),
             'secondaryAssignments' => $secondaryAssignments,
             'user' => $user,
             'tis' => $tis,
             'tig' => $tig,
+            'reportInDate' => $lastReportInDate,
         ]);
     }
 

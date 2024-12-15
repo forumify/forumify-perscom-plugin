@@ -120,6 +120,8 @@ perscom:
         no_secondary_positions: 'User does not have any secondary positions.'
         document: 'Record Document'
         text: 'Record Text'
+        last_report_in: 'Last report in'
+        no_report_in: 'This user has not reported in yet.'
     rank:
         title: 'Ranks'
         no_ranks: 'No ranks.'
