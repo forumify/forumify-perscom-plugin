@@ -44,6 +44,7 @@
         </div>
         <div class="box flex-grow">
             <h2>{{ course.title }}</h2>
+            {{ class.description|rich }}
             <div class="rich-text">
                 <p class="text-bold">{{ 'perscom.course.class.start'|trans }}</p>
                 <p>{{ class.start|format_date(true) }}</p>
