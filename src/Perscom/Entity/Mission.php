@@ -8,6 +8,8 @@ use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Forumify\Calendar\Entity\Calendar;
+use Forumify\Calendar\Entity\CalendarEvent;
 use Forumify\Core\Entity\BlameableEntityTrait;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SluggableEntityTrait;
@@ -50,6 +52,12 @@ class Mission
 
     #[ORM\Column(nullable: true)]
     private ?string $combatRecordText = null;
+
+    #[ORM\ManyToOne(targetEntity: Calendar::class, fetch: 'EXTRA_LAZY')]
+    private ?Calendar $calendar = null;
+
+    #[ORM\OneToOne(targetEntity: CalendarEvent::class, fetch: 'EXTRA_LAZY')]
+    private ?CalendarEvent $calendarEvent = null;
 
     public function __construct()
     {
@@ -147,5 +155,25 @@ class Mission
     public function setCombatRecordText(?string $combatRecordText): void
     {
         $this->combatRecordText = $combatRecordText;
+    }
+
+    public function getCalendar(): ?Calendar
+    {
+        return $this->calendar;
+    }
+
+    public function setCalendar(?Calendar $calendar): void
+    {
+        $this->calendar = $calendar;
+    }
+
+    public function getCalendarEvent(): ?CalendarEvent
+    {
+        return $this->calendarEvent;
+    }
+
+    public function setCalendarEvent(?CalendarEvent $calendarEvent): void
+    {
+        $this->calendarEvent = $calendarEvent;
     }
 }

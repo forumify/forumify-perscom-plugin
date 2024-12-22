@@ -9,6 +9,7 @@ use Forumify\PerscomPlugin\Forum\Form\CourseClassType;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
+use Forumify\PerscomPlugin\Perscom\Service\CourseClassService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,7 +21,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CourseClassController extends AbstractController
 {
     public function __construct(
-        private readonly CourseClassRepository $courseClassRepository,
+        private readonly CourseClassService $courseClassService,
     ) {
     }
 
@@ -72,7 +73,7 @@ class CourseClassController extends AbstractController
         }
 
         $courseSlug = $class->getCourse()->getSlug();
-        $this->courseClassRepository->remove($class);
+        $this->courseClassService->remove($class);
 
         $this->addFlash('success', 'perscom.course.class.deleted');
         return $this->redirectToRoute('perscom_courses_view', ['slug' => $courseSlug]);
@@ -84,7 +85,7 @@ class CourseClassController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $class = $form->getData();
-            $this->courseClassRepository->save($class);
+            $this->courseClassService->createOrUpdate($class, $isNew);
 
             $this->addFlash('success', $isNew ? 'perscom.course.class.created' : 'perscom.course.class.edited');
             return $this->redirectToRoute('perscom_course_class_view', ['id' => $class->getId()]);

@@ -7,7 +7,6 @@ namespace Forumify\PerscomPlugin\Forum\Controller;
 use Forumify\Core\Security\VoterAttribute;
 use Forumify\PerscomPlugin\Forum\Form\MissionType;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
-use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\OperationRepository;
 use Forumify\PerscomPlugin\Perscom\Service\MissionService;
 use Forumify\Plugin\Attribute\PluginVersion;
@@ -22,7 +21,6 @@ class MissionController extends AbstractController
 {
     public function __construct(
         private readonly OperationRepository $operationRepository,
-        private readonly MissionRepository $missionRepository,
         private readonly MissionService $missionService,
     ) {
     }
@@ -88,7 +86,7 @@ class MissionController extends AbstractController
         }
 
         $operationSlug = $mission->getOperation()->getSlug();
-        $this->missionRepository->remove($mission);
+        $this->missionService->remove($mission);
 
         $this->addFlash('success', 'perscom.mission.deleted');
         return $this->redirectToRoute('perscom_operations_view', ['slug' => $operationSlug]);

@@ -6,6 +6,8 @@ namespace Forumify\PerscomPlugin\Perscom\Entity;
 
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
+use Forumify\Calendar\Entity\Calendar;
+use Forumify\Calendar\Entity\CalendarEvent;
 use Forumify\Core\Entity\BlameableEntityTrait;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
@@ -61,6 +63,12 @@ class CourseClass
 
     #[ORM\OneToOne(mappedBy: 'class', targetEntity: CourseClassResult::class)]
     private ?CourseClassResult $result = null;
+
+    #[ORM\ManyToOne(targetEntity: Calendar::class, fetch: 'EXTRA_LAZY')]
+    private ?Calendar $calendar = null;
+
+    #[ORM\OneToOne(targetEntity: CalendarEvent::class, fetch: 'EXTRA_LAZY')]
+    private ?CalendarEvent $event = null;
 
     public function getCourse(): Course
     {
@@ -202,5 +210,25 @@ class CourseClass
     public function setResult(?CourseClassResult $result): void
     {
         $this->result = $result;
+    }
+
+    public function getCalendar(): ?Calendar
+    {
+        return $this->calendar;
+    }
+
+    public function setCalendar(?Calendar $calendar): void
+    {
+        $this->calendar = $calendar;
+    }
+
+    public function getEvent(): ?CalendarEvent
+    {
+        return $this->event;
+    }
+
+    public function setEvent(?CalendarEvent $event): void
+    {
+        $this->event = $event;
     }
 }

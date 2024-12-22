@@ -9,7 +9,7 @@ use Forumify\PerscomPlugin\Forum\Form\CourseClassResultType;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassResult;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassResultRepository;
-use Forumify\PerscomPlugin\Perscom\Service\ClassResultService;
+use Forumify\PerscomPlugin\Perscom\Service\CourseClassService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,7 +22,7 @@ class CourseClassReportController extends AbstractController
 {
     public function __construct(
         private readonly CourseClassResultRepository $courseClassResultRepository,
-        private readonly ClassResultService $classResultService,
+        private readonly CourseClassService $classResultService,
     ) {
     }
 

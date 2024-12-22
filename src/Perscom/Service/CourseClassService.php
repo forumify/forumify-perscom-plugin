@@ -4,14 +4,62 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Service;
 
+use Forumify\Calendar\Entity\CalendarEvent;
+use Forumify\Calendar\Repository\CalendarEventRepository;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
+use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassResult;
+use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
-class ClassResultService
+class CourseClassService
 {
     public function __construct(
         private readonly RecordService $recordService,
+        private readonly CourseClassRepository $courseClassRepository,
+        private readonly CalendarEventRepository $calendarEventRepository,
+        private readonly UrlGeneratorInterface $urlGenerator,
     ) {
+    }
+
+    public function createOrUpdate(CourseClass $class, bool $isNew): void
+    {
+        $this->courseClassRepository->save($class);
+        if ($isNew) {
+            $this->createCalendarEvent($class);
+            $this->courseClassRepository->save($class);
+        }
+    }
+
+    public function remove(CourseClass $class): void
+    {
+        $this->calendarEventRepository->remove($class);
+
+        $event = $class->getEvent();
+        if ($event !== null) {
+            $this->calendarEventRepository->remove($event);
+        }
+    }
+
+    private function createCalendarEvent(CourseClass $class): void
+    {
+        $calendar = $class->getCalendar();
+        if ($calendar === null) {
+            return;
+        }
+
+        $event = new CalendarEvent();
+        $event->setCalendar($calendar);
+        $event->setTitle($class->getTitle());
+        $event->setStart($class->getStart());
+
+        $classLink = $this->urlGenerator->generate('perscom_course_class_view', ['id' => $class->getId()]);
+        $content = "<p><a href='$classLink' target='_blank'><i class='ph ph-arrow-square-out'></i> View class</a></p>";
+        $event->setContent($content);
+
+        $this->calendarEventRepository->save($event);
+
+        $class->setEvent($event);
     }
 
     public function processResult(CourseClassResult $result): void
@@ -91,14 +139,5 @@ class ClassResultService
              }
         }
         return $return;
-    }
-
-    /**
-    * @param array<scalar> $items
-    * @return array<int>
-    */
-    private function toIntArray(array $items): array
-    {
-        return array_map(fn (mixed $item): int => (int)$item, $items);
     }
 }
