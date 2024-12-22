@@ -8,6 +8,7 @@ use Exception;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
 use Perscom\Data\FilterObject;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -15,6 +16,7 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly PerscomFactory $perscomFactory,
+        private readonly AfterActionReportService $afterActionReportService,
     ) {
     }
 
@@ -58,14 +60,29 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
             $users = $this->perscomFactory
                 ->getPerscom()
                 ->users()
-                ->search(filter: new FilterObject('id', 'in', $ids))
-                ->json('data')
-            ;
+                ->search(
+                    filter: new FilterObject('id', 'in', $ids),
+                    include: [
+                        'rank',
+                        'rank.image',
+                        'position',
+                        'specialty',
+                    ])
+                ->json('data');
         } catch (Exception) {
             return [];
         }
+        $users = array_combine(array_column($users, 'id'), $users);
+        $this->afterActionReportService->sortUsers($users);
 
-        return array_combine(array_column($users, 'id'), array_column($users, 'name'));
+        foreach ($users as $k => $user) {
+            $users[$k] = [
+                'id' => $user['id'],
+                'name' => $user['name'],
+                'rankImage' => !empty($user['rank']['image']) ? $user['rank']['image']['image_url'] : null,
+            ];
+        }
+        return $users;
     }
 
     private function getRank(int $id): ?array
