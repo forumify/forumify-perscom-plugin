@@ -18,12 +18,11 @@ class ClassResultService
     {
         $courseTitle = $result->getClass()->getCourse()->getTitle();
         $data = $result->getResult();
-
         $presentInstructors = array_filter($data['instructors']);
         if ($data['instructor_service_record'] && !empty($presentInstructors)) {
             $this->recordService->createRecord('service', [
                 'sendNotification' => true,
-                'users' => $presentInstructors,
+                'users' => array_keys($presentInstructors),
                 'text' => "Attended {$courseTitle} as instructor.",
             ]);
         }
@@ -92,5 +91,14 @@ class ClassResultService
              }
         }
         return $return;
+    }
+
+    /**
+    * @param array<scalar> $items
+    * @return array<int>
+    */
+    private function toIntArray(array $items): array
+    {
+        return array_map(fn (mixed $item): int => (int)$item, $items);
     }
 }
