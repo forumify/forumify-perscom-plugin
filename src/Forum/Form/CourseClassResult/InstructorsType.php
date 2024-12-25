@@ -44,7 +44,6 @@ class InstructorsType extends AbstractType
                 'label' => "<strong>{$instructor['name']}</strong> attended",
                 'label_html' => true,
                 'required' => false,
-                'empty_data' => false,
             ]);
         }
     }

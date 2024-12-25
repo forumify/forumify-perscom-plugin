@@ -72,14 +72,14 @@
                 {% endif %}
                 <p class="text-bold mt-2">{{ 'perscom.course.class.instructors'|trans }}</p>
                 <ul>
-                    {% for instructorId, instructor in class.instructors|perscom_course_users %}
+                    {% for instructor in class.instructors|perscom_course_users %}
                         <li style="list-style: none">
                             <div class="flex items-center gap-1">
                                 {% if instructor.rankImage is not null %}
                                     <img width="24px" height="24px" src="{{ instructor.rankImage }}">
                                 {% endif %}
                                 {{ instructor.name }}
-                                {% set instructorAttended = class|perscom_course_instructor_attended(instructorId) %}
+                                {% set instructorAttended = class|perscom_course_instructor_attended(instructor.id) %}
                                 {% if instructorAttended is null %}
                                 {% elseif instructorAttended %}
                                     <i class="ph ph-check-circle" style="color: green"></i>
@@ -101,14 +101,14 @@
                 </ul>
                 <p class="text-bold mt-2">{{ 'perscom.course.class.students'|trans }}</p>
                 <ul>
-                    {% for studentId, student in class.students|perscom_course_users %}
+                    {% for student in class.students|perscom_course_users %}
                         <li style="list-style: none">
                             <div class="flex items-center gap-1">
                                 {% if student.rankImage is not null %}
                                     <img width="24px" height="24px" src="{{ student.rankImage }}">
                                 {% endif %}
                                 {{ student.name }}
-                                {% set studentResult = class|perscom_course_student_result(studentId) %}
+                                {% set studentResult = class|perscom_course_student_result(student.id) %}
                                 {% if studentResult is not null %}
                                     {% set color = {
                                         passed: 'green',

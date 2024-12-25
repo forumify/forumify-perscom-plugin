@@ -24,12 +24,18 @@ class ResultType extends AbstractType
         $class = $options['class'];
 
         $builder
-            ->add('instructors', InstructorsType::class, ['class' => $class])
+            ->add('instructors', InstructorsType::class, [
+                'class' => $class,
+                'required' => false,
+            ])
             ->add('instructor_service_record', CheckboxType::class, [
                 'required' => false,
                 'help' => 'Automatically create service records for the present instructors in this class.',
             ])
-            ->add('students', StudentsType::class, ['class' => $class])
+            ->add('students', StudentsType::class, [
+                'class' => $class,
+                'required' => false,
+            ])
             ->add('student_service_record', CheckboxType::class, [
                 'required' => false,
                 'help' => 'Automatically create service records for all non-excused students in this class.',
