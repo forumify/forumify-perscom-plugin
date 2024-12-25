@@ -11,15 +11,17 @@ use Forumify\PerscomPlugin\Perscom\Message\SyncUserMessage;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
-use Perscom\Data\FilterObject;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Twig\Environment;
 
 class SyncUserService
 {
+    private const USER_INCLUDES = ['rank', 'rank.image'];
+
     public function __construct(
         private readonly PerscomFactory $perscomFactory,
+        private readonly PerscomUserService $perscomUserService,
         private readonly UserRepository $userRepository,
         private readonly Environment $twig,
         private readonly SettingRepository $settingRepository,
@@ -100,7 +102,7 @@ class SyncUserService
             $perscomData = $this->perscomFactory
                 ->getPerscom(true)
                 ->users()
-                ->get($userId, ['rank', 'rank.image', 'position', 'specialty', 'status'])
+                ->get($userId, self::USER_INCLUDES)
                 ->json('data')
             ;
         } catch (\Exception) {
@@ -108,10 +110,6 @@ class SyncUserService
         }
 
         $forumifyUser = $this->userRepository->findOneBy(['email' => $perscomData['email']]);
-        if ($forumifyUser === null) {
-            return [null, null];
-        }
-
         return [$forumifyUser, $perscomData];
     }
 
@@ -122,19 +120,7 @@ class SyncUserService
             return [null, null];
         }
 
-        try {
-            $perscomData = $this->perscomFactory
-                ->getPerscom()
-                ->users()
-                ->search(
-                    filter: [new FilterObject('email', 'like', $forumifyUser->getEmail())],
-                    include: ['rank', 'rank.image', 'position', 'specialty', 'status'],
-                )
-                ->json('data')[0] ?? null;
-        } catch (\Exception) {
-            return [null, null];
-        }
-
+        $perscomData = $this->perscomUserService->getPerscomUser($forumifyUser, self::USER_INCLUDES);
         return [$forumifyUser, $perscomData];
     }
 

@@ -5,16 +5,17 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Service;
 
 use Forumify\Core\Entity\User;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Perscom\Data\FilterObject;
 use Symfony\Bundle\SecurityBundle\Security;
 
 class PerscomUserService
 {
-    private array $perscomUsers = [];
-
     public function __construct(
+        private readonly PerscomUserRepository $perscomUserRepository,
         private readonly PerscomFactory $perscomFactory,
         private readonly Security $security,
     ) {
@@ -30,25 +31,46 @@ class PerscomUserService
         return $this->getPerscomUser($user);
     }
 
-    public function getPerscomUser(User $user): ?array
+    public function getPerscomUser(User $user, array $includes = []): ?array
     {
-        if (isset($this->perscomUsers[$user->getId()])) {
-            return $this->perscomUsers[$user->getId()];
+        /** @var PerscomUser|null $perscomUser */
+        $perscomUser = $this->perscomUserRepository->findOneBy(['user' => $user]);
+        if ($perscomUser !== null) {
+            $perscomUserId = $perscomUser->getId();
+            try {
+                return $this->perscomFactory
+                    ->getPerscom()
+                    ->users()
+                    ->get($perscomUserId, $includes)
+                    ->json('data') ?? null;
+            } catch (\Exception) {
+                return null;
+            }
         }
 
-        // TODO: link perscom user id to forumify user id so we can get the user by id
-        //       then it can use PERSCOM's cache, which should be much faster than a search request.
         try {
-            $this->perscomUsers[$user->getId()] = $this->perscomFactory
+            $perscomUserData = $this->perscomFactory
                 ->getPerscom()
                 ->users()
-                ->search(filter: [new FilterObject('email', 'like', $user->getEmail())])
+                ->search(
+                    filter: [new FilterObject('email', 'like', $user->getEmail())],
+                    include: $includes,
+                )
                 ->json('data')[0] ?? null;
-
-            return $this->perscomUsers[$user->getId()];
         } catch (\Exception) {
             return null;
         }
+
+        if ($perscomUserData === null) {
+            return null;
+        }
+
+        $perscomUser = new PerscomUser();
+        $perscomUser->setId($perscomUserData['id']);
+        $perscomUser->setUser($user);
+        $this->perscomUserRepository->save($perscomUser);
+
+        return $perscomUserData;
     }
 
     public function createUser(string $firstName, string $lastName)
