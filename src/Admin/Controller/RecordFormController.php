@@ -7,6 +7,7 @@ namespace Forumify\PerscomPlugin\Admin\Controller;
 use DateTime;
 use Forumify\PerscomPlugin\Admin\Form\RecordType;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
+use Forumify\PerscomPlugin\Perscom\Exception\PerscomUserNotFoundException;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
@@ -27,14 +28,6 @@ class RecordFormController extends AbstractController
         Request $request,
         string $type
     ): Response {
-        $author = $perscomUserService->getLoggedInPerscomUser();
-        if ($author === null) {
-            $this->addFlash('error', 'perscom.admin.requires_perscom_account');
-            return $this->redirectToRoute('perscom_admin_user_list');
-        }
-
-        $data = ['author_id' => $author['id']];
-
         $userIds = $request->get('users', '');
         $userIds = array_filter(explode(',', $userIds));
         $data['users'] = $userIds;
@@ -47,7 +40,12 @@ class RecordFormController extends AbstractController
             $data = $form->getData();
             $data['created_at'] = $data['created_at']->format(Perscom::DATE_FORMAT);
 
-            $recordService->createRecord($type, $data);
+            try {
+                $recordService->createRecord($type, $data);
+            } catch (PerscomUserNotFoundException) {
+                $this->addFlash('error', 'perscom.admin.requires_perscom_account');
+                return $this->redirectToRoute('perscom_admin_user_list');
+            }
 
             $this->addFlash('success', 'perscom.admin.users.record_form.created');
             return $this->redirectToRoute('perscom_admin_user_list');

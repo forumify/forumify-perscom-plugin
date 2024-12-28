@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Service;
 
+use Exception;
 use Forumify\Core\Entity\Notification;
 use Forumify\Core\Entity\User;
 use Forumify\Core\Notification\NotificationService;
 use Forumify\Core\Repository\UserRepository;
 use Forumify\Core\Twig\Extension\MenuRuntime;
+use Forumify\PerscomPlugin\Perscom\Exception\PerscomException;
+use Forumify\PerscomPlugin\Perscom\Exception\PerscomUserNotFoundException;
 use Forumify\PerscomPlugin\Perscom\Notification\NewRecordNotificationType;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Forumify\PerscomPlugin\Perscom\Service\SyncUserService;
 use Perscom\Data\FilterObject;
 use Perscom\Data\ResourceObject;
@@ -20,6 +24,7 @@ class RecordService
 {
     public function __construct(
         private readonly PerscomFactory $perscomFactory,
+        private readonly PerscomUserService $perscomUserService,
         private readonly NotificationService $notificationService,
         private readonly UserRepository $userRepository,
         private readonly CacheInterface $cache,
@@ -27,21 +32,13 @@ class RecordService
     ) {
     }
 
+    /**
+     * @throws PerscomException
+     */
     public function createRecord(string $type, array $data): void
     {
         $sendNotification = $data['sendNotification'] ?? false;
         unset($data['sendNotification']);
-
-        $userIds = $data['users'] ?? [];
-        unset($data['users']);
-
-        $records = [];
-        foreach ($userIds as $userId) {
-            $records[] = new ResourceObject(null, [
-                'user_id' => $userId,
-                ...$data,
-            ]);
-        }
 
         $perscom = $this->perscomFactory->getPerscom();
         $recordResource = match ($type) {
@@ -52,15 +49,20 @@ class RecordService
             'assignment' => $perscom->assignmentRecords(),
             'qualification' => $perscom->qualificationRecords()
         };
-        $responses = $recordResource->batchCreate($records)->json('data');
 
-        $userIds = array_column($responses, 'user_id');
-        $users = $perscom
-            ->users()
-            ->search(filter: new FilterObject('id', 'in', $userIds))
-            ->json('data');
+        $records = $this->dataToResourceObjects($data);
+        try {
+            $responses = $recordResource->batchCreate($records)->json('data');
+            $userIds = array_column($responses, 'user_id');
+            $users = $perscom
+                ->users()
+                ->search(filter: new FilterObject('id', 'in', $userIds))
+                ->json('data');
+        } catch (Exception $ex) {
+            throw new PerscomException($ex->getMessage(), 0, $ex);
+        }
+
         $users = array_combine(array_column($users, 'id'), array_column($users, 'email'));
-
         foreach ($responses as $response) {
             $email = $users[$response['user_id']] ?? null;
             if ($email === null) {
@@ -84,6 +86,27 @@ class RecordService
         foreach ($userIds as $userId) {
             $this->syncUserService->syncFromPerscom($userId);
         }
+    }
+
+    /**
+     * @return array<ResourceObject>
+     * @throws PerscomUserNotFoundException
+     */
+    private function dataToResourceObjects(array $data): array
+    {
+        $author = $this->perscomUserService->getLoggedInPerscomUser();
+        if ($author === null || empty($author['id'])) {
+            throw new PerscomUserNotFoundException();
+        }
+
+        $userIds = $data['users'] ?? [];
+        unset($data['users']);
+
+        return array_map(static fn (int|string $userId) => new ResourceObject(null, [
+            'user_id' => (int)$userId,
+            'author_id' => $author['id'],
+            ...$data,
+        ]), $userIds);
     }
 
     private function sendNotification(string $type, User $user, array $data): void

@@ -9,6 +9,7 @@ use Forumify\Calendar\Repository\CalendarEventRepository;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassResult;
+use Forumify\PerscomPlugin\Perscom\Exception\PerscomException;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -62,6 +63,9 @@ class CourseClassService
         $class->setEvent($event);
     }
 
+    /**
+     * @throws PerscomException
+     */
     public function processResult(CourseClassResult $result): void
     {
         $courseTitle = $result->getClass()->getCourse()->getTitle();

@@ -8,6 +8,7 @@ use Forumify\Core\Security\VoterAttribute;
 use Forumify\PerscomPlugin\Forum\Form\CourseClassResultType;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassResult;
+use Forumify\PerscomPlugin\Perscom\Exception\PerscomUserNotFoundException;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassResultRepository;
 use Forumify\PerscomPlugin\Perscom\Service\CourseClassService;
 use Forumify\Plugin\Attribute\PluginVersion;
@@ -41,9 +42,13 @@ class CourseClassReportController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $result = $form->getData();
-
             $this->courseClassResultRepository->save($result);
-            $this->classResultService->processResult($result);
+
+            try {
+                $this->classResultService->processResult($result);
+            } catch (PerscomUserNotFoundException) {
+                $this->addFlash('error', 'perscom.admin.requires_perscom_account');
+            }
 
             return $this->redirectToRoute('perscom_course_class_view', ['id' => $class->getId()]);
         }
