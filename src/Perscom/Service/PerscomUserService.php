@@ -11,6 +11,7 @@ use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Perscom\Data\FilterObject;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class PerscomUserService
 {
@@ -77,7 +78,7 @@ class PerscomUserService
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        return $this->perscomFactory
+        $data = $this->perscomFactory
             ->getPerscom()
             ->users()
             ->create([
@@ -86,5 +87,12 @@ class PerscomUserService
                 'email_verified_at' => (new \DateTime())->format(Perscom::DATE_FORMAT),
             ])
             ->json('data');
+
+        $perscomUser = new PerscomUser();
+        $perscomUser->setId($data['id']);
+        $perscomUser->setUser($user);
+        $this->perscomUserRepository->save($perscomUser);
+
+        return $data;
     }
 }
