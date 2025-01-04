@@ -166,6 +166,10 @@ class AttendanceSheet extends AbstractController
         foreach ($this->sheet as $units) {
             foreach ($units as $users) {
                 foreach ($users as $uid => $state) {
+                    if (empty($state)) {
+                        continue;
+                    }
+
                     if ($userId === $uid) {
                         $total++;
                         if ($count === null) {
@@ -233,6 +237,10 @@ class AttendanceSheet extends AbstractController
 
         foreach ($this->sheet[$missionId] as $users) {
             foreach ($users as $state) {
+                if (empty($state)) {
+                    continue;
+                }
+
                 $total++;
                 if ($count === null) {
                     $count = 0;
