@@ -153,7 +153,7 @@ class MissionService
 
         $enlistmentStatuses = $this->settingRepository->get('perscom.enlistment.status') ?? [];
         if (!empty($enlistmentStatuses)) {
-            $filters[] = new FilterObject('status_id', 'not in', $enlistmentStatuses);
+            $filters[] = new FilterObject('status_id', 'not in', $enlistmentStatuses, 'and');
         }
 
         return $this->perscomFactory->getPerscom()
