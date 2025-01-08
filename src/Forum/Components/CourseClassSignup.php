@@ -87,7 +87,7 @@ class CourseClassSignup extends AbstractController
             return false;
         }
 
-        return $rankRequirement['order'] > $user['rank']['order'];
+        return $rankRequirement['order'] >= $user['rank']['order'];
     }
 
     public function isSignedUpAsStudent(): bool
