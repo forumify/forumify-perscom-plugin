@@ -103,6 +103,7 @@ class AttendanceSheet extends AbstractController
                 'position' => $aar->getUnitPosition(),
             ];
         }
+        uasort($units, fn (array $a, array $b): int => $a['position'] <=> $b['position']);
 
         $users = [];
         foreach ($units as $unit) {
@@ -126,7 +127,17 @@ class AttendanceSheet extends AbstractController
 
             foreach ($aar->getAttendance() as $state => $userIds) {
                 foreach ($userIds as $userId) {
-                    $sheetData[$missionId][$unitId][$userId] = $state;
+                    if (isset($sheetData[$missionId][$unitId][$userId])) {
+                        $sheetData[$missionId][$unitId][$userId] = $state;
+                    } else {
+                        // The user changed combat units, let's see if we can find them in a different unit
+                        foreach($sheetData[$missionId] as $mUnitId => $mUserIds) {
+                            if (in_array($userId, array_keys($mUserIds))) {
+                                $sheetData[$missionId][$mUnitId][$userId] = $state;
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -150,12 +161,12 @@ class AttendanceSheet extends AbstractController
 
     public function userAttendance(int $userId): ?int
     {
-        return $this->getUserPercentage($userId, ['present']);
+        return $this->getUserPercentage($userId, ['present']) ?? 0;
     }
 
     public function userAccountability(int $userId): ?int
     {
-        return $this->getUserPercentage($userId, ['present', 'excused']);
+        return $this->getUserPercentage($userId, ['present', 'excused']) ?? 0;
     }
 
     private function getUserPercentage(int $userId, array $states): ?int

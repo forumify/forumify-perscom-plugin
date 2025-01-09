@@ -13,8 +13,6 @@ use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsExcep
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use JsonException;
-use Saloon\Exceptions\Request\FatalRequestException;
-use Saloon\Exceptions\Request\RequestException;
 
 class AfterActionReportService
 {

@@ -19,10 +19,18 @@
                     {{ 'perscom.attendance_sheet.perc_accountable'|trans }}
                 </th>
                 {% for mission in this.missions %}
-                    <th style="writing-mode: vertical-rl; vertical-align: bottom; rotate: -15deg;">
-                        {{ mission.title }}
-                        <br>
-                        <span class="text-light">{{ mission.start|date('Y-m-d') }}</span>
+                    <th
+                        style="
+                            writing-mode: vertical-rl;
+                            vertical-align: bottom;
+                            rotate: -15deg;
+                            width: 60px;
+                        "
+                        title="{{ mission.title }}"
+                    >
+                        <a href="{{ path('perscom_missions_view', { id: mission.id }) }}">
+                            {{ mission.start|date('Y-m-d') }}
+                        </a>
                     </th>
                 {% endfor %}
             </tr>
