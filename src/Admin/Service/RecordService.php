@@ -30,6 +30,55 @@ class RecordService
         $sendNotification = $data['sendNotification'] ?? false;
         unset($data['sendNotification']);
 
+        $userIds = $data['users'] ?? [];
+        unset($data['users']);
+
+        if (empty($userIds)) {
+            return;
+        }
+
+        $resources = array_map(fn (int|string $userId) => new ResourceObject(null, [
+            'user_id' => (int)$userId,
+            'author_id' => $this->getAuthorId(),
+            ...$data,
+        ]), $userIds);
+
+        $this->batchCreate($type, $resources, $sendNotification);
+    }
+
+    /**
+     * @throws PerscomException
+     */
+    public function createRecords(string $type, array $records, bool $sendNotification): void
+    {
+        if (empty($records)) {
+            return;
+        }
+
+        $resources = array_map(fn (array $data) => new ResourceObject(null, [
+            'author_id' => $this->getAuthorId(),
+            ...$data,
+        ]), $records);
+
+        $this->batchCreate($type, $resources, $sendNotification);
+    }
+
+    private function getAuthorId(): int
+    {
+        $author = $this->perscomUserService->getLoggedInPerscomUser();
+        if ($author === null || empty($author['id'])) {
+            throw new PerscomUserNotFoundException();
+        }
+        return $author['id'];
+    }
+
+    /**
+     * @param array<ResourceObject> $records
+     * @return void
+     * @throws PerscomException
+     */
+    private function batchCreate(string $type, array $resources, bool $sendNotification): void
+    {
         $perscom = $this->perscomFactory->getPerscom();
         $recordResource = match ($type) {
             'service' => $perscom->serviceRecords(),
@@ -40,35 +89,12 @@ class RecordService
             'qualification' => $perscom->qualificationRecords()
         };
 
-        $records = $this->dataToResourceObjects($data);
         try {
-            $responses = $recordResource->batchCreate($records)->json('data');
+            $responses = $recordResource->batchCreate($resources)->json('data');
         } catch (Exception $ex) {
             throw new PerscomException($ex->getMessage(), 0, $ex);
         }
 
         $this->eventDispatcher->dispatch(new RecordsCreatedEvent($type, $responses, $sendNotification));
     }
-
-    /**
-     * @return array<ResourceObject>
-     * @throws PerscomUserNotFoundException
-     */
-    private function dataToResourceObjects(array $data): array
-    {
-        $author = $this->perscomUserService->getLoggedInPerscomUser();
-        if ($author === null || empty($author['id'])) {
-            throw new PerscomUserNotFoundException();
-        }
-
-        $userIds = $data['users'] ?? [];
-        unset($data['users']);
-
-        return array_map(static fn (int|string $userId) => new ResourceObject(null, [
-            'user_id' => (int)$userId,
-            'author_id' => $author['id'],
-            ...$data,
-        ]), $userIds);
-    }
-
 }

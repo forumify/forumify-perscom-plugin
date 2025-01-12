@@ -25,10 +25,10 @@
                     <a class="btn-primary" href="{{ path('perscom_course_class_report', { id: class.id }) }}">
                         {{ 'perscom.course.class.new_report'|trans }}
                     </a>
+                    <a class="btn-link btn-icon" href="{{ path('perscom_course_class_edit', { id: class.id }) }}">
+                        <i class="ph ph-pencil-simple-line"></i>
+                    </a>
                 {% endif %}
-                <a class="btn-link btn-icon" href="{{ path('perscom_course_class_edit', { id: class.id }) }}">
-                    <i class="ph ph-pencil-simple-line"></i>
-                </a>
                 <a class="btn-link btn-icon" href="{{ path('perscom_course_class_delete', { id: class.id }) }}">
                     <i class="ph ph-x"></i>
                 </a>

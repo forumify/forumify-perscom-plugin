@@ -9,7 +9,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Perscom\Data\FilterObject;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -40,10 +39,10 @@ class InstructorsType extends AbstractType
         }
 
         foreach ($instructors as $instructor) {
-            $builder->add((string)$instructor['id'], CheckboxType::class, [
-                'label' => "<strong>{$instructor['name']}</strong> attended",
-                'label_html' => true,
-                'required' => false,
+            $id = (string)$instructor['id'];
+            $builder->add($id, InstructorType::class, [
+                'instructor' => $instructor,
+                'label' => $instructor['name'],
             ]);
         }
     }

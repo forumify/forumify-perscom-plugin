@@ -68,80 +68,44 @@ class CourseClassService
      */
     public function processResult(CourseClassResult $result): void
     {
-        $courseTitle = $result->getClass()->getCourse()->getTitle();
         $data = $result->getResult();
-        $presentInstructors = array_filter($data['instructors']);
-        if ($data['instructor_service_record'] && !empty($presentInstructors)) {
-            $this->recordService->createRecord('service', [
-                'sendNotification' => true,
-                'users' => array_keys($presentInstructors),
-                'text' => "Attended {$courseTitle} as instructor.",
-            ]);
-        }
 
-        $students = $this->separateStudentsPerResult($data['students']);
-        if ($data['student_service_record']) {
-            if (!empty($students['passed'])) {
-                $this->recordService->createRecord('service', [
-                    'sendNotification' => true,
-                    'users' => $students['passed'],
-                    'text' => "Graduated from {$courseTitle} with a passing grade."
-                ]);
-            }
+        $serviceRecords = $this->getServiceRecords($data);
+        $this->recordService->createRecords('service', $serviceRecords, true);
 
-            if (!empty($students['failed'])) {
-                $this->recordService->createRecord('service', [
-                    'sendNotification' => true,
-                    'users' => $students['failed'],
-                    'text' => "Completed {$courseTitle} with a non-passing grade."
-                ]);
-            }
-
-            if (!empty($students['no-show'])) {
-                $this->recordService->createRecord('service', [
-                    'sendNotification' => true,
-                    'users' => $students['no-show'],
-                    'text' => "Enrolled in {$courseTitle} but failed to show up."
-                ]);
-            }
-        }
-
-        $qualifications = $this->separateStudentsPerQualification($data['students']);
-        foreach ($qualifications as $qualificationId => $studentIds) {
-            $this->recordService->createRecord('qualification', [
-                'sendNotification' => true,
-                'users' => $studentIds,
-                'qualification_id' => $qualificationId,
-            ]);
-        }
+        $qualificationRecords = $this->getQualificationRecords($data['students']);
+        $this->recordService->createRecords('qualification', $qualificationRecords, true);
     }
 
-    /**
-     * @param array<int, array{result: string, qualifications: int[]}> $students
-     * @return array<string, int>
-     */
-    private function separateStudentsPerResult(array $students): array
+    private function getServiceRecords(array $result): array
     {
-        $return = [];
-        foreach ($students as $studentId => $student) {
-            $return[$student['result']][] = $studentId;
+        $records = [];
+
+        $instructors = array_filter(array_combine(array_keys($result['instructors']), array_column($result['instructors'], 'service_record_text')));
+        foreach ($instructors as $id => $text) {
+            $records[] = ['user_id' => $id, 'text' => $text];
         }
 
-        return $return;
+        $students = array_filter(array_combine(array_keys($result['students']), array_column($result['students'], 'service_record_text')));
+        foreach ($students as $id => $text) {
+            $records[] = ['user_id' => $id, 'text' => $text];
+        }
+
+        return $records;
     }
 
-    /**
-     * @param array<int, array{result: string, qualifications: int[]}> $students
-     * @return array<int, int>
-     */
-    private function separateStudentsPerQualification(array $students): array
+    private function getQualificationRecords(array $students): array
     {
-        $return = [];
-        foreach ($students as $studentId => $student) {
-             foreach ($student['qualifications'] as $qualificationId) {
-                 $return[$qualificationId][] = $studentId;
-             }
+        $records = [];
+        foreach ($students as $id => $result) {
+            foreach ($result['qualifications'] as $qualificationId) {
+                $records[] = [
+                    'user_id' => $id,
+                    'qualification_id' => $qualificationId,
+                ];
+            }
         }
-        return $return;
+
+        return $records;
     }
 }

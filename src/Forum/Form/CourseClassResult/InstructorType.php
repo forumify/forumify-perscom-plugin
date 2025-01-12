@@ -4,33 +4,31 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Form\CourseClassResult;
 
-use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class ResultType extends AbstractType
+class InstructorType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->define('class');
-        $resolver->setAllowedTypes('class', [CourseClass::class]);
+        $resolver->define('instructor');
+        $resolver->setAllowedTypes('instructor', 'array');
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        /** @var CourseClass $class */
-        $class = $options['class'];
-
         $builder
-            ->add('instructors', InstructorsType::class, [
-                'class' => $class,
+            ->add('attended', CheckboxType::class, [
                 'required' => false,
             ])
-            ->add('students', StudentsType::class, [
-                'class' => $class,
+            ->add('service_record_text', TextType::class, [
                 'required' => false,
+                'help' => 'Leave blank to not create a service record',
             ])
         ;
     }
 }
+

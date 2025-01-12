@@ -101,7 +101,7 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
         }
 
         $instructors = $class->getResult()->getResult()['instructors'] ?? null;
-        return $instructors[$instructorId] ?? false;
+        return $instructors[$instructorId]['attended'] ?? false;
     }
 
     public function studentResult(CourseClass $class, int $studentId): ?string

@@ -8,6 +8,7 @@ use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Form\QualificationType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -41,6 +42,9 @@ class StudentType extends AbstractType
                 'multiple' => true,
                 'required' => false,
                 'choice_filter' => fn ($id) => in_array($id, $class->getCourse()->getQualifications(), true)
+            ])
+            ->add('service_record_text', TextType::class, [
+                'required' => false,
             ])
         ;
     }
