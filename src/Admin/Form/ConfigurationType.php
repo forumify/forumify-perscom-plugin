@@ -38,6 +38,7 @@ class ConfigurationType extends AbstractType
             ])
             ->add('perscom__enlistment__form', PerscomFormType::class, [
                 'label' => 'Enlistment Form',
+                'required' => false,
                 'help' => 'The form to use for enlistments, by default, all required fields to create a PERSCOM user are already added by this plugin.',
                 'placeholder' => 'Select a form to use for enlistments',
             ])
