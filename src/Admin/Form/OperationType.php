@@ -8,6 +8,7 @@ use Forumify\Core\Form\RichTextEditorType;
 use Forumify\PerscomPlugin\Perscom\Entity\Operation;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -62,6 +63,10 @@ class OperationType extends AbstractType
             ->add('end', DateType::class, [
                 'widget' => 'single_text',
                 'required' => false,
+            ])
+            ->add('requestRsvp', CheckboxType::class, [
+                'required' => false,
+                'help' => 'perscom.admin.operation.rsvp_help',
             ])
             ->add('missionBriefingTemplate', RichTextEditorType::class, [
                 'required' => false,

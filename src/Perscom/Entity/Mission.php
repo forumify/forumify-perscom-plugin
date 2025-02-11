@@ -59,9 +59,13 @@ class Mission
     #[ORM\OneToOne(targetEntity: CalendarEvent::class, fetch: 'EXTRA_LAZY')]
     private ?CalendarEvent $calendarEvent = null;
 
+    #[ORM\OneToMany(mappedBy: 'mission', targetEntity: MissionRSVP::class, fetch: 'EXTRA_LAZY', cascade: ['persist', 'remove'])]
+    private Collection $rsvps;
+
     public function __construct()
     {
         $this->afterActionReports = new ArrayCollection();
+        $this->rsvps = new ArrayCollection();
     }
 
     public function getTitle(): string
@@ -175,5 +179,20 @@ class Mission
     public function setCalendarEvent(?CalendarEvent $calendarEvent): void
     {
         $this->calendarEvent = $calendarEvent;
+    }
+
+    public function canRsvp(): bool
+    {
+        return $this->getStart() > new DateTime();
+    }
+
+    public function getRsvps(): Collection
+    {
+        return $this->rsvps;
+    }
+
+    public function setRsvps(Collection $rsvps): void
+    {
+        $this->rsvps = $rsvps;
     }
 }

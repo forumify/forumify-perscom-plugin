@@ -8,10 +8,12 @@ use Forumify\Core\Entity\User;
 use Forumify\Core\Security\VoterAttribute;
 use Forumify\PerscomPlugin\Forum\Form\AfterActionReportType;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
+use Forumify\PerscomPlugin\Perscom\Entity\MissionRSVP;
 use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\MissionRSVPRepository;
 use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Perscom\Data\FilterObject;
@@ -170,6 +172,7 @@ class AfterActionReportController extends AbstractController
         }
 
         return $this->render('@ForumifyPerscomPlugin/frontend/aar/form.html.twig', [
+            'aar' => $aar,
             'form' => $form->createView(),
             'title' => $isNew ? 'perscom.aar.create' : 'perscom.aar.edit',
             'cancelPath' => $isNew
@@ -180,9 +183,23 @@ class AfterActionReportController extends AbstractController
     }
 
     #[Route('/unit/{id}', 'unit')]
-    public function getUnit(int $id): JsonResponse
+    public function getUnit(int $id, Request $request, MissionRSVPRepository $missionRSVPRepository): JsonResponse
     {
         $users = $this->afterActionReportService->findUsersByUnit($id);
+
+        $missionId = $request->get('mission');
+        $rsvps = $missionId === null 
+            ? []
+            : $missionRSVPRepository->findBy([
+                'mission' => $missionId,
+                'perscomUserId' => array_column($users, 'id'),
+            ]);
+
+        $usersToRsvp = [];
+        /** @var MissionRSVP $rsvp */
+        foreach ($rsvps as $rsvp) {
+            $usersToRsvp[$rsvp->getPerscomUserId()] = $rsvp->isGoing();
+        }
 
         $response = [];
         foreach ($users as $user) {
@@ -190,6 +207,7 @@ class AfterActionReportController extends AbstractController
                 'id' => $user['id'],
                 'name' => $user['name'],
                 'rankImage' => !empty($user['rank']['image']) ? $user['rank']['image']['image_url'] : null,
+                'rsvp' => $usersToRsvp[$user['id']] ?? null,
             ];
         }
 

@@ -48,6 +48,9 @@ class Operation implements AccessControlledEntityInterface
     #[ORM\OneToMany(mappedBy: 'operation', targetEntity: Mission::class, cascade: ['persist', 'remove'])]
     private Collection $missions;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => false])]
+    private bool $requestRsvp = false;
+
     public function __construct()
     {
         $this->missions = new ArrayCollection();
@@ -144,6 +147,16 @@ class Operation implements AccessControlledEntityInterface
     public function setAfterActionReportTemplate(string $afterActionReportTemplate): void
     {
         $this->afterActionReportTemplate = $afterActionReportTemplate;
+    }
+
+    public function isRequestRsvp(): bool
+    {
+        return $this->requestRsvp;
+    }
+
+    public function setRequestRsvp(bool $requestRsvp): void
+    {
+        $this->requestRsvp = $requestRsvp;
     }
 
     public function getACLPermissions(): array

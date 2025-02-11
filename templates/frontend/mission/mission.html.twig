@@ -21,6 +21,9 @@
             </div>
         </div>
         <div class="flex gap-2">
+            {% if mission.operation.requestRsvp and mission.canRsvp %}
+                {{ component('Perscom\\MissionRSVPButton', { mission: mission }) }}
+            {% endif %}
             {% if can('manage_after_action_reports', mission.operation) %}
                 <a class="btn-primary" href="{{ path('perscom_aar_create', { mission: mission.id }) }}">
                     {{ 'perscom.aar.create'|trans }}

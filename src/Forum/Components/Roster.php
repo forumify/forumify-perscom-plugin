@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
-use Perscom\Data\ScopeObject;
-use Symfony\Component\Stopwatch\Stopwatch;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -24,7 +22,7 @@ class Roster
     #[LiveProp(writable: true)]
     public ?int $selectedGroup = null;
 
-    public function __construct(private readonly PerscomFactory $perscomFactory, private Stopwatch $stopwatch)
+    public function __construct(private readonly PerscomFactory $perscomFactory)
     {
     }
 

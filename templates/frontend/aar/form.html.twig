@@ -4,7 +4,7 @@
 {% endblock %}
 {% block body %}
     <div {{ stimulus_controller('forumify/forumify-perscom-plugin/aar_form', {
-        fetchUnitUri: path('perscom_aar_unit', { id: 'id' })
+        fetchUnitUri: path('perscom_aar_unit', { id: 'id', mission: aar.mission.id })
     }) }}>
         <div class="flex justify-center d-none" {{ stimulus_target('forumify/forumify-perscom-plugin/aar_form', 'loader') }}>
             {% include '@Forumify/components/loader.html.twig' %}

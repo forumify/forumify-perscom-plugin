@@ -1,0 +1,45 @@
+{% set rsvp = this.rsvp %}
+{% set going = rsvp is not null and rsvp.going %}
+<div {{ attributes }}>
+    <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'bottom-end' }) }}>
+        {% if going %}
+            <button class="btn-link" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
+                <i class="ph ph-check" style="color: green"></i>{{ 'perscom.mission.rsvp.going'|trans }}
+            </button>
+        {% elseif rsvp is not null %}
+            <button class="btn-link" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
+                <i class="ph ph-x" style="color: red"></i>{{ 'perscom.mission.rsvp.not_going'|trans }}
+            </button>
+        {% else %}
+            <button class="btn-primary" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
+                <i class="ph ph-calendar"></i>{{ 'perscom.mission.rsvp.rsvp'|trans }}
+            </button>
+        {% endif %}
+        <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
+            {% if rsvp is null or not going %}
+                <button class="btn-link" {{
+                    stimulus_action('live', 'action', parameters: { action: 'toggle', going: true })
+                        |stimulus_action('forumify/forumify-platform/menu', 'close')
+                }}>
+                    <i class="ph ph-check-circle" style="color: green"></i>{{ 'perscom.mission.rsvp.going'|trans }}
+                </button>
+            {% endif %}
+            {% if rsvp is null or going %}
+                <button class="btn-link" {{
+                    stimulus_action('live', 'action', parameters: { action: 'toggle', going: false })
+                        |stimulus_action('forumify/forumify-platform/menu', 'close')
+                }}>
+                    <i class="ph ph-x-circle" style="color: red"></i>{{ 'perscom.mission.rsvp.not_going'|trans }}
+                </button>
+            {% endif %}
+            {% if rsvp is not null %}
+                <button class="btn-link" {{
+                    stimulus_action('live', 'action', parameters: { action: 'cancel' })
+                        |stimulus_action('forumify/forumify-platform/menu', 'close')
+                }}>
+                    <i class="ph ph-prohibit-inset" style="color: gray"></i>{{ 'perscom.mission.rsvp.remove_rsvp'|trans }}
+                </button>
+            {% endif %}
+        </div>
+    </div>
+</div>

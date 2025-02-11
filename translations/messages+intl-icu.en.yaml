@@ -89,6 +89,7 @@ perscom:
                 single: 'Operation'
                 plural: 'Operations'
             description_help: 'Brief description that is shown on the operation list page.'
+            rsvp_help: 'When enabled, users will get the option to mark their own attendance before the mission, which will prefil attendance on the after action report.'
     roster:
         title: 'Roster'
         no_users: 'No users in unit.'
@@ -165,6 +166,11 @@ perscom:
         mission_by: 'Mission by'
         start: 'Starts on'
         end: 'Ends on'
+        rsvp:
+            rsvp: 'RSVP'
+            going: 'Going'
+            not_going: 'Not Going'
+            remove_rsvp: 'Remove RSVP'
     aar:
         title: 'After Action Report'
         create: 'New After Action Report'

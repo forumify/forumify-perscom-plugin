@@ -47,6 +47,13 @@ export default class extends Controller {
       [...tr.querySelectorAll('input[type="radio"]')].forEach((input) => {
         input.name = input.name.replace('__ID__', user.id);
         input.dataset.userId = user.id;
+
+        if (
+          (user.rsvp === true && input.value === 'present') ||
+          (user.rsvp === false && input.value === 'excused')
+        ) {
+          input.checked = true;
+        }
       });
 
       const nameTd = tr.firstElementChild;
