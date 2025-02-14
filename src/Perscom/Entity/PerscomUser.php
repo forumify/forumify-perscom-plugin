@@ -16,6 +16,7 @@ class PerscomUser
     private int $id;
 
     #[ORM\OneToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private User $user;
 
     public function getId(): int
