@@ -75,8 +75,13 @@ class RecordTable extends AbstractTable
         return $this;
     }
 
+    protected function modifyData(): void
+    {
+    }
+
     protected function getData(int $limit, int $offset, array $search, array $sort): array
     {
+        $this->modifyData();
         return array_slice($this->data, $offset, $limit);
     }
 

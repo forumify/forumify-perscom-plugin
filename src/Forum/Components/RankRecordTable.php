@@ -30,6 +30,11 @@ class RankRecordTable extends RecordTable
             ->addDocumentColumn(true, 'rank');
     }
 
+    protected function modifyData(): void
+    {
+        $this->data = array_filter($this->data, static fn (array $row) => $row['rank'] !== null);
+    }
+
     private function renderRank(string $rankName, array $record): string
     {
         $imgUrl = $record['rank']['image']['image_url'] ?? null;

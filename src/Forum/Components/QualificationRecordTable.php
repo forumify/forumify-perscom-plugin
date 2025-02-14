@@ -21,4 +21,9 @@ class QualificationRecordTable extends RecordTable
             ])
             ->addDocumentColumn(true, 'qualification');
     }
+
+    protected function modifyData(): void
+    {
+        $this->data = array_filter($this->data, static fn (array $row) => $row['qualification'] !== null);
+    }
 }
