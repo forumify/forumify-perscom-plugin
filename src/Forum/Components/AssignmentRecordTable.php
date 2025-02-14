@@ -27,9 +27,8 @@ class AssignmentRecordTable extends RecordTable
             ]);
     }
 
-    protected function getData(int $limit, int $offset, array $search, array $sort): array
+    protected function modifyData(): void
     {
-        $relevantData = array_filter($this->data, static fn (array $row) => $row['position'] !== null || $row['unit'] !== null);
-        return array_slice($relevantData, $offset, $limit);
+        $this->data = array_filter($this->data, static fn (array $row) => $row['position'] !== null || $row['unit'] !== null);
     }
 }
