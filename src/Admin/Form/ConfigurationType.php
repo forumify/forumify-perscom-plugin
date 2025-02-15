@@ -83,12 +83,6 @@ class ConfigurationType extends AbstractType
 
         if ($this->pluginVersionChecker->isVersionInstalled('forumify/forumify-perscom-plugin', 'premium')) {
             $builder
-                // Operations
-                ->add('perscom__operations__show_in_menu', CheckboxType::class, [
-                    'label' => 'Show in menu',
-                    'help' => 'Add "Operations" to the PERSCOM menu. Turn this on if you want to show off your operations to guests or users who do not have access to the operations center.',
-                    'required' => false,
-                ])
                 // Reporting In
                 ->add('perscom__report_in__enabled', CheckboxType::class, [
                     'label' => 'Enabled',
@@ -119,12 +113,6 @@ class ConfigurationType extends AbstractType
                 ->add('perscom__report_in__failure_status', StatusType::class, [
                     'label' => 'Failure status',
                     'help' => 'Status to move the user to when they fail to report in. For example: AWOL',
-                    'required' => false,
-                ])
-                // Courses
-                ->add('perscom__courses__show_in_menu', CheckboxType::class, [
-                    'label' => 'Show in menu',
-                    'help' => 'Add "Courses" to the PERSCOM menu. Turn this on if you want to show off your courses to guests or users who do not have access to the operations center.',
                     'required' => false,
                 ])
             ;

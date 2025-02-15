@@ -1,15 +1,23 @@
-{% set isPremium = plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
 {% embed '@Forumify/components/menu.html.twig' with { placement: 'bottom-start' } %}
-    {% block button_text %}{{ name }}{% endblock %}
+    {% block button_text %}{{ item.name }}{% endblock %}
     {% block menu_items %}
-        <a class="btn-link" href="{{ path('perscom_roster') }}">{{ 'perscom.roster.title'|trans }}</a>
-        <a class="btn-link" href="{{ path('perscom_awards') }}">{{ 'perscom.award.title'|trans }}</a>
-        <a class="btn-link" href="{{ path('perscom_ranks') }}">{{ 'perscom.rank.title'|trans }}</a>
-        {% if isPremium %}
-            {% if setting('perscom.operations.show_in_menu') %}
+        {% if (canEnlist and item.payload.roster_guests) or (not canEnlist and item.payload.roster_active_duty) %}
+            <a class="btn-link" href="{{ path('perscom_roster') }}">{{ 'perscom.roster.title'|trans }}</a>
+        {% endif %}
+        {% if (canEnlist and item.payload.awards_guests) or (not canEnlist and item.payload.awards_active_duty) %}
+            <a class="btn-link" href="{{ path('perscom_awards') }}">{{ 'perscom.award.title'|trans }}</a>
+        {% endif %}
+        {% if (canEnlist and item.payload.ranks_guests) or (not canEnlist and item.payload.ranks_active_duty) %}
+            <a class="btn-link" href="{{ path('perscom_ranks') }}">{{ 'perscom.rank.title'|trans }}</a>
+        {% endif %}
+        {% if (canEnlist and item.payload.qualifications_guests) or (not canEnlist and item.payload.qualifications_active_duty) %}
+            <a class="btn-link" href="{{ path('perscom_qualifications') }}">{{ 'perscom.qualification.title'|trans }}</a>
+        {% endif %}
+        {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
+            {% if (canEnlist and item.payload.operations_guests) or (not canEnlist and item.payload.operations_active_duty) %}
                 <a class="btn-link" href="{{ path('perscom_operations_list') }}">{{ 'perscom.opcenter.operations'|trans }}</a>
             {% endif %}
-            {% if setting('perscom.courses.show_in_menu') %}
+            {% if (canEnlist and item.payload.courses_guests) or (not canEnlist and item.payload.courses_active_duty) %}
                 <a class="btn-link" href="{{ path('perscom_courses_list') }}">{{ 'perscom.opcenter.courses'|trans }}</a>
             {% endif %}
         {% endif %}

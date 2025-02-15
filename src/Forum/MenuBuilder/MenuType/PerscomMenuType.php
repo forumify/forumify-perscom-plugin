@@ -25,8 +25,13 @@ class PerscomMenuType extends AbstractMenuType
     protected function render(MenuItem $item): string
     {
         return $this->twig->render('@ForumifyPerscomPlugin/frontend/menu/perscom.html.twig', [
-            'name' => $item->getName(),
+            'item' => $item,
             'canEnlist' => $this->perscomEnlistService->canEnlist(),
         ]);
+    }
+
+    public function getPayloadFormType(): ?string
+    {
+        return PerscomMenuFormType::class;
     }
 }

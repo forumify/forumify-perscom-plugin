@@ -132,6 +132,9 @@ perscom:
     award:
         title: 'Awards'
         no_awards: 'No awards.'
+    qualification:
+        title: 'Qualifications'
+        no_qualifications: 'No qualifications.'
     opcenter:
         operations_center: 'Operations Center'
         pfile: 'Personnel File'
