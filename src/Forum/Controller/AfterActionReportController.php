@@ -15,6 +15,7 @@ use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRSVPRepository;
 use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
+use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Perscom\Data\FilterObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -32,6 +33,7 @@ class AfterActionReportController extends AbstractController
         private readonly MissionRepository $missionRepository,
         private readonly PerscomFactory $perscomFactory,
         private readonly AfterActionReportService $afterActionReportService,
+        private readonly PerscomUserService $userService,
     ) {
     }
 
@@ -74,7 +76,7 @@ class AfterActionReportController extends AbstractController
 
         foreach ($attendance as &$list) {
             $list = array_filter($list);
-            $this->afterActionReportService->sortUsers($list);
+            $this->userService->sortUsers($list);
 
             foreach ($list as $k => $user) {
                 $list[$k] = [

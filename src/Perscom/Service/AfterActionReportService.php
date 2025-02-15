@@ -21,6 +21,7 @@ class AfterActionReportService
         private readonly SettingRepository $settingRepository,
         private readonly AfterActionReportRepository $afterActionReportRepository,
         private readonly RecordService $recordService,
+        private readonly PerscomUserService $userService,
     ) {
     }
 
@@ -124,32 +125,7 @@ class AfterActionReportService
             return [];
         }
 
-        $this->sortUsers($users);
+        $this->userService->sortUsers($users);
         return $users;
-    }
-
-    public function sortUsers(&$users): void
-    {
-        usort($users, static function (array $a, array $b): int {
-            $aRank = $a['rank']['order'] ?? 100;
-            $bRank = $b['rank']['order'] ?? 100;
-            if ($aRank !== $bRank) {
-                return $aRank - $bRank;
-            }
-
-            $aPos = $a['position']['order'] ?? 100;
-            $bPos = $b['position']['order'] ?? 100;
-            if ($aPos !== $bPos) {
-                return $aPos - $bPos;
-            }
-
-            $aSpec = $a['specialty']['order'] ?? 100;
-            $bSpec = $b['specialty']['order'] ?? 100;
-            if ($aSpec !== $bSpec) {
-                return $aSpec - $bSpec;
-            }
-
-            return strcmp($a['name'], $b['name']);
-        });
     }
 }

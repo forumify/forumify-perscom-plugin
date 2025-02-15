@@ -8,7 +8,7 @@ use Exception;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
-use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
+use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Perscom\Data\FilterObject;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -16,7 +16,7 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly PerscomFactory $perscomFactory,
-        private readonly AfterActionReportService $afterActionReportService,
+        private readonly PerscomUserService $userService,
     ) {
     }
 
@@ -73,7 +73,7 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
             return [];
         }
         $users = array_combine(array_column($users, 'id'), $users);
-        $this->afterActionReportService->sortUsers($users);
+        $this->userService->sortUsers($users);
 
         foreach ($users as $k => $user) {
             $users[$k] = [

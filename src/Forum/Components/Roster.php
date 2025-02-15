@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
@@ -22,8 +23,10 @@ class Roster
     #[LiveProp(writable: true)]
     public ?int $selectedGroup = null;
 
-    public function __construct(private readonly PerscomFactory $perscomFactory)
-    {
+    public function __construct(
+        private readonly PerscomFactory $perscomFactory,
+        private readonly PerscomUserService $perscomUserService,
+    ) {
     }
 
     #[LiveAction]
@@ -55,7 +58,12 @@ class Roster
             )
             ->json('data') ?? [];
 
-        return $this->mergeSecondaryUnitsIntoPrimary($group);
+        $group = $this->mergeSecondaryUnitsIntoPrimary($group);
+        foreach ($group['units'] as &$unit) {
+            $this->perscomUserService->sortUsers($unit['users']);
+        }
+
+        return $group;
     }
 
     private function mergeSecondaryUnitsIntoPrimary(array $group): array

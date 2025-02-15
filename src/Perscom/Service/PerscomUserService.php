@@ -11,7 +11,6 @@ use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Perscom\Data\FilterObject;
 use Symfony\Bundle\SecurityBundle\Security;
-use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class PerscomUserService
 {
@@ -94,5 +93,30 @@ class PerscomUserService
         $this->perscomUserRepository->save($perscomUser);
 
         return $data;
+    }
+
+    public function sortUsers(&$users): void
+    {
+        usort($users, static function (array $a, array $b): int {
+            $aRank = $a['rank']['order'] ?? 100;
+            $bRank = $b['rank']['order'] ?? 100;
+            if ($aRank !== $bRank) {
+                return $aRank - $bRank;
+            }
+
+            $aPos = $a['position']['order'] ?? 100;
+            $bPos = $b['position']['order'] ?? 100;
+            if ($aPos !== $bPos) {
+                return $aPos - $bPos;
+            }
+
+            $aSpec = $a['specialty']['order'] ?? 100;
+            $bSpec = $b['specialty']['order'] ?? 100;
+            if ($aSpec !== $bSpec) {
+                return $aSpec - $bSpec;
+            }
+
+            return strcmp($a['name'], $b['name']);
+        });
     }
 }
