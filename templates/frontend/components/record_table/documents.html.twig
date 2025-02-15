@@ -6,7 +6,11 @@
         {% block modalContent %}
             <div class="card">
                 <div class="card-title">
-                    {{ 'perscom.user.document'|trans }}
+                    {% if record.document is defined and record.document is not null %}
+                        {{ record.document.name }}
+                    {% else %}
+                        {{ 'perscom.user.document'|trans }}
+                    {% endif %}
                 </div>
                 <div class="card-body text-left">
                     {% if item is not null and item.image is defined and item.image is not null and item.image.image_url %}
