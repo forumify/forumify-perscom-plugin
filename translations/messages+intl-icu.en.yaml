@@ -169,6 +169,7 @@ perscom:
         mission_by: 'Mission by'
         start: 'Starts on'
         end: 'Ends on'
+        rsvps: 'Expected Attendance'
         rsvp:
             rsvp: 'RSVP'
             going: 'Going'

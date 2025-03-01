@@ -39,8 +39,8 @@
             {% endif %}
         </div>
     </div>
-    {% if can('view_after_action_reports', mission.operation) %}
-        <div class="mb-4">
+    {% if can('view_after_action_reports', mission.operation) and not mission.afterActionReports.empty %}
+        <div class="mb-8">
             <h3>{{ 'perscom.mission.aars'|trans }}</h3>
             {{ component('Perscom\\AfterActionReportList', { mission: mission }) }}
         </div>
@@ -61,4 +61,13 @@
             {{ mission.briefing|rich }}
         </div>
     </div>
+    {% if mission.operation.requestRsvp %}
+        <div class="mt-8">
+            <h3>{{ 'perscom.mission.rsvps'|trans }}</h3>
+            {{ component('Perscom\\MissionRSVPs', {
+                loading: 'lazy',
+                mission: mission,
+            }) }}
+        </div>
+    {% endif %}
 {% endblock %}

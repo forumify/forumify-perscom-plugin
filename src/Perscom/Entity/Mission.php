@@ -186,6 +186,9 @@ class Mission
         return $this->getStart() > new DateTime();
     }
 
+    /**
+     * @return Collection<int, MissionRSVP>
+     */
     public function getRsvps(): Collection
     {
         return $this->rsvps;
