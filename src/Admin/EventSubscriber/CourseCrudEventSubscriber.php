@@ -36,11 +36,6 @@ class CourseCrudEventSubscriber implements EventSubscriberInterface
         $course = $event->getEntity();
         $form = $event->getForm();
 
-        if ($course->getPosition() === 0) {
-            $position = $this->courseRepository->getHighestPosition();
-            $course->setPosition($position + 1);
-        }
-
         $newImage = $form->get('newImage')->getData();
         if ($newImage instanceof UploadedFile) {
             $image = $this->mediaService->saveToFilesystem($this->assetStorage, $newImage);

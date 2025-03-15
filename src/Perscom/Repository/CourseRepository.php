@@ -18,7 +18,7 @@ class CourseRepository extends AbstractRepository
         return Course::class;
     }
 
-    public function getHighestPosition(): int
+    public function getHighestPosition(object $entity): int
     {
         try {
             return $this->createQueryBuilder('e')
