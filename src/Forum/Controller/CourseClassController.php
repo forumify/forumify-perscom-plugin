@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class CourseClassController extends AbstractController
 {
     public function __construct(
-        private readonly CourseClassService $courseClassService,
+        private readonly CourseClassRepository $courseClassRepository,
     ) {
     }
 
@@ -73,7 +73,7 @@ class CourseClassController extends AbstractController
         }
 
         $courseSlug = $class->getCourse()->getSlug();
-        $this->courseClassService->remove($class);
+        $this->courseClassRepository->remove($class);
 
         $this->addFlash('success', 'perscom.course.class.deleted');
         return $this->redirectToRoute('perscom_courses_view', ['slug' => $courseSlug]);
@@ -85,7 +85,7 @@ class CourseClassController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $class = $form->getData();
-            $this->courseClassService->createOrUpdate($class, $isNew);
+            $this->courseClassRepository->save($class);
 
             $this->addFlash('success', $isNew ? 'perscom.course.class.created' : 'perscom.course.class.edited');
             return $this->redirectToRoute('perscom_course_class_view', ['id' => $class->getId()]);

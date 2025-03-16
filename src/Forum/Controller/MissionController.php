@@ -7,8 +7,8 @@ namespace Forumify\PerscomPlugin\Forum\Controller;
 use Forumify\Core\Security\VoterAttribute;
 use Forumify\PerscomPlugin\Forum\Form\MissionType;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
+use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\OperationRepository;
-use Forumify\PerscomPlugin\Perscom\Service\MissionService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +21,7 @@ class MissionController extends AbstractController
 {
     public function __construct(
         private readonly OperationRepository $operationRepository,
-        private readonly MissionService $missionService,
+        private readonly MissionRepository $missionRepository,
     ) {
     }
 
@@ -86,7 +86,7 @@ class MissionController extends AbstractController
         }
 
         $operationSlug = $mission->getOperation()->getSlug();
-        $this->missionService->remove($mission);
+        $this->missionRepository->remove($mission);
 
         $this->addFlash('success', 'perscom.mission.deleted');
         return $this->redirectToRoute('perscom_operations_view', ['slug' => $operationSlug]);
@@ -98,7 +98,7 @@ class MissionController extends AbstractController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $mission = $form->getData();
-            $this->missionService->createOrUpdate($mission, $isNew);
+            $this->missionRepository->save($mission);
 
             $this->addFlash('success', $isNew ? 'perscom.mission.created' : 'perscom.mission.edited');
             return $this->redirectToRoute('perscom_missions_view', [

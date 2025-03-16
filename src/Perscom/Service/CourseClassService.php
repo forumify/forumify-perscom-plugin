@@ -23,34 +23,22 @@ class CourseClassService
     ) {
     }
 
-    public function createOrUpdate(CourseClass $class, bool $isNew): void
-    {
-        $this->courseClassRepository->save($class);
-        if ($isNew) {
-            $this->createCalendarEvent($class);
-            $this->courseClassRepository->save($class);
-        }
-    }
-
-    public function remove(CourseClass $class): void
-    {
-        $this->calendarEventRepository->remove($class);
-
-        $event = $class->getEvent();
-        if ($event !== null) {
-            $this->calendarEventRepository->remove($event);
-        }
-    }
-
-    private function createCalendarEvent(CourseClass $class): void
+    public function createCalendarEvent(CourseClass $class): void
     {
         $calendar = $class->getCalendar();
         if ($calendar === null) {
             return;
         }
 
-        $event = new CalendarEvent();
-        $event->setCalendar($calendar);
+        $event = $this->createOrUpdateCalendarEvent($class);
+        $class->setEvent($event);
+        $this->courseClassRepository->save($class);
+    }
+
+    public function createOrUpdateCalendarEvent(CourseClass $class): CalendarEvent
+    {
+        $event = $class->getEvent() ?? new CalendarEvent();
+        $event->setCalendar($class->getCalendar());
         $event->setTitle($class->getTitle());
         $event->setStart($class->getStart());
 
@@ -59,8 +47,7 @@ class CourseClassService
         $event->setContent($content);
 
         $this->calendarEventRepository->save($event);
-
-        $class->setEvent($event);
+        return $event;
     }
 
     /**

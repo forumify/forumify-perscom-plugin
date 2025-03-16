@@ -35,35 +35,21 @@ class MissionService
     ) {
     }
 
-    public function createOrUpdate(Mission $mission, bool $isNew): void
-    {
-        $this->missionRepository->save($mission);
-
-        if ($isNew) {
-            $this->createCalendarEvent($mission);
-            $this->sendNotification($mission);
-            $this->missionRepository->save($mission);
-        }
-    }
-
-    public function remove(Mission $mission): void
-    {
-        $this->missionRepository->remove($mission);
-
-        $event = $mission->getCalendarEvent();
-        if ($event !== null) {
-            $this->calendarEventRepository->remove($event);
-        }
-    }
-
-    private function createCalendarEvent(Mission $mission): void
+    public function createCalendarEvent(Mission $mission): void
     {
         $calendar = $mission->getCalendar();
         if ($calendar === null) {
             return;
         }
 
-        $event = new CalendarEvent();
+        $event = $this->createOrUpdateCalendarEvent($mission);
+        $mission->setCalendarEvent($event);
+        $this->missionRepository->save($mission);
+    }
+
+    public function createOrUpdateCalendarEvent(Mission $mission): CalendarEvent
+    {
+        $event = $mission->getCalendarEvent() ?? new CalendarEvent();
         $event->setCalendar($mission->getCalendar());
         $event->setTitle($mission->getTitle());
         $event->setStart($mission->getStart());
@@ -73,11 +59,10 @@ class MissionService
         $event->setContent($content);
 
         $this->calendarEventRepository->save($event);
-
-        $mission->setCalendarEvent($event);
+        return $event;
     }
 
-    private function sendNotification(Mission $mission): void
+    public function sendNotification(Mission $mission): void
     {
         if (!$mission->isSendNotification()) {
             return;
