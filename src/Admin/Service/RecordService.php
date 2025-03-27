@@ -63,11 +63,11 @@ class RecordService
         $this->batchCreate($type, $resources, $sendNotification);
     }
 
-    private function getAuthorId(): int
+    private function getAuthorId(): ?int
     {
         $author = $this->perscomUserService->getLoggedInPerscomUser();
         if ($author === null || empty($author['id'])) {
-            throw new PerscomUserNotFoundException();
+            return null;
         }
         return $author['id'];
     }

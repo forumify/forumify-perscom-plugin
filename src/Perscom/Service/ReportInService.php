@@ -13,7 +13,6 @@ use Forumify\Core\Repository\SettingRepository;
 use Forumify\Core\Repository\UserRepository;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Entity\ReportIn;
-use Forumify\PerscomPlugin\Perscom\Notification\ReportInFailedNotificationType;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\ReportInRepository;
 use Forumify\Plugin\Service\PluginVersionChecker;
