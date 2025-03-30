@@ -1,4 +1,3 @@
-{% set class = '' %}
 {% extends '@Forumify/components/list.html.twig' %}
 {% block pagination_top %}
     <div class="mb-6">
@@ -12,13 +11,13 @@
                 <div class="card-title">
                     {{ item.name }}
                 </div>
-                <div class="card-body flex">
-                    <div class="w-15 flex flex-col items-center justify-center">
+                <div class="card-body grid gap-4">
+                    <div class="col-xs-12 col-sm-3 col-lg-2 flex flex-col items-center">
                         {% if item.image %}
-                            <img src="{{ item.image.image_url }}" width="150px" height="auto">
+                            <img src="{{ item.image.image_url }}" width="100%" height="auto">
                         {% endif %}
                     </div>
-                    <div class="w-85 rich-text">
+                    <div class="col-xs-12 col-sm-9 col-lg-10">
                         {{ item.description|perscom_text }}
                     </div>
                 </div>
