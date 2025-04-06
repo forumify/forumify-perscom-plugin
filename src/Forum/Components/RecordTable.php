@@ -5,17 +5,23 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Forumify\Core\Component\Table\AbstractTable;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Contracts\Service\Attribute\Required;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Twig\Environment;
 
-#[AsLiveComponent('RecordTable', '@Forumify/components/table/table.html.twig')]
+#[AsLiveComponent('RecordTable', '@ForumifyPerscomPlugin/frontend/components/record_table.html.twig')]
 class RecordTable extends AbstractTable
 {
     #[LiveProp]
     public array $data;
+    private ?array $filteredData = null;
+
+    #[LiveProp(writable: true)]
+    public string $query = '';
+
     protected TranslatorInterface $translator;
     protected Environment $twig;
 
@@ -75,18 +81,41 @@ class RecordTable extends AbstractTable
         return $this;
     }
 
-    protected function modifyData(): void
+    protected function filterData(array $fields): callable
     {
+        $query = strtolower(trim($this->query));
+        $propertyAccessor = new PropertyAccessor();
+        return function (array $record) use ($fields, $query, $propertyAccessor): bool {
+            if (empty ($query)) {
+                return true;
+            }
+
+            $searchBody = '';
+            foreach ($fields as $field) {
+                $searchBody .= $propertyAccessor->getValue($record, $field);
+            }
+            return str_contains(strtolower($searchBody), $query);
+        };
+    }
+
+
+    private function getDataInner(): array
+    {
+        if ($this->filteredData !== null) {
+            return $this->filteredData;
+        }
+
+        $this->filteredData = array_filter($this->data, $this->filterData(['[text]']));
+        return $this->filteredData;
     }
 
     protected function getData(int $limit, int $offset, array $search, array $sort): array
     {
-        $this->modifyData();
-        return array_slice($this->data, $offset, $limit);
+        return array_slice($this->getDataInner(), $offset, $limit);
     }
 
     protected function getTotalCount(array $search): int
     {
-        return count($this->data);
+        return count($this->getDataInner());
     }
 }

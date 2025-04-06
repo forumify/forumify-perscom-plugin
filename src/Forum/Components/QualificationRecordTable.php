@@ -6,7 +6,7 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
-#[AsLiveComponent('QualificationRecordTable', '@Forumify/components/table/table.html.twig')]
+#[AsLiveComponent('QualificationRecordTable', '@ForumifyPerscomPlugin/frontend/components/record_table.html.twig')]
 class QualificationRecordTable extends RecordTable
 {
     protected function buildTable(): void
@@ -14,7 +14,7 @@ class QualificationRecordTable extends RecordTable
         $this
             ->addDateColumn()
             ->addColumn('qualification', [
-                'field' => '[qualification][name?]',
+                'field' => '[qualification][name]',
                 'sortable' => false,
                 'searchable' => false,
                 'class' => 'text-left text-small',
@@ -22,8 +22,9 @@ class QualificationRecordTable extends RecordTable
             ->addDocumentColumn(true, 'qualification');
     }
 
-    protected function modifyData(): void
+    protected function filterData(array $fields): callable
     {
-        $this->data = array_filter($this->data, static fn (array $row) => $row['qualification'] !== null);
+        $parentFilter = parent::filterData(['[qualification][name]']);
+        return fn (array $record): bool => ($record['qualification'] ?? null) !== null && $parentFilter($record);
     }
 }

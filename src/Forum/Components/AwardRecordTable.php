@@ -6,7 +6,7 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
-#[AsLiveComponent('AwardRecordTable', '@Forumify/components/table/table.html.twig')]
+#[AsLiveComponent('AwardRecordTable', '@ForumifyPerscomPlugin/frontend/components/record_table.html.twig')]
 class AwardRecordTable extends RecordTable
 {
     protected function buildTable(): void
@@ -14,7 +14,7 @@ class AwardRecordTable extends RecordTable
         $this
             ->addDateColumn()
             ->addColumn('award', [
-                'field' => '[award?][name]',
+                'field' => '[award][name]',
                 'searchable' => false,
                 'sortable' => false,
                 'class' => 'text-small',
@@ -31,5 +31,11 @@ class AwardRecordTable extends RecordTable
         $awardName = $awardName ?? 'Unknown';
 
         return "<div class='w-100 flex items-center gap-2'>$image $awardName</div>";
+    }
+
+    protected function filterData(array $fields): callable
+    {
+        $parentFilter = parent::filterData(['[award][name]']);
+        return fn (array $record): bool => ($record['award'] ?? null) !== null && $parentFilter($record);
     }
 }
