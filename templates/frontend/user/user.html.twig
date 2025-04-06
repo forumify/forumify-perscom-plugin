@@ -16,10 +16,10 @@
             <img style="max-height: 530px; max-width: 100%" src="{{ user.cover_photo_url }}">
         </div>
     {% endif %}
-    <div class="flex gap-4">
-        <div class="w-25 flex flex-col gap-4">
+    <div class="grid gap-4">
+        <div class="col-xs-12 col-md-4 col-xl-3 flex flex-col gap-4">
             {% if user.rank %}
-                <div class="card">
+                <div class="card hide-phone">
                     <div class="card-title">{{ 'perscom.user.rank'|trans }}</div>
                     <div class="card-body flex flex-col items-center">
                         {% if user.rank.image %}
@@ -29,6 +29,37 @@
                     </div>
                 </div>
             {% endif %}
+            <div class="card">
+                <div class="card-title">{{ 'perscom.user.assignment'|trans }}</div>
+                <div class="card-body">
+                    <div class="flex flex-col gap-2">
+                        {% if user.specialty %}
+                            <div>
+                                <p class="text-bold">{{ 'perscom.user.specialty'|trans }}</p>
+                                <p>{{ user.specialty.name }}</p>
+                            </div>
+                        {% endif %}
+                        {% if user.position %}
+                            <div>
+                                <p class="text-bold">{{ 'perscom.user.position'|trans }}</p>
+                                <p>{{ user.position.name }}</p>
+                            </div>
+                        {% endif %}
+                        {% if user.unit %}
+                            <div>
+                                <p class="text-bold">{{ 'perscom.user.unit'|trans }}</p>
+                                <p>{{ user.unit.name }}</p>
+                            </div>
+                        {% endif %}
+                        {% if user.status %}
+                            <div>
+                                <p class="text-bold">{{ 'perscom.user.status'|trans }}</p>
+                                <p>{{ user.status.name }}</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
             <div class="card">
                 <div class="card-title">{{ 'perscom.user.length_in_service'|trans }}</div>
                 <div class="card-body flex flex-col">
@@ -67,10 +98,11 @@
                 </div>
             {% endif %}
         </div>
-        <div class="w-75">
+        <hr class="col-xs-12 hide-tablet hide-desktop">
+        <div class="col-xs-12 col-md-8 col-xl-9">
             {% embed '@Forumify/components/tabs.html.twig' %}
                 {% block tabs %}
-                    <button class="btn-link" data-tab-id="assignment">{{ 'perscom.user.assignment'|trans }}</button>
+                    <button class="btn-link" data-tab-id="assignment">{{ 'perscom.user.profile'|trans }}</button>
                     <button class="btn-link" data-tab-id="service-record">{{ 'perscom.user.service_record'|trans }}</button>
                     <button class="btn-link" data-tab-id="award-record">{{ 'perscom.user.award_record'|trans }}</button>
                     <button class="btn-link" data-tab-id="combat-record">{{ 'perscom.user.combat_record'|trans }}</button>

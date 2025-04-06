@@ -107,6 +107,8 @@ perscom:
         time_in_service: 'Time in service'
         time_in_grade: 'Time in grade'
         assignment: 'Assignment'
+        profile: 'Profile'
+        awards: 'Awards'
         service_record: 'Service Record'
         award_record: 'Award Record'
         combat_record: 'Combat Record'

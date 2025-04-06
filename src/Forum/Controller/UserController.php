@@ -68,14 +68,13 @@ class UserController extends AbstractController
         $lastRankRecord = reset($user['rank_records']);
         $tig = $lastRankRecord !== false ? (new DateTime($lastRankRecord['created_at']))->diff($now) : null;
 
-        $secondaryAssignments = $this->transformSecondaryAssignments($user);
-
         $lastReportIn = $this->reportInRepository->findOneBy(['perscomUserId' => $id]);
         $lastReportInDate = $lastReportIn?->getLastReportInDate();
 
         return $this->render('@ForumifyPerscomPlugin/frontend/user/user.html.twig', [
             'forumAccount' => $this->userRepository->findOneBy(['email' => $user['email']]),
-            'secondaryAssignments' => $secondaryAssignments,
+            'secondaryAssignments' => $this->transformSecondaryAssignments($user),
+            'awards' => $this->transformAwards($user),
             'user' => $user,
             'tis' => $tis,
             'tig' => $tig,
@@ -108,5 +107,26 @@ class UserController extends AbstractController
         }
 
         return $grouped;
+    }
+
+    private function transformAwards(array $user): array
+    {
+        $awards = [];
+        foreach ($user['award_records'] ?? [] as $record) {
+            $award = $record['award'] ?? null;
+            if ($award === null) {
+                continue;
+            }
+
+            $awardId = $award['id'];
+            if (!isset($awards[$awardId])) {
+                $awards[$awardId] = $award;
+                $awards[$awardId]['count'] = 0;
+            }
+            $awards[$awardId]['count']++;
+        }
+
+        uasort($awards, fn (array $a, array $b) => $a['order'] - $b['order']);
+        return $awards;
     }
 }

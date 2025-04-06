@@ -1,53 +1,46 @@
-<div class="card mb-4">
-    <div class="card-title">{{ 'perscom.user.assignment'|trans }}</div>
-    <div class="card-body">
-        <div class="flex justify-evenly">
-            {% if user.specialty %}
-                <div class="flex flex-col items-center">
-                    <p class="text-small">{{ 'perscom.user.specialty'|trans }}</p>
-                    <p>{{ user.specialty.name }}</p>
+<div class="flex flex-col gap-4">
+    {% if user.profile_photo_url and 'ui-avatars.com' not in user.profile_photo_url %}
+        <img class="card" width="100%" height="auto" src="{{ user.profile_photo_url }}">
+    {% endif %}
+    <div class="card">
+        <div class="card-title">{{ 'perscom.user.awards'|trans }}</div>
+        <div class="card-body grid-xs-4 grid-sm-6 grid-md-12 gap-1">
+            {% for award in awards|filter(a => a.image is defined and a.image is not null) %}
+                <div style="position: relative;" title="{{ award.name }}">
+                    <div class="text-center">
+                        <img src="{{ award.image.image_url }}" style="width: 100%; height: 42px; object-fit: contain;">
+                    </div>
+                    {% if award.count > 1 %}
+                        <span style="
+                            position: absolute;
+                            bottom: 8px;
+                            right: 8px;
+                            text-shadow: -1px -1px 0 var(--c-elevation-0), 1px -1px 0 var(--c-elevation-0), -1px 1px 0 var(--c-elevation-0), 1px 1px 0 var(--c-elevation-0);"
+                        >
+                            x{{ award.count }}
+                        </span>
+                    {% endif %}
                 </div>
-            {% endif %}
-            {% if user.position %}
-                <div class="flex flex-col items-center">
-                    <p class="text-small">{{ 'perscom.user.position'|trans }}</p>
-                    <p>{{ user.position.name }}</p>
-                </div>
-            {% endif %}
-            {% if user.unit %}
-                <div class="flex flex-col items-center">
-                    <p class="text-small">{{ 'perscom.user.unit'|trans }}</p>
-                    <p>{{ user.unit.name }}</p>
-                </div>
-            {% endif %}
-            {% if user.status %}
-                <div class="flex flex-col items-center">
-                    <p class="text-small">{{ 'perscom.user.status'|trans }}</p>
-                    <p>{{ user.status.name }}</p>
-                </div>
-            {% endif %}
+            {% endfor %}
         </div>
     </div>
-</div>
-{% if user.profile_photo_url and 'ui-avatars.com' not in user.profile_photo_url %}
-    <img class="mb-4" width="100%" height="auto" src="{{ user.profile_photo_url }}">
-{% endif %}
-<div class="card mb-4">
-    <div class="card-title">{{ 'perscom.user.secondary_positions'|trans }}</div>
-    <div class="card-body">
-        <ul class="text-small flex flex-col gap-2">
-            {% for unit in secondaryAssignments %}
-                <li>
-                    <h3>{{ unit.name }}</h3>
-                    <ul class="ml-2">
-                        {% for record in unit.records %}
-                            <li>{{ record }}</li>
-                        {% endfor %}
-                    </ul>
-                </li>
-            {% else %}
-                <li>{{ 'perscom.user.no_secondary_positions'|trans }}</li>
-            {% endfor %}
-        </ul>
+    <div class="card">
+        <div class="card-title">{{ 'perscom.user.secondary_positions'|trans }}</div>
+        <div class="card-body">
+            <ul class="text-small flex flex-col gap-2">
+                {% for unit in secondaryAssignments %}
+                    <li>
+                        <p class="text-bold">{{ unit.name }}</p>
+                        <ul class="ml-2">
+                            {% for record in unit.records %}
+                                <li>{{ record }}</li>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                {% else %}
+                    <li>{{ 'perscom.user.no_secondary_positions'|trans }}</li>
+                {% endfor %}
+            </ul>
+        </div>
     </div>
 </div>
