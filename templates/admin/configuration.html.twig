@@ -10,6 +10,7 @@
                 {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
                     <button type="button" class="btn-link" data-tab-id="report-in">{{ 'perscom.settings.tab_report_in'|trans }}</button>
                 {% endif %}
+                <button type="button" class="btn-link" data-tab-id="award-nominations">{{ 'perscom.settings.tab_award_nominations'|trans }}</button>
             {% endblock %}
             {% block tabpanels %}
                 <div id="enlistment">
@@ -34,6 +35,10 @@
                         {{ form_row(form.perscom__report_in__failure_status) }}
                     </div>
                 {% endif %}
+                <div id="award-nominations">
+                    {{ form_row(form.perscom__award_nominations__pending_status_id) }}
+                    {{ form_row(form.perscom__award_nominations__approved_status_id) }}
+                </div>
             {% endblock %}
         {% endembed %}
         <div class="flex justify-center items-center gap-2">

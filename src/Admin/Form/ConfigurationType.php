@@ -79,6 +79,19 @@ class ConfigurationType extends AbstractType
                 'help' => 'Automatically set the user\'s signature to match their PERSCOM signature.',
                 'required' => false,
             ])
+            // Award Nominations
+            ->add('perscom__award_nominations__pending_status_id', NumberType::class, [
+                'label' => 'Perscom: Pending Status ID',
+                'help' => 'The ID of your pending status in Perscom',
+                'required' => true,
+                'html5' => true
+            ])
+            ->add('perscom__award_nominations__approved_status_id', NumberType::class, [
+                'label' => 'Perscom: Approved Status ID',
+                'help' => 'The ID of your approved status in Perscom',
+                'required' => true,
+                'html5' => true
+            ])
         ;
 
         if ($this->pluginVersionChecker->isVersionInstalled('forumify/forumify-perscom-plugin', 'premium')) {

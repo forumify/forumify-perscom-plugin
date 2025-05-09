@@ -13,7 +13,7 @@ use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 
 class AwardNominationRepository extends AbstractRepository
 {
-    private Array $usersCache = [];
+    private Array $usersCache;
     private Array $statusesCache;
     private Array $awardsCache;
 
@@ -21,6 +21,7 @@ class AwardNominationRepository extends AbstractRepository
         ManagerRegistry $managerRegistry,
         private readonly PerscomFactory $perscomFactory) {
             parent::__construct($managerRegistry);
+            $this->usersCache = [];
     }
 
     public static function getEntityClass(): string
@@ -30,9 +31,7 @@ class AwardNominationRepository extends AbstractRepository
 
     public function getListQuery(): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('ar');
-
-        return $qb;
+        return $this->createQueryBuilder('ar');
     }
 
     /** @return AwardNominationData[] $ */

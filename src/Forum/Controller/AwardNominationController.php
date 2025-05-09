@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Controller;
 
 use DateTime;
+use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Forum\Form\AwardNominationForm;
 use Forumify\PerscomPlugin\Perscom\Service\AwardNominationService;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
@@ -20,7 +21,8 @@ class AwardNominationController extends AbstractController
 {
     public function __construct(
         private readonly AwardNominationService $awardNominationService,
-        private readonly PerscomUserService $perscomUserService
+        private readonly PerscomUserService $perscomUserService,
+        private readonly SettingRepository $settingRepository
     ) {
     }
 
@@ -35,7 +37,7 @@ class AwardNominationController extends AbstractController
 
             $data->setPerscomUserId($this->perscomUserService->getLoggedInPerscomUser()['id']);
             $data->setCreatedDate(new DateTime());
-            $data->setStatus(3); //TODO: This to config
+            $data->setStatus(intval($this->settingRepository->get('perscom.award_nominations.pending_status_id')));
 
             $this->awardNominationService->create($data);
 

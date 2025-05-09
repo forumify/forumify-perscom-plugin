@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Controller;
 
+use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\AwardNominationRepository;
 use Forumify\PerscomPlugin\Perscom\Service\AwardNominationService;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
@@ -25,7 +26,8 @@ class AwardNominationsController extends AbstractController
         private readonly AwardNominationRepository $awardNominationRepository,
         private readonly AwardNominationService $awardNominationService,
         private readonly PerscomUserService $perscomUserService,
-        private readonly RecordService $recordService
+        private readonly RecordService $recordService,
+        private readonly SettingRepository $settingRepository
         ) {}
 
     #[Route('', 'list')]
@@ -42,31 +44,37 @@ class AwardNominationsController extends AbstractController
     {
         $data = $this->awardNominationRepository->getAwardNomination($nomination->getId());
 
-        $record = new AwardNominationAdminFormData();
-        $record->data = $data;
-        $form = $this->createForm(AwardNominationAdminForm::class, $record);
+        $pendingStatus = intVal($this->settingRepository->get('perscom.award_nominations.pending_status_id'));
+        $form = null;
+        if ($data->nomination->getStatus() == $pendingStatus)
+        {
+            $record = new AwardNominationAdminFormData();
+            $record->data = $data;
+            $form = $this->createForm(AwardNominationAdminForm::class, $record);
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $nominationRecord = $form->getData();
-            $nomination->setStatus($nominationRecord->status);
-            $currentUserId = $this->perscomUserService->getLoggedInPerscomUser()['id'];
-            $nomination->setUpdatedByUserId($currentUserId);
-            $this->awardNominationService->update($nomination);
+            $form->handleRequest($request);
+            if ($form->isSubmitted() && $form->isValid()) {
+                $nominationRecord = $form->getData();
+                $nomination->setStatus($nominationRecord->status);
+                $currentUserId = $this->perscomUserService->getLoggedInPerscomUser()['id'];
+                $nomination->setUpdatedByUserId($currentUserId);
+                $this->awardNominationService->update($nomination);
 
-            if ($nominationRecord->status == 6) {// Get this from config
-                $recordData = [
-                    'users' => [$nominationRecord->data->receiverItem['id']], 
-                    'sendNotification' => true,
-                    'award_id' => $nominationRecord->data->nomination->getAwardId(),
-                    'author_id' => $currentUserId,
-                    'text' => $nominationRecord->data->nomination->getReason()
-                ];
-                $this->recordService->createRecord('award', $recordData);
+                $approvedStatus = intVal($this->settingRepository->get('perscom.award_nominations.approved_status_id'));
+                if ($nominationRecord->status == $approvedStatus) {
+                    $recordData = [
+                        'users' => [$nominationRecord->data->receiverItem['id']],
+                        'sendNotification' => true,
+                        'award_id' => $nominationRecord->data->nomination->getAwardId(),
+                        'author_id' => $currentUserId,
+                        'text' => $nominationRecord->data->nomination->getReason()
+                    ];
+                    $this->recordService->createRecord('award', $recordData);
+                }
+
+                $this->addFlash('success', 'perscom.admin.submissions.view.status_created');
+                return $this->redirectToRoute('perscom_admin_awardnominations_view', ['id' => $nomination->getId()]);
             }
-
-            $this->addFlash('success', 'perscom.admin.submissions.view.status_created');
-            return $this->redirectToRoute('perscom_admin_awardnominations_view', ['id' => $nomination->getId()]);
         }
 
         return $this->render('@ForumifyPerscomPlugin/admin/awardnominations/view.html.twig', [
