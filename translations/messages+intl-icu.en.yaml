@@ -63,6 +63,16 @@ perscom:
         awards:
             list:
                 title: 'Awards'
+        awardnominations:
+            list:
+                title: 'Award Nominations'
+            view:
+                title: 'Nomination'
+                requester: 'Requested by'
+                receiver: 'Receiver'
+                award: 'Award'
+                reason: 'Reason'
+                reviewedby: 'Reviewed by'
         positions:
             list:
                 title: 'Positions'
@@ -126,6 +136,7 @@ perscom:
         last_report_in: 'Last report in'
         no_report_in: 'This user has not reported in yet.'
         search_records: 'Search Records'
+        points: 'Points'
     rank:
         title: 'Ranks'
         no_ranks: 'No ranks.'
@@ -156,6 +167,9 @@ perscom:
         class_last: 'Last ran:'
         class_never: 'Never'
         attendance: 'Attendance Sheet'
+        award-nominations:
+            tab-title: 'Award Nominations'
+            no-nominations: 'You have not nominated anyone for awards.'
     operation:
         missions: 'Missions'
         operation: 'Operation'

@@ -1,0 +1,52 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+{% block title_page %}{% endblock %}
+{% block body %}
+    {% if data == null %}
+        <p>Unknown nomination!</p>
+    {% else %}
+        <h1 class="flex items-center gap-2 mb-4">        
+            {{ 'perscom.admin.awardnominations.view.title'|trans }} #{{data.nomination.id}}
+            {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
+                status: data.statusItem,
+                class: 'text-small'
+            } only %}
+        </h1>
+        <div class="flex gap-4">
+            <div class="w-50">
+                <div class="box">
+                    <div class="mb-2">
+                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.requester'|trans }}</p>
+                        <a href="{{ path('perscom_admin_user_edit', { id: data.requesterItem.id }) }}">
+                            {{ data.requesterItem.name }}
+                        </a>
+                    </div>
+                    <div class="mb-2">
+                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.receiver'|trans }}</p>
+                        <a href="{{ path('perscom_admin_user_edit', { id: data.receiverItem.id }) }}">
+                            {{ data.receiverItem.name }}
+                        </a>
+                    </div>
+                    <div class="mb-2">
+                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.award'|trans }}</p>
+                        <span>{{ data.awardItem.name }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.reason'|trans }}</p>
+                        <span>{{ data.nomination.reason }}</span>
+                    </div>
+                    <div class="mb-2">
+                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.reviewedby'|trans }}</p>
+                        <span>{% if data.updatedByItem != null %} {{ data.updatedByItem.name }} {% endif %}</span>
+                    </div>
+                </div>
+            </div>
+            <ul class="w-50">
+                {% if is_granted('perscom-io.admin.submissions.assign_statuses') and data.nomination.status == 3 %}
+                    <li class="mb-4">
+                        {% include '@Forumify/admin/components/simple_form.html.twig' %}
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    {% endif %}
+{% endblock %}

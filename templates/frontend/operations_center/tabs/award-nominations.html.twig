@@ -1,0 +1,9 @@
+<div id="award-nominations" class="flex flex-col gap-2">
+    <div>
+        <a href="{{ path('perscom_nomination_create') }}" class="btn-primary">
+            <i class="ph ph-medal"></i>
+            New Nomination
+        </a>
+    </div>
+    {{ component('Perscom\\AwardNominationsList', { user: user }) }}
+</div>

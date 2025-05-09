@@ -1,0 +1,23 @@
+{% extends '@Forumify/components/list.html.twig' %}
+{% block list %}
+    <ul>
+        {% for data in this.getPendingAwards() %}
+            <li class="p-4 flex justify-between items-center">
+                <div class="flex flex-col justify-start gap-2">
+                    <span>{{ data.receiverItem.name }}</span>
+                    <img class="nomination-award" src="{{ data.awardItem.image['image_url'] }}"></img>
+                    <span class="text-small">Nominated for: {{ data.awardItem.name }}</span>
+                    <span class="text-small text-italic">"{{ data.nomination.reason }}"</span>
+                </div>
+                <div>
+                    {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
+                        status: data.statusItem,
+                        class: 'text-small'
+                    } only %}
+                </div>
+            </li>
+        {% else %}
+            <li class="p-4">{{ 'perscom.opcenter.award-nominations.no-nominations'|trans }}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

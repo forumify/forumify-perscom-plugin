@@ -1,0 +1,14 @@
+{% extends '@Forumify/frontend/base.html.twig' %}
+{% block title_page %}Nominate Award{% endblock %}
+{% block body %}
+    <h1 class="mb-6">Nominate Award</h1>
+    <div class="box">
+        {{ form_start(form) }}
+        {{ form_widget(form) }}
+        <div class="flex justify-center gap-4">
+            <button class="btn-primary">{{ 'save'|trans }}</button>
+            <a href="{{ path('perscom_operations_center') }}" class="btn-outlined">{{ 'cancel'|trans }}</a>
+        </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
