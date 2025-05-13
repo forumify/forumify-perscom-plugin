@@ -6,6 +6,7 @@ perscom:
         tab_report_in: 'Report In'
         tab_operations: 'Operations'
         tab_courses: 'Courses'
+        tab_award_nominations: 'Award Nominations'
         title: 'PERSCOM.io Plugin Configuration'
         license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
         automations: 'Automations'
@@ -63,7 +64,7 @@ perscom:
         awards:
             list:
                 title: 'Awards'
-        awardnominations:
+        award_nominations:
             list:
                 title: 'Award Nominations'
             view:
@@ -167,9 +168,10 @@ perscom:
         class_last: 'Last ran:'
         class_never: 'Never'
         attendance: 'Attendance Sheet'
-        award-nominations:
-            tab-title: 'Award Nominations'
-            no-nominations: 'You have not nominated anyone for awards.'
+        award_nominations:
+            tab_title: 'Award Nominations'
+            no_nominations: 'You have not nominated anyone for awards.'
+            already_nominated: 'You already created a nomination for this award!'
     operation:
         missions: 'Missions'
         operation: 'Operation'

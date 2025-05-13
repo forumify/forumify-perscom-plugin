@@ -7,6 +7,7 @@ namespace Forumify\PerscomPlugin\Forum\Controller;
 use DateTime;
 use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Forum\Form\AwardNominationForm;
+use Forumify\PerscomPlugin\Perscom\Exception\AwardNominationAlreadyExistsException;
 use Forumify\PerscomPlugin\Perscom\Service\AwardNominationService;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Forumify\Plugin\Attribute\PluginVersion;
@@ -39,10 +40,13 @@ class AwardNominationController extends AbstractController
             $data->setCreatedDate(new DateTime());
             $data->setStatus(intval($this->settingRepository->get('perscom.award_nominations.pending_status_id')));
 
-            $this->awardNominationService->create($data);
-
-            $this->addFlash('success', 'perscom.admin.users.record_form.created');
-            return $this->redirectToRoute('perscom_operations_center');
+            try {
+                $this->awardNominationService->create($data);
+                $this->addFlash('success', 'perscom.admin.users.record_form.created');
+                return $this->redirectToRoute('perscom_operations_center');
+            } catch (AwardNominationAlreadyExistsException) {
+                $this->addFlash('error', 'perscom.opcenter.award_nominations.already_nominated');
+            }
         }
 
         return $this->render('@ForumifyPerscomPlugin/frontend/form/award_nomination.html.twig', [

@@ -5,7 +5,7 @@
         <p>Unknown nomination!</p>
     {% else %}
         <h1 class="flex items-center gap-2 mb-4">        
-            {{ 'perscom.admin.awardnominations.view.title'|trans }} #{{data.nomination.id}}
+            {{ 'perscom.admin.award_nominations.view.title'|trans }} #{{data.nomination.id}}
             {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
                 status: data.statusItem,
                 class: 'text-small'
@@ -15,27 +15,27 @@
             <div class="w-50">
                 <div class="box">
                     <div class="mb-2">
-                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.requester'|trans }}</p>
+                        <p class="text-bold">{{ 'perscom.admin.award_nominations.view.requester'|trans }}</p>
                         <a href="{{ path('perscom_admin_user_edit', { id: data.requesterItem.id }) }}">
                             {{ data.requesterItem.name }}
                         </a>
                     </div>
                     <div class="mb-2">
-                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.receiver'|trans }}</p>
+                        <p class="text-bold">{{ 'perscom.admin.award_nominations.view.receiver'|trans }}</p>
                         <a href="{{ path('perscom_admin_user_edit', { id: data.receiverItem.id }) }}">
                             {{ data.receiverItem.name }}
                         </a>
                     </div>
                     <div class="mb-2">
-                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.award'|trans }}</p>
+                        <p class="text-bold">{{ 'perscom.admin.award_nominations.view.award'|trans }}</p>
                         <span>{{ data.awardItem.name }}</span>
                     </div>
                     <div class="mb-2">
-                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.reason'|trans }}</p>
+                        <p class="text-bold">{{ 'perscom.admin.award_nominations.view.reason'|trans }}</p>
                         <span>{{ data.nomination.reason }}</span>
                     </div>
                     <div class="mb-2">
-                        <p class="text-bold">{{ 'perscom.admin.awardnominations.view.reviewedby'|trans }}</p>
+                        <p class="text-bold">{{ 'perscom.admin.award_nominations.view.reviewedby'|trans }}</p>
                         <span>{% if data.updatedByItem != null %} {{ data.updatedByItem.name }} {% endif %}</span>
                     </div>
                 </div>

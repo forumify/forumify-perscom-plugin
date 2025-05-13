@@ -89,13 +89,18 @@ class AwardNominationRepository extends AbstractRepository
     }
 
     // Because of limit in perscom api, we need to be able to navigate all the pages until there are no more
-    private function getPerscomUser(int $id): ?Array {
+    private function getPerscomUser(int $id, ?int $lastPage = null): ?Array {
         // page in perscom api is 1-based
         $lastLocalPage = count($this->usersCache) + 1;
         foreach ($this->usersCache as $pageData) {
             $user = array_find($pageData, function($x) use ($id) { return $x['id'] == $id; });
             if ($user != null)
                 return $user;
+        }
+
+        // If we are at last page we don't wanna query another time
+        if ($lastLocalPage == $lastPage) {
+            return null;
         }
 
         $perscom = $this->perscomFactory->getPerscom();
@@ -105,9 +110,6 @@ class AwardNominationRepository extends AbstractRepository
         $data = $result['data'];
         $this->usersCache[$lastLocalPage] = $data;
 
-        if ($lastLocalPage == $lastPage)
-            return null;
-
-        return $this->getPerscomUser($id);
+        return $this->getPerscomUser($id, $lastPage);
     }
 }

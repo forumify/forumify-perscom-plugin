@@ -8,10 +8,10 @@ use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\AwardNominationRepository;
 use Forumify\PerscomPlugin\Perscom\Service\AwardNominationService;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
-use Forumify\PerscomPlugin\Admin\Form\AwardNominationAdminFormData;
+use Forumify\PerscomPlugin\Admin\Form\AwardNominationFormData;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Entity\AwardNomination;
-use Forumify\PerscomPlugin\Admin\Form\AwardNominationAdminForm;
+use Forumify\PerscomPlugin\Admin\Form\AwardNominationForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,7 +34,7 @@ class AwardNominationsController extends AbstractController
     public function list(): Response
     {
         return $this->render('@ForumifyPerscomPlugin/admin/pages/table.html.twig', [
-            'title' => 'perscom.admin.awardnominations.list.title',
+            'title' => 'perscom.admin.award_nominations.list.title',
             'table' => 'AwardNominationsTable'
         ]);
     }
@@ -45,12 +45,13 @@ class AwardNominationsController extends AbstractController
         $data = $this->awardNominationRepository->getAwardNomination($nomination->getId());
 
         $pendingStatus = intVal($this->settingRepository->get('perscom.award_nominations.pending_status_id'));
+        $approvedStatus = intVal($this->settingRepository->get('perscom.award_nominations.approved_status_id'));
         $form = null;
-        if ($data->nomination->getStatus() == $pendingStatus)
+        if ($data->nomination->getStatus() != $approvedStatus)
         {
-            $record = new AwardNominationAdminFormData();
+            $record = new AwardNominationFormData();
             $record->data = $data;
-            $form = $this->createForm(AwardNominationAdminForm::class, $record);
+            $form = $this->createForm(AwardNominationForm::class, $record);
 
             $form->handleRequest($request);
             if ($form->isSubmitted() && $form->isValid()) {
@@ -72,7 +73,6 @@ class AwardNominationsController extends AbstractController
                     $this->recordService->createRecord('award', $recordData);
                 }
 
-                $this->addFlash('success', 'perscom.admin.submissions.view.status_created');
                 return $this->redirectToRoute('perscom_admin_awardnominations_view', ['id' => $nomination->getId()]);
             }
         }

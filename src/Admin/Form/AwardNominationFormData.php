@@ -6,7 +6,7 @@ namespace Forumify\PerscomPlugin\Admin\Form;
 
 use Forumify\PerscomPlugin\Perscom\Entity\AwardNominationData;
 
-class AwardNominationAdminFormData
+class AwardNominationFormData
 {
     public AwardNominationData $data;
     public int $status;
