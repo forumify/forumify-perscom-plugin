@@ -82,13 +82,13 @@ class ConfigurationType extends AbstractType
             // Award Nominations
             ->add('perscom__award_nominations__pending_status_id', NumberType::class, [
                 'label' => 'Perscom: Pending Status ID',
-                'help' => 'The ID of your pending status in Perscom',
+                'help' => 'The ID of your pending status in Perscom. This will be the default status for a new nomination and it will block users to create a nomination for the same person and award.',
                 'required' => true,
                 'html5' => true
             ])
             ->add('perscom__award_nominations__approved_status_id', NumberType::class, [
                 'label' => 'Perscom: Approved Status ID',
-                'help' => 'The ID of your approved status in Perscom',
+                'help' => 'The ID of your "approved" status in Perscom. Once a nomination hits this status, the nomination becomes locked and cannot be changed again. This will also create an award record in perscom and allow the user to nominate the person again for the same award.',
                 'required' => true,
                 'html5' => true
             ])

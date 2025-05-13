@@ -44,7 +44,6 @@ class AwardNominationsController extends AbstractController
     {
         $data = $this->awardNominationRepository->getAwardNomination($nomination->getId());
 
-        $pendingStatus = intVal($this->settingRepository->get('perscom.award_nominations.pending_status_id'));
         $approvedStatus = intVal($this->settingRepository->get('perscom.award_nominations.approved_status_id'));
         $form = null;
         if ($data->nomination->getStatus() != $approvedStatus)
