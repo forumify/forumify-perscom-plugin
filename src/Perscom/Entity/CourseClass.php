@@ -145,7 +145,7 @@ class CourseClass
      */
     public function getInstructors(): array
     {
-        return array_map(static fn (int $id) => $id, $this->instructors);
+        return array_map(static fn (int|string $id) => (int)$id, $this->instructors);
     }
 
     /**
@@ -176,7 +176,7 @@ class CourseClass
      */
     public function getStudents(): array
     {
-        return array_map(static fn (int $id) => $id, $this->students);
+        return array_map(static fn (int|string $id) => (int)$id, $this->students);
     }
 
     /**

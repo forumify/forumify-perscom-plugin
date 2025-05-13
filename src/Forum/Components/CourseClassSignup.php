@@ -12,7 +12,6 @@ use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -28,13 +27,10 @@ class CourseClassSignup extends AbstractController
     #[LiveProp]
     public CourseClass $class;
 
-    private ?array $perscomUser = null;
-
     public function __construct(
         private readonly PerscomUserService $perscomUserService,
         private readonly PerscomFactory $perscomFactory,
         private readonly CourseClassRepository $courseClassRepository,
-        private readonly Security $security,
     ) {
     }
 

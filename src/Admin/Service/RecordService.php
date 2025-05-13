@@ -7,7 +7,6 @@ namespace Forumify\PerscomPlugin\Admin\Service;
 use Exception;
 use Forumify\PerscomPlugin\Perscom\Event\RecordsCreatedEvent;
 use Forumify\PerscomPlugin\Perscom\Exception\PerscomException;
-use Forumify\PerscomPlugin\Perscom\Exception\PerscomUserNotFoundException;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Perscom\Data\ResourceObject;
@@ -73,7 +72,7 @@ class RecordService
     }
 
     /**
-     * @param array<ResourceObject> $records
+     * @param array<ResourceObject> $resources
      * @return void
      * @throws PerscomException
      */
@@ -86,8 +85,12 @@ class RecordService
             'combat' => $perscom->combatRecords(),
             'rank' => $perscom->rankRecords(),
             'assignment' => $perscom->assignmentRecords(),
-            'qualification' => $perscom->qualificationRecords()
+            'qualification' => $perscom->qualificationRecords(),
+            default => null,
         };
+        if ($recordResource === null) {
+            return;
+        }
 
         try {
             $responses = $recordResource->batchCreate($resources)->json('data');

@@ -40,4 +40,3 @@ class UserEnlistedTrigger implements TriggerInterface
         }
     }
 }
-

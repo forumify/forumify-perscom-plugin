@@ -118,6 +118,16 @@ class Course implements AccessControlledEntityInterface, SortableEntityInterface
         return $this->hydratedPrerequisites;
     }
 
+    public function getClasses(): Collection
+    {
+        return $this->classes;
+    }
+
+    public function setClasses(Collection $classes): void
+    {
+        $this->classes = $classes;
+    }
+
     public function getACLPermissions(): array
     {
         return [

@@ -86,7 +86,7 @@ class RecordTable extends AbstractTable
         $query = strtolower(trim($this->query));
         $propertyAccessor = new PropertyAccessor();
         return function (array $record) use ($fields, $query, $propertyAccessor): bool {
-            if (empty ($query)) {
+            if (empty($query)) {
                 return true;
             }
 

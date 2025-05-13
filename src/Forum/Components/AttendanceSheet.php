@@ -6,7 +6,6 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 
 use DateTime;
 use Forumify\PerscomPlugin\Perscom\Form\UnitType;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
 use Forumify\Plugin\Attribute\PluginVersion;
@@ -34,7 +33,6 @@ class AttendanceSheet extends AbstractController
     public ?array $sheet = null;
 
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
         private readonly AfterActionReportRepository $aarRepository,
         private readonly AfterActionReportService $aarService,
     ) {
@@ -61,6 +59,7 @@ class AttendanceSheet extends AbstractController
         ;
     }
 
+    // @phpstan-ignore-next-line
     private function getDataModelValue(): ?string
     {
         return 'norender|*';
@@ -131,7 +130,7 @@ class AttendanceSheet extends AbstractController
                         $sheetData[$missionId][$unitId][$userId] = $state;
                     } else {
                         // The user changed combat units, let's see if we can find them in a different unit
-                        foreach($sheetData[$missionId] as $mUnitId => $mUserIds) {
+                        foreach ($sheetData[$missionId] as $mUnitId => $mUserIds) {
                             if (in_array($userId, array_keys($mUserIds))) {
                                 $sheetData[$missionId][$mUnitId][$userId] = $state;
                                 break;

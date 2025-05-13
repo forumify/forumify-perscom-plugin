@@ -62,7 +62,8 @@ class AfterActionReportController extends AbstractController
                     'rank.image',
                     'position',
                     'specialty',
-                ])
+                ]
+            )
             ->json('data');
         $users = array_combine(array_column($users, 'id'), $users);
 
@@ -190,7 +191,7 @@ class AfterActionReportController extends AbstractController
         $users = $this->afterActionReportService->findUsersByUnit($id);
 
         $missionId = $request->get('mission');
-        $rsvps = $missionId === null 
+        $rsvps = $missionId === null
             ? []
             : $missionRSVPRepository->findBy([
                 'mission' => $missionId,

@@ -33,10 +33,10 @@ class CourseClassResult
 
     /**
      * @return array{
-     *     instructors: array<int, bool>,
-     *     instructor_service_record: bool,
-     *     students: array<int, array{result: string, qualifications: int[]}>,
-     *     student_service_record: bool,
+     *     instructors?: array<int, bool>,
+     *     instructor_service_record?: bool,
+     *     students?: array<int, array{result: string, qualifications: int[]}>,
+     *     student_service_record?: bool,
      * }
      */
     public function getResult(): array

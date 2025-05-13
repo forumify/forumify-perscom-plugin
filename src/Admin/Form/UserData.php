@@ -28,9 +28,9 @@ class UserData
     private array $secondaryAssignments = [];
     private array $customFields = [];
 
-    public static function fromArray(array $user): static
+    public static function fromArray(array $user): self
     {
-        $data = new static();
+        $data = new self();
 
         $data->setName($user['name']);
         $data->setEmail($user['email']);

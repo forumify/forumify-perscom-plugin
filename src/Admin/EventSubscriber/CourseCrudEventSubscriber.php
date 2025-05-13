@@ -7,7 +7,6 @@ namespace Forumify\PerscomPlugin\Admin\EventSubscriber;
 use Forumify\Admin\Crud\Event\PreSaveCrudEvent;
 use Forumify\Core\Service\MediaService;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
-use Forumify\PerscomPlugin\Perscom\Repository\CourseRepository;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -17,7 +16,6 @@ class CourseCrudEventSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly MediaService $mediaService,
         private readonly FilesystemOperator $assetStorage,
-        private readonly CourseRepository $courseRepository,
     ) {
     }
 

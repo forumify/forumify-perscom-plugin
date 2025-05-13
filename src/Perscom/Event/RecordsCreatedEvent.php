@@ -15,4 +15,3 @@ class RecordsCreatedEvent extends Event
     ) {
     }
 }
-

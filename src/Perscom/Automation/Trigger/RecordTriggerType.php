@@ -27,4 +27,3 @@ class RecordTriggerType extends AbstractType
         ;
     }
 }
-

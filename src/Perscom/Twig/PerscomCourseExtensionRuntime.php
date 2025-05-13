@@ -67,7 +67,8 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
                         'rank.image',
                         'position',
                         'specialty',
-                    ])
+                    ]
+                )
                 ->json('data');
         } catch (Exception) {
             return [];

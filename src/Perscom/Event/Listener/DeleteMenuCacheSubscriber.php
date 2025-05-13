@@ -46,4 +46,3 @@ class DeleteMenuCacheSubscriber implements EventSubscriberInterface
         $this->cache->delete(MenuRuntime::createMenuCacheKey($user));
     }
 }
-

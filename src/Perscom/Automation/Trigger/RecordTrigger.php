@@ -45,4 +45,3 @@ class RecordTrigger implements TriggerInterface
         }
     }
 }
-

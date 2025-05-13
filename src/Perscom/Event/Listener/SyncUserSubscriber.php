@@ -29,4 +29,3 @@ class SyncUserSubscriber implements EventSubscriberInterface
         }
     }
 }
-

@@ -89,4 +89,3 @@ class PerscomUserRepository extends AbstractRepository
         return $result;
     }
 }
-

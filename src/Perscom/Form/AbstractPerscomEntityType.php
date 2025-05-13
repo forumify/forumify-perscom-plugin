@@ -6,7 +6,7 @@ namespace Forumify\PerscomPlugin\Perscom\Form;
 
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Searchable;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -17,7 +17,7 @@ abstract class AbstractPerscomEntityType extends AbstractType
     {
     }
 
-    abstract protected function getResource(Perscom $perscom): ResourceContract;
+    abstract protected function getResource(Perscom $perscom): Searchable;
 
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -58,7 +58,7 @@ abstract class AbstractPerscomEntityType extends AbstractType
 
     protected function getFilters(): ?array
     {
-       return null;
+        return null;
     }
 
     protected function getSorting(): ?array

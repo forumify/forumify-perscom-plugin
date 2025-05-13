@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Form;
 
 use Forumify\PerscomPlugin\Perscom\Perscom;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Searchable;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractPerscomEntityType
@@ -15,7 +15,7 @@ class UserType extends AbstractPerscomEntityType
         parent::configureOptions($resolver);
     }
 
-    protected function getResource(Perscom $perscom): ResourceContract
+    protected function getResource(Perscom $perscom): Searchable
     {
         return $perscom->users();
     }

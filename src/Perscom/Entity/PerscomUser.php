@@ -39,4 +39,3 @@ class PerscomUser
         $this->user = $user;
     }
 }
-

@@ -160,11 +160,12 @@ class ReportInService
 
         $failureStatusId = (int)$this->settingRepository->get('perscom.report_in.failure_status');
         try {
-            return $this->perscomFactory
+            $this->failureStatus = $this->perscomFactory
                 ->getPerscom()
                 ->statuses()
                 ->get($failureStatusId)
                 ->json('data');
+            return $this->failureStatus;
         } catch (Exception) {
         }
         throw new \RuntimeException('No failure status found.');
@@ -238,6 +239,5 @@ class ReportInService
                 'emailActionLabel' => 'perscom.notification.report_in_failure.action'
             ],
         ));
-
     }
 }

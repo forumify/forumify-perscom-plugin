@@ -5,7 +5,7 @@ export default class extends Controller {
 
   static values = {
     fetchUnitUri: String,
-  }
+  };
 
   connect() {
     const form = this.element.querySelector('form');
@@ -26,7 +26,7 @@ export default class extends Controller {
       .then((res) => res.json())
       .then((users) => this._addAttendanceToForm(users))
       .then(this._setAttendance.bind(this))
-      .finally(this._endLoading.bind(this))
+      .finally(this._endLoading.bind(this));
   }
 
   _addAttendanceToForm(users) {
@@ -38,7 +38,7 @@ export default class extends Controller {
     const attendanceForm = this.element.querySelector('#attendance-table-prototype').firstElementChild.cloneNode(true);
     attendanceForm.id = 'attendance-form';
 
-    const tbody = attendanceForm.querySelector('tbody')
+    const tbody = attendanceForm.querySelector('tbody');
     const rowPrototype = tbody.querySelector('tr');
     rowPrototype.remove();
 
@@ -49,8 +49,8 @@ export default class extends Controller {
         input.dataset.userId = user.id;
 
         if (
-          (user.rsvp === true && input.value === 'present') ||
-          (user.rsvp === false && input.value === 'excused')
+          (user.rsvp === true && input.value === 'present')
+          || (user.rsvp === false && input.value === 'excused')
         ) {
           input.checked = true;
         }

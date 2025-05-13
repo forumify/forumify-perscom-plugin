@@ -51,7 +51,12 @@ class SendRecordNotificationListener
             'rank' => $userResource->rank_records(...),
             'assignment' => $userResource->assignment_records(...),
             'qualification' => $userResource->qualification_records(...),
+            default => null,
         };
+        if ($resource === null) {
+            return;
+        }
+
         $includes = $this->getIncludesForType($type);
         $data = $resource($data['user_id'])
             ->get($data['id'], $includes)
@@ -83,4 +88,3 @@ class SendRecordNotificationListener
         };
     }
 }
-
