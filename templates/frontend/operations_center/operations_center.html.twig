@@ -31,6 +31,7 @@
                     <button class="btn-link" data-tab-id="attendance">{{ 'perscom.opcenter.attendance'|trans }}</button>
                 {% endif %}
                 <button class="btn-link" data-tab-id="courses">{{ 'perscom.opcenter.courses'|trans }}</button>
+                <button class="btn-link" data-tab-id="award-nominations">{{ 'perscom.opcenter.award_nominations.tab_title'|trans }}</button>
             {% endif %}
         {% endblock %}
         {% block tabpanels %}
@@ -42,6 +43,7 @@
                 {% endif %}
                 {% include '@ForumifyPerscomPlugin/frontend/operations_center/tabs/courses.html.twig' %}
             {% endif %}
+            {% include '@ForumifyPerscomPlugin/frontend/operations_center/tabs/award-nominations.html.twig' %}
         {% endblock %}
     {% endembed %}
 {% endblock %}
