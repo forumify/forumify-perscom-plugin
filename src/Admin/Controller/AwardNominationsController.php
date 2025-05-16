@@ -18,8 +18,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/awardnominations', 'awardnominations_')]
-#[IsGranted('perscom-io.admin.organization.view')]
+#[Route('/award_nominations', 'awardnominations_')]
+#[IsGranted('perscom-io.admin.nominations.manage')]
 class AwardNominationsController extends AbstractController
 {
     public function __construct(
@@ -76,7 +76,7 @@ class AwardNominationsController extends AbstractController
             }
         }
 
-        return $this->render('@ForumifyPerscomPlugin/admin/awardnominations/view.html.twig', [
+        return $this->render('@ForumifyPerscomPlugin/admin/award_nominations/view.html.twig', [
             'form' => $form,
             'data' => $data
         ]);

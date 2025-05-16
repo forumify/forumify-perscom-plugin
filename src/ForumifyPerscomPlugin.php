@@ -56,6 +56,9 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                     'manage',
                     'delete',
                 ],
+                'nominations' => [
+                    'manage'
+                ]
             ],
         ];
     }
