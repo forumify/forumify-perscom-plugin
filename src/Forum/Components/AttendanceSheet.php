@@ -5,10 +5,13 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Components;
 
 use DateTime;
+use Forumify\PerscomPlugin\Admin\Form\OperationType;
+use Forumify\PerscomPlugin\Perscom\Entity\Operation;
 use Forumify\PerscomPlugin\Perscom\Form\UnitType;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
 use Forumify\Plugin\Attribute\PluginVersion;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormInterface;
@@ -55,6 +58,14 @@ class AttendanceSheet extends AbstractController
                 'required' => false,
                 'help' => 'Leave empty to calculate attendance for all units that have at least 1 after action report in the selected time period.',
             ])
+            ->add('operation', EntityType::class, [
+                'class' => Operation::class,
+                'choice_label' => 'title',
+                'autocomplete' => true,
+                'multiple' => true,
+                'required' => false,
+                'help' => 'Leave empty to calculate attendance for all operations.',
+            ])
             ->getForm()
         ;
     }
@@ -87,7 +98,12 @@ class AttendanceSheet extends AbstractController
             return;
         }
 
-        $aars = $this->aarRepository->findByMissionStartAndUnit($data['from'], $data['to'], $data['unit']);
+        $aars = $this->aarRepository->findByMissionStartAndUnit(
+            $data['from'],
+            $data['to'],
+            $data['unit'] ?? [],
+            $data['operation']?->toArray() ?? [],
+        );
         $missions = [];
         $units = [];
 

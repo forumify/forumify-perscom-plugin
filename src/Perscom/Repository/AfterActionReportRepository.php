@@ -20,10 +20,15 @@ class AfterActionReportRepository extends AbstractRepository
 
     /**
      * @param array<int> $unitIds
+     * @param array<Operation> $operations
      * @return array<AfterActionReport>
      */
-    public function findByMissionStartAndUnit(\DateTime $from, \DateTime $to, array $unitIds): array
-    {
+    public function findByMissionStartAndUnit(
+        \DateTime $from,
+        \DateTime $to,
+        array $unitIds,
+        array $operations,
+    ): array {
         $qb = $this->createQueryBuilder('aar')
             ->join('aar.mission', 'm')
             ->join('m.operation', 'o')
@@ -37,6 +42,13 @@ class AfterActionReportRepository extends AbstractRepository
             $qb
                 ->andWhere('aar.unitId IN (:units)')
                 ->setParameter('units', $unitIds)
+            ;
+        }
+
+        if (!empty($operations)) {
+            $qb
+                ->andWhere('m.operation IN (:operations)')
+                ->setParameter('operations', $operations)
             ;
         }
 
