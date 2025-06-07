@@ -84,6 +84,13 @@ perscom:
             crud:
                 single: 'Course'
                 plural: 'Courses'
+            instructor:
+                title: 'Instructors'
+                create: 'New Instructor'
+                created: 'Instructor created.'
+                edit: 'Editing {instructor}'
+                edited: 'Instructor updated.'
+                removed: 'Instructor removed.'
         operation:
             crud:
                 single: 'Operation'
@@ -210,14 +217,12 @@ perscom:
             delete: 'You are about to delete the class "{class}".'
             deleted: 'Class deleted.'
             description_help: 'Additional class specific information, equipment to bring, where to assemble,...'
-            instructors_help: 'Manually setting instructors will disregard the slot count.'
             instructor_slots_help: 'How many instructors are allowed to sign up? Leave blank to allow unlimited, set to 0 to disable signups.'
-            students_help: 'Manually setting students will disregard the slot count.'
             student_slots_help: 'How many students are allowed to sign up? Leave blank to allow unlimited, set to 0 to disable signups.'
             created_by: 'Class by'
             register_as_student: 'Register as student'
             deregister_as_student: 'Deregister as student'
-            register_as_instructor: 'Register as instructor'
+            register_as_instructor: 'Register as {instructor}'
             deregister_as_instructor: 'Deregister as instructor'
             start: 'Starts on'
             end: 'Ends on'
@@ -227,6 +232,7 @@ perscom:
             prerequisites_not_met: 'Prerequisites not met'
             new_report: 'Submit Class Report'
             create_report: 'New Class Report'
+            report: '{class} - Report'
             signups_closed: 'Signups are closed.'
     notification:
         submission_status_updated:

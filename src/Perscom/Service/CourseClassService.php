@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Service;
 
+use Doctrine\Common\Collections\Collection;
 use Forumify\Calendar\Entity\CalendarEvent;
 use Forumify\Calendar\Repository\CalendarEventRepository;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
-use Forumify\PerscomPlugin\Perscom\Entity\CourseClassResult;
+use Forumify\PerscomPlugin\Perscom\Entity\CourseClassStudent;
 use Forumify\PerscomPlugin\Perscom\Exception\PerscomException;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -53,41 +54,53 @@ class CourseClassService
     /**
      * @throws PerscomException
      */
-    public function processResult(CourseClassResult $result): void
+    public function processResult(CourseClass $class): void
     {
-        $data = $result->getResult();
-
-        $serviceRecords = $this->getServiceRecords($data);
+        $serviceRecords = $this->getServiceRecords($class);
         $this->recordService->createRecords('service', $serviceRecords, true);
 
-        $qualificationRecords = $this->getQualificationRecords($data['students']);
+        $qualificationRecords = $this->getQualificationRecords($class->getStudents());
         $this->recordService->createRecords('qualification', $qualificationRecords, true);
     }
 
-    private function getServiceRecords(array $result): array
+    private function getServiceRecords(CourseClass $class): array
     {
         $records = [];
 
-        $instructors = array_filter(array_combine(array_keys($result['instructors']), array_column($result['instructors'], 'service_record_text')));
-        foreach ($instructors as $id => $text) {
-            $records[] = ['user_id' => $id, 'text' => $text];
+        foreach ($class->getInstructors() as $instructor) {
+            $text = 'Attended ' . $class->getTitle();
+            if ($instructor->getInstructor() !== null) {
+                $text .= ' as ' . $instructor->getInstructor()->getTitle();
+            }
+
+            $records[] = [
+                'user_id' => $instructor->getPerscomUserId(),
+                'text' =>  $text,
+            ];
         }
 
-        $students = array_filter(array_combine(array_keys($result['students']), array_column($result['students'], 'service_record_text')));
-        foreach ($students as $id => $text) {
-            $records[] = ['user_id' => $id, 'text' => $text];
+        $students = $class->getStudents()->filter(fn (CourseClassStudent $s) => $s->getResult() === 'passed');
+        /** @var CourseClassStudent $student */
+        foreach ($students as $student) {
+            $records[] = [
+                'user_id' => $student->getPerscomUserId(),
+                'text' => $student->getServiceRecordTextOverride() ?: "Graduated {$class->getTitle()}",
+            ];
         }
 
         return $records;
     }
 
-    private function getQualificationRecords(array $students): array
+    /**
+     * @param Collection<int, CourseClassStudent> $students
+     */
+    private function getQualificationRecords(Collection $students): array
     {
         $records = [];
-        foreach ($students as $id => $result) {
-            foreach ($result['qualifications'] as $qualificationId) {
+        foreach ($students as $student) {
+            foreach ($student->getQualifications() as $qualificationId) {
                 $records[] = [
-                    'user_id' => $id,
+                    'user_id' => $student->getPerscomUserId(),
                     'qualification_id' => $qualificationId,
                 ];
             }

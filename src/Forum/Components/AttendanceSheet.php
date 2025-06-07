@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Components;
 
 use DateTime;
-use Forumify\PerscomPlugin\Admin\Form\OperationType;
 use Forumify\PerscomPlugin\Perscom\Entity\Operation;
 use Forumify\PerscomPlugin\Perscom\Form\UnitType;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
@@ -81,7 +80,6 @@ class AttendanceSheet extends AbstractController
     {
         $this->submitForm();
 
-        /** @var array{from: DateTime, to: DateTime, unit: int[]} $data */
         $data = $this->getForm()->getData();
 
         $data['from']->setTime(0, 0, 0);

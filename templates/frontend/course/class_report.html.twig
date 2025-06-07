@@ -1,0 +1,22 @@
+{% extends '@Forumify/frontend/base.html.twig' %}
+{% set title = 'perscom.course.class.report'|trans({ class: class.title }) %}
+{% block title_page %}{{ title }}{% endblock %}
+{% block body %}
+    <h1>{{ title }}</h1>
+    {{ form_start(form) }}
+    <div class="box mb-4">
+        <h3>Instructors</h3>
+        {{ form_widget(form.instructors) }}
+    </div>
+    <div class="box mb-4">
+        <h3>Students</h3>
+        {{ form_widget(form.students) }}
+    </div>
+    <div class="flex justify-center items-center gap-2">
+        <button type="submit" class="btn-primary">{{ 'save'|trans }}</button>
+        <a href="{{ path('perscom_course_class_view', { id: class.id }) }}" class="btn-outlined">
+            {{ 'cancel'|trans }}
+        </a>
+    </div>
+    {{ form_end(form) }}
+{% endblock %}

@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Perscom\Form;
 
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Perscom\Contracts\ResourceContract;
 use Perscom\Contracts\Searchable;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -21,16 +22,28 @@ abstract class AbstractPerscomEntityType extends AbstractType
 
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $sorting = $this->getSorting();
+        $filters = $this->getFilters();
+
         $perscom = $this->perscomFactory->getPerscom();
-        $entities = $this->getResource($perscom)
-            ->search(
-                null,
-                $this->getSorting(),
-                $this->getFilters(),
-                $this->getIncludes(),
-                limit: 1000
-            )
-            ->json('data') ?? [];
+        $resource = $this->getResource($perscom);
+        if ($resource instanceof ResourceContract && empty($sorting) && empty($filters)) {
+            $entities = $resource
+                ->all($this->getIncludes(), limit: 1000)
+                ->json('data') ?? []
+            ;
+        } else {
+            $entities = $resource
+                ->search(
+                    null,
+                    $sorting,
+                    $filters,
+                    $this->getIncludes(),
+                    limit: 1000
+                )
+                ->json('data') ?? []
+            ;
+        }
 
         $choiceLabelField = $this->getLabelField();
         $choiceIdField = $this->getIdField();

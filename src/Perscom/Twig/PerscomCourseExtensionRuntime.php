@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Twig;
 
+use Doctrine\Common\Collections\Collection;
 use Exception;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
-use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
+use Forumify\PerscomPlugin\Perscom\Entity\CourseClassInstructor;
+use Forumify\PerscomPlugin\Perscom\Entity\CourseClassStudent;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Perscom\Data\FilterObject;
@@ -54,14 +56,27 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
         return $prerequisites;
     }
 
-    public function getUsers(array $ids): array
+    /**
+     * @param Collection<int, CourseClassStudent|CourseClassInstructor> $users
+     */
+    public function getUsers(Collection $users): array
     {
+        if ($users->isEmpty()) {
+            return [];
+        }
+
+        $userIds = $users
+            ->map(fn (CourseClassInstructor|CourseClassStudent $user) => $user->getPerscomUserId())
+            ->toArray()
+        ;
+        $courseUsers = array_combine($userIds, $users->toArray());
+
         try {
             $users = $this->perscomFactory
                 ->getPerscom()
                 ->users()
                 ->search(
-                    filter: new FilterObject('id', 'in', $ids),
+                    filter: new FilterObject('id', 'in', $userIds),
                     include: [
                         'rank',
                         'rank.image',
@@ -73,14 +88,16 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
         } catch (Exception) {
             return [];
         }
-        $users = array_combine(array_column($users, 'id'), $users);
+
         $this->userService->sortUsers($users);
+        $users = array_combine(array_column($users, 'id'), $users);
 
         foreach ($users as $k => $user) {
             $users[$k] = [
                 'id' => $user['id'],
                 'name' => $user['name'],
                 'rankImage' => !empty($user['rank']['image']) ? $user['rank']['image']['image_url'] : null,
+                'courseUser' => $courseUsers[$k],
             ];
         }
         return $users;
@@ -93,25 +110,5 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
         } catch (Exception) {
             return null;
         }
-    }
-
-    public function instructorAttended(CourseClass $class, int $instructorId): ?bool
-    {
-        if ($class->getResult() === null) {
-            return null;
-        }
-
-        $instructors = $class->getResult()->getResult()['instructors'] ?? null;
-        return $instructors[$instructorId]['attended'] ?? false;
-    }
-
-    public function studentResult(CourseClass $class, int $studentId): ?string
-    {
-        if ($class->getResult() === null) {
-            return null;
-        }
-
-        $students = $class->getResult()->getResult()['students'] ?? null;
-        return $students[$studentId]['result'] ?? null;
     }
 }

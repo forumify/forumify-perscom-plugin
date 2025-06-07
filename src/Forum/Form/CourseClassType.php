@@ -8,7 +8,6 @@ use Forumify\Calendar\Entity\Calendar;
 use Forumify\Core\Entity\User;
 use Forumify\Core\Form\RichTextEditorType;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
-use Forumify\PerscomPlugin\Perscom\Form\UserType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Form\AbstractType;
@@ -67,35 +66,10 @@ class CourseClassType extends AbstractType
                 'placeholder' => 'Do not create a calendar event',
                 'help' => 'Automatically create a calendar event after posting this class.',
             ])
-            ->add('instructors', UserType::class, [
-                'required' => false,
-                'multiple' => true,
-                'autocomplete' => true,
-                'empty_data' => [],
-                'help' => 'perscom.course.class.instructors_help'
-            ])
-            ->add('instructorSlots', NumberType::class, [
-                'required' => false,
-                'html5' => true,
-                'help' => 'perscom.course.class.instructor_slots_help'
-            ])
-            ->add('students', UserType::class, [
-                'required' => false,
-                'multiple' => true,
-                'autocomplete' => true,
-                'empty_data' => [],
-                'help' => 'perscom.course.class.students_help'
-            ])
             ->add('studentSlots', NumberType::class, [
                 'required' => false,
                 'html5' => true,
                 'help' => 'perscom.course.class.student_slots_help'
             ]);
-
-        if ($options['data']?->getResult()) {
-            $builder->add('result', CourseClassResultType::class, [
-                'class' => $options['data']
-            ]);
-        }
     }
 }

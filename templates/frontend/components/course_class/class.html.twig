@@ -1,0 +1,154 @@
+<div {{ attributes }}>
+    {% set course = class.course %}
+    {% set canManage = can('manage_classes', course) %}
+    <div class="breadcrumbs text-small">
+        <a href="{{ path('perscom_operations_center') }}">{{ 'perscom.opcenter.operations_center'|trans }}</a> &gt;
+        <a href="{{ path('perscom_courses_view', { slug: course.slug }) }}">{{ course.title }}</a> &gt;
+        {{ class.title }}
+    </div>
+    <div class="mb-8 flex justify-between flex-wrap">
+        <div>
+            <h1 class="mb-0">{{ class.title }}</h1>
+            <div class="flex items-center gap-2 text-small">
+                {{ 'perscom.course.class.created_by'|trans }}
+                {% include '@Forumify/components/avatar.html.twig' with { user: class.createdBy, className: 'avatar-xs' } only %}
+                <span class="flex items-baseline gap-2">
+                    {% include '@Forumify/components/username.html.twig' with { user: class.createdBy } only %}
+                    {{ class.createdAt|format_date }}
+                </span>
+            </div>
+        </div>
+        {% if canManage %}
+            <div class="flex gap-2">
+                {% if class.result %}
+                    <a class="btn-link btn-icon" href="{{ path('perscom_course_class_report', { id: class.id }) }}" title="Edit class report">
+                        <i class="ph ph-note-pencil"></i>
+                    </a>
+                {% else %}
+                    <a class="btn-primary" href="{{ path('perscom_course_class_report', { id: class.id }) }}">
+                        <i class="ph ph-note-pencil"></i>
+                        {{ 'perscom.course.class.new_report'|trans }}
+                    </a>
+                {% endif %}
+                <a class="btn-link btn-icon" href="{{ path('perscom_course_class_edit', { id: class.id }) }}" title="Edit class">
+                    <i class="ph ph-pencil-simple-line"></i>
+                </a>
+                <a class="btn-link btn-icon" href="{{ path('perscom_course_class_delete', { id: class.id }) }}" title="Delete class">
+                    <i class="ph ph-trash"></i>
+                </a>
+            </div>
+        {% endif %}
+    </div>
+    <div class="grid-12 items-start gap-4">
+        <div class="col-xs-12 col-md-5 col-lg-3 flex flex-col box">
+            {% if course.image %}
+                <img class="mb-4 rounded" src="{{ asset(course.image, 'forumify.asset') }}" style="width: 100%; height: auto">
+            {% endif %}
+            {% include '@ForumifyPerscomPlugin/frontend/components/course_class/class_signup.html.twig' %}
+        </div>
+        <div class="col-xs-12 col-md-7 col-lg-9 box flex-grow">
+            <h2>{{ course.title }}</h2>
+            {{ class.description|rich }}
+            <div class="rich-text">
+                <p class="text-bold">{{ 'perscom.course.class.start'|trans }}</p>
+                <p>{{ class.start|format_date(true) }}</p>
+                <p class="text-bold mt-2">{{ 'perscom.course.class.end'|trans }}</p>
+                <p>{{ class.end|format_date(true) }}</p>
+                {% set qualifications = course.qualifications|perscom_course_qualifications %}
+                {% if qualifications is not empty %}
+                    <p class="text-bold mt-2">{{ 'perscom.course.qualifications'|trans }}</p>
+                    <ul>
+                        {% for qualification in qualifications %}
+                            <li>{{ qualification }}</li>
+                        {% else %}
+                            <li>{{ 'perscom.course.no_qualifications'|trans }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+                {% set prerequisites = course|perscom_course_prerequisites %}
+                {% if prerequisites is not empty %}
+                    <p class="text-bold mt-2">{{ 'perscom.course.prerequisites'|trans }}</p>
+                    <ul>
+                        {% for prerequisite in prerequisites %}
+                            <li>{{ prerequisite }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+        </div>
+        <div class="table-wrapper col-xs-12 col-md-6">
+            <table>
+                <thead>
+                    <tr>
+                        <th colspan="2" class="text-left">Instructors</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for instructorType in course.instructors %}
+                        {% set instructors = class.instructors.filter((i) => i.instructor and i.instructor.id == instructorType.id) %}
+                        {% if instructors is not empty %}
+                            {% include '@ForumifyPerscomPlugin/frontend/components/course_class/instructor_rows.html.twig' with {
+                                instructorType: instructorType.title|plural
+                            } %}
+                        {% endif %}
+                    {% endfor %}
+                    {% set instructors = class.instructors.filter((i) => i.instructor is null) %}
+                    {% if instructors is not empty %}
+                        {% include '@ForumifyPerscomPlugin/frontend/components/course_class/instructor_rows.html.twig' with {
+                            instructorType: 'Instructors'
+                        } %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+        <div class="table-wrapper col-xs-12 col-md-6">
+            <table>
+                <tbody>
+                    <tr>
+                        <th colspan="2" class="p-2 border-b text-left">
+                            {{ 'perscom.course.class.students'|trans }}
+                        </th>
+                    </tr>
+                    {% for student in class.students|perscom_course_users %}
+                        <tr>
+                            <td>
+                                <span class="flex items-center gap-1 p-1">
+                                    {% if student.rankImage is not null %}
+                                        <img width="24px" height="24px" src="{{ student.rankImage }}">
+                                    {% endif %}
+                                    {{ student.name }}
+                                    {% set studentResult = student.courseUser.result %}
+                                    {% if studentResult %}
+                                        {% set color = {
+                                            passed: 'green',
+                                            failed: 'red',
+                                            excused: 'gray',
+                                            'no-show': 'gray',
+                                        }[studentResult] %}
+                                        | <span class="text-bold" style="color: {{ color }}">{{ studentResult|upper }}</span>
+                                    {% endif %}
+                                </span>
+                            </td>
+                            <td class="text-right">
+                                {% if canManage %}
+                                    <button
+                                        class="btn-link btn-icon btn-small"
+                                        {{ live_action('toggleStudent', { perscomUserId: student.id }) }}
+                                    >
+                                        <i class="ph ph-x"></i>
+                                    </button>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    {% set studentSlots = this.studentSlots %}
+                    {% if studentSlots > 0 %}
+                        {% for i in range(1, studentSlots) %}
+                            <tr><td class="text-light text-small text-center" colspan="2">OPEN</td></tr>
+                        {% endfor %}
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

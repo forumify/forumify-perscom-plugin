@@ -1,4 +1,4 @@
-<div {{ attributes }}>
+<div>
     <div data-loading>
         <div class="flex justify-center items-center" style="min-height: 100px;">
             {% include '@Forumify/components/loader.html.twig' %}
@@ -7,11 +7,10 @@
     <div data-loading="hide" class="flex flex-col gap-2">
         {% if this.signupOpen %}
             {% set isStudent = this.signedUpAsStudent %}
-            {% if this.canSignUpAsStudent or isStudent %}
+            {% if isStudent or this.canSignUpAsStudent %}
                 <button
                     class="btn-outlined w-100 justify-start"
-                    data-action="live#action"
-                    data-live-action-param="toggleStudent"
+                    {{ live_action('toggleStudent') }}
                 >
                     {% if not isStudent %}
                         <i class="ph ph-student"></i>
@@ -29,19 +28,25 @@
             {% endif %}
             {% if can('signup_as_instructor', class.course) %}
                 {% set isInstructor = this.signedUpAsInstructor %}
-                <button
-                    class="btn-outlined w-100 justify-start"
-                    data-action="live#action"
-                    data-live-action-param="toggleInstructor"
-                >
-                    {% if not isInstructor %}
-                        <i class="ph ph-chalkboard-teacher"></i>
-                        {{ 'perscom.course.class.register_as_instructor'|trans }}
-                    {% else %}
+                {% if isInstructor %}
+                    <button
+                        class="btn-outlined w-100 justify-start"
+                        {{ live_action('registerInstructor', { instructorId: null }) }}
+                    >
                         <i class="ph ph-x"></i>
                         {{ 'perscom.course.class.deregister_as_instructor'|trans }}
-                    {% endif %}
-                </button>
+                    </button>
+                {% else %}
+                    {% for instructor in this.class.course.instructors %}
+                        <button
+                            class="btn-outlined w-100 justify-start"
+                            {{ live_action('registerInstructor', { instructorId: instructor.id }) }}
+                        >
+                            <i class="ph ph-chalkboard-teacher"></i>
+                            {{ 'perscom.course.class.register_as_instructor'|trans({ instructor: instructor.title }) }}
+                        </button>
+                    {% endfor %}
+                {% endif %}
             {% endif %}
         {% else %}
             <div class="flex justify-center items-center gap-2 text-light" style="height: 100px">

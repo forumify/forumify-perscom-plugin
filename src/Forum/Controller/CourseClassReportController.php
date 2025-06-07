@@ -5,11 +5,10 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Controller;
 
 use Forumify\Core\Security\VoterAttribute;
-use Forumify\PerscomPlugin\Forum\Form\CourseClassResultType;
+use Forumify\PerscomPlugin\Forum\Form\ClassResultType;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
-use Forumify\PerscomPlugin\Perscom\Entity\CourseClassResult;
 use Forumify\PerscomPlugin\Perscom\Exception\PerscomUserNotFoundException;
-use Forumify\PerscomPlugin\Perscom\Repository\CourseClassResultRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
 use Forumify\PerscomPlugin\Perscom\Service\CourseClassService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -22,8 +21,8 @@ use Symfony\Component\Routing\Attribute\Route;
 class CourseClassReportController extends AbstractController
 {
     public function __construct(
-        private readonly CourseClassResultRepository $courseClassResultRepository,
-        private readonly CourseClassService $classResultService,
+        private readonly CourseClassService $classService,
+        private readonly CourseClassRepository $classRepository,
     ) {
     }
 
@@ -35,28 +34,28 @@ class CourseClassReportController extends AbstractController
             'permission' => 'manage_classes',
         ]);
 
-        $result = new CourseClassResult();
-        $result->setClass($class);
-
-        $form = $this->createForm(CourseClassResultType::class, $result, ['class' => $class]);
+        $form = $this->createForm(ClassResultType::class, $class);
         $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
-            $result = $form->getData();
-            $this->courseClassResultRepository->save($result);
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->render('@ForumifyPerscomPlugin/frontend/course/class_report.html.twig', [
+                'class' => $class,
+                'form' => $form->createView(),
+            ]);
+        }
 
+        $alreadyProcessed = $class->getResult();
+
+        $class->setResult(true);
+        $this->classRepository->save($class);
+
+        if (!$alreadyProcessed) {
             try {
-                $this->classResultService->processResult($result);
+                $this->classService->processResult($class);
             } catch (PerscomUserNotFoundException) {
                 $this->addFlash('error', 'perscom.admin.requires_perscom_account');
             }
-
-            return $this->redirectToRoute('perscom_course_class_view', ['id' => $class->getId()]);
         }
 
-        return $this->render('@Forumify/form/simple_form_page.html.twig', [
-            'form' => $form->createView(),
-            'title' => 'perscom.course.class.create_report',
-            'cancelPath' => $this->generateUrl('perscom_course_class_view', ['id' => $class->getId()]),
-        ]);
+        return $this->redirectToRoute('perscom_course_class_view', ['id' => $class->getId()]);
     }
 }

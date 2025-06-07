@@ -1,0 +1,32 @@
+<tr>
+    <td colspan="2" class="p-2 border-b text-left">{{ instructorType }}</td>
+</tr>
+{% for instructor in instructors|perscom_course_users %}
+    <tr>
+        <td>
+            <span class="flex items-center gap-1 p-1">
+                {% if instructor.rankImage is not null %}
+                    <img width="24px" height="24px" src="{{ instructor.rankImage }}">
+                {% endif %}
+                {{ instructor.name }}
+                {% set instructorAttended = instructor.courseUser.present %}
+                {% if instructorAttended is null %}
+                {% elseif instructorAttended %}
+                    <i class="ph ph-check-circle" style="color: green"></i>
+                {% else %}
+                    <i class="ph ph-prohibit-inset" style="color: gray"></i>
+                {% endif %}
+            </span>
+        </td>
+        <td class="text-right">
+            {% if canManage %}
+                <button
+                    class="btn-link btn-icon btn-small"
+                    {{ live_action('registerInstructor', { perscomUserId: instructor.id }) }}
+                >
+                    <i class="ph ph-x"></i>
+                </button>
+            {% endif %}
+        </td>
+    </tr>
+{% endfor %}

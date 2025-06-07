@@ -5,7 +5,10 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Entity;
 
 use DateTime;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\Column;
 use Forumify\Calendar\Entity\Calendar;
 use Forumify\Calendar\Entity\CalendarEvent;
 use Forumify\Core\Entity\BlameableEntityTrait;
@@ -44,31 +47,34 @@ class CourseClass
     private DateTime $end;
 
     /**
-     * @var array<string>
+     * @var Collection<int, CourseClassInstructor>
      */
-    #[ORM\Column(type: 'simple_array', nullable: true)]
-    private array $instructors = [];
-
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $instructorSlots = null;
+    #[ORM\OneToMany(mappedBy: 'class', targetEntity: CourseClassInstructor::class, cascade: ['persist', 'remove'])]
+    private Collection $instructors;
 
     /**
-     * @var array<string>
+     * @var Collection<int, CourseClassStudent>
      */
-    #[ORM\Column(type: 'simple_array', nullable: true)]
-    private array $students = [];
+    #[ORM\OneToMany(mappedBy: 'class', targetEntity: CourseClassStudent::class, cascade: ['persist', 'remove'])]
+    private Collection $students;
 
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $studentSlots = null;
 
-    #[ORM\OneToOne(mappedBy: 'class', targetEntity: CourseClassResult::class)]
-    private ?CourseClassResult $result = null;
+    #[Column(type: 'boolean', options: ['default' => false])]
+    private bool $result = false;
 
     #[ORM\ManyToOne(targetEntity: Calendar::class, fetch: 'EXTRA_LAZY')]
     private ?Calendar $calendar = null;
 
     #[ORM\OneToOne(targetEntity: CalendarEvent::class, fetch: 'EXTRA_LAZY')]
     private ?CalendarEvent $event = null;
+
+    public function __construct()
+    {
+        $this->instructors = new ArrayCollection();
+        $this->students = new ArrayCollection();
+    }
 
     public function getCourse(): Course
     {
@@ -141,55 +147,33 @@ class CourseClass
     }
 
     /**
-     * @return array<int>
+     * @return Collection<int, CourseClassInstructor>
      */
-    public function getInstructors(): array
+    public function getInstructors(): Collection
     {
-        return array_map(static fn (int|string $id) => (int)$id, $this->instructors);
+        return $this->instructors;
+    }
+
+    public function setInstructors(Collection|array $instructors): void
+    {
+        $this->instructors = $instructors instanceof Collection
+            ? $instructors
+            : new ArrayCollection($instructors);
     }
 
     /**
-     * @param array<int|string> $instructors
+     * @return Collection<int, CourseClassStudent>
      */
-    public function setInstructors(array $instructors): void
+    public function getStudents(): Collection
     {
-        $this->instructors = $instructors;
+        return $this->students;
     }
 
-    public function addInstructor(int $instructorId): void
+    public function setStudents(Collection|array $students): void
     {
-        $this->instructors[] = $instructorId;
-    }
-
-    public function getInstructorSlots(): ?int
-    {
-        return $this->instructorSlots;
-    }
-
-    public function setInstructorSlots(?int $instructorSlots): void
-    {
-        $this->instructorSlots = $instructorSlots;
-    }
-
-    /**
-     * @return array<int>
-     */
-    public function getStudents(): array
-    {
-        return array_map(static fn (int|string $id) => (int)$id, $this->students);
-    }
-
-    /**
-     * @param array<int|string> $students
-     */
-    public function setStudents(array $students): void
-    {
-        $this->students = $students;
-    }
-
-    public function addStudent(int $studentId): void
-    {
-        $this->students[] = $studentId;
+        $this->students = $students instanceof Collection
+            ? $students
+            : new ArrayCollection($students);
     }
 
     public function getStudentSlots(): ?int
@@ -202,12 +186,12 @@ class CourseClass
         $this->studentSlots = $studentSlots;
     }
 
-    public function getResult(): ?CourseClassResult
+    public function getResult(): bool
     {
         return $this->result;
     }
 
-    public function setResult(?CourseClassResult $result): void
+    public function setResult(bool $result): void
     {
         $this->result = $result;
     }

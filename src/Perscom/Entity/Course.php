@@ -43,6 +43,10 @@ class Course implements AccessControlledEntityInterface, SortableEntityInterface
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: CourseClass::class, cascade: ['persist', 'remove'])]
     private Collection $classes;
 
+    #[ORM\OneToMany(mappedBy: 'course', targetEntity: CourseInstructor::class, cascade: ['persist', 'remove'])]
+    #[ORM\OrderBy(['position' => 'ASC'])]
+    private Collection $instructors;
+
     private array $hydratedPrerequisites = [];
 
     public function getTitle(): string
@@ -126,6 +130,16 @@ class Course implements AccessControlledEntityInterface, SortableEntityInterface
     public function setClasses(Collection $classes): void
     {
         $this->classes = $classes;
+    }
+
+    public function getInstructors(): Collection
+    {
+        return $this->instructors;
+    }
+
+    public function setInstructors(Collection $instructors): void
+    {
+        $this->instructors = $instructors;
     }
 
     public function getACLPermissions(): array

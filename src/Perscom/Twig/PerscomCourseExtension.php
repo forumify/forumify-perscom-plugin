@@ -15,8 +15,6 @@ class PerscomCourseExtension extends AbstractExtension
             new TwigFilter('perscom_course_prerequisites', [PerscomCourseExtensionRuntime::class, 'getPrerequisites']),
             new TwigFilter('perscom_course_qualifications', [PerscomCourseExtensionRuntime::class, 'getQualifications']),
             new TwigFilter('perscom_course_users', [PerscomCourseExtensionRuntime::class, 'getUsers']),
-            new TwigFilter('perscom_course_instructor_attended', [PerscomCourseExtensionRuntime::class, 'instructorAttended']),
-            new TwigFilter('perscom_course_student_result', [PerscomCourseExtensionRuntime::class, 'studentResult']),
         ];
     }
 }

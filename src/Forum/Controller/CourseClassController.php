@@ -9,7 +9,6 @@ use Forumify\PerscomPlugin\Forum\Form\CourseClassType;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
-use Forumify\PerscomPlugin\Perscom\Service\CourseClassService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -28,13 +27,8 @@ class CourseClassController extends AbstractController
     #[Route('/class/{id}', 'view')]
     public function view(CourseClass $class): Response
     {
-        $instructorSlots = ($class->getInstructorSlots() ?? 0) - count($class->getInstructors());
-        $studentSlots = ($class->getStudentSlots() ?? 0) - count($class->getStudents());
-
         return $this->render('@ForumifyPerscomPlugin/frontend/course/class.html.twig', [
             'class' => $class,
-            'instructorSlots' => $instructorSlots,
-            'studentSlots' => $studentSlots,
         ]);
     }
 
