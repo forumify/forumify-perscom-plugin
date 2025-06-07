@@ -41,13 +41,17 @@ final class Version20250601131117 extends AbstractMigration
 
         foreach ($classes as $class) {
             $result = $results[$class['id']] ?? null;
-
             $instructors = empty($class['instructors']) ? [] : explode(',', $class['instructors']);
             foreach ($instructors as $instructor) {
-                $this->addSql('INSERT INTO perscom_course_class_instructor (perscom_user_id, class_id, present) VALUES (?, ?, ?, ?)', [
+                $present = $result['instructors'][$instructor]['attended'] ?? null;
+                if ($present !== null) {
+                    $present = $present ? 1 : 0;
+                }
+
+                $this->addSql('INSERT INTO perscom_course_class_instructor (perscom_user_id, class_id, present) VALUES (?, ?, ?)', [
                     $instructor,
                     $class['id'],
-                    $result['instructors'][$instructor]['attended'] ?? null,
+                    $present,
                 ]);
             }
 
@@ -72,17 +76,19 @@ final class Version20250601131117 extends AbstractMigration
         }
 
         $this->addSql(<<<'SQL'
-            ALTER TABLE perscom_course_class DROP instructors, DROP students, DROP instructor_slots
-        SQL);
-        $this->addSql(<<<'SQL'
             ALTER TABLE perscom_course_class_result DROP FOREIGN KEY FK_EAE3CFCEEA000B10
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE perscom_course_class_result
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE perscom_course_class ADD result TINYINT(1) DEFAULT 0 NOT NULL, DROP instructors, DROP students;
+            ALTER TABLE perscom_course_class ADD result TINYINT(1) DEFAULT 0 NOT NULL, DROP instructors, DROP instructor_slots, DROP students;
         SQL);
+
+        $classesWithResults = array_keys(($results));
+        if (!empty($classesWithResults)) {
+            $this->addSql('UPDATE perscom_course_class SET result = 1 WHERE id IN (' . implode(',', $classesWithResults) . ')');
+        }
     }
 
     public function down(Schema $schema): void
