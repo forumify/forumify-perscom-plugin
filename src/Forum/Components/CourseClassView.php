@@ -105,13 +105,13 @@ class CourseClassView extends AbstractController
     }
 
     #[LiveAction]
-    public function toggleStudent(#[LiveArg] ?int $perscomUserId = null): void
+    public function toggleStudent(): void
     {
         if (!$this->canSignUpAsStudent()) {
             return;
         }
 
-        $perscomUserId ??= $this->perscomUserService->getLoggedInPerscomUser()['id'] ?? null;
+        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()['id'] ?? null;
         if ($perscomUserId === null) {
             return;
         }
@@ -128,10 +128,8 @@ class CourseClassView extends AbstractController
     }
 
     #[LiveAction]
-    public function registerInstructor(
-        #[LiveArg] ?int $instructorId = null,
-        #[LiveArg] ?int $perscomUserId = null,
-    ): void {
+    public function registerInstructor(#[LiveArg] ?int $instructorId = null): void
+    {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'permission' => 'signup_as_instructor',
             'entity' => $this->class->getCourse(),
@@ -142,28 +140,59 @@ class CourseClassView extends AbstractController
             return;
         }
 
-        if ($instructorId === null) {
-            $instructor = $this->classInstructorRepository->find([
-                'perscomUserId' => $perscomUserId,
-                'class' => $this->class,
-            ]);
+        $instructor = $this->classInstructorRepository->find([
+            'perscomUserId' => $perscomUserId,
+            'class' => $this->class,
+        ]);
 
-            if ($instructor !== null) {
-                $this->classInstructorRepository->remove($instructor);
-            }
+        if ($instructor !== null) {
+            $this->classInstructorRepository->remove($instructor);
             return;
         }
 
-        $instructor = $this->instructorRepository->find($instructorId);
-        if ($instructor === null) {
-            return;
-        }
+        $instructorType = $instructorId === null ? null : $this->instructorRepository->find($instructorId);
 
         $cInstructor = new CourseClassInstructor();
         $cInstructor->setPerscomUserId($perscomUserId);
         $cInstructor->setClass($this->class);
-        $cInstructor->setInstructor($instructor);
+        $cInstructor->setInstructor($instructorType);
         $this->classInstructorRepository->save($cInstructor);
+    }
+
+    #[LiveAction]
+    public function removeStudent(#[LiveArg] int $perscomUserId): void
+    {
+        $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
+            'entity' => $this->class->getCourse(),
+            'permission' => 'manage_classes'
+        ]);
+
+        $student = $this->classStudentRepository->find([
+            'perscomUserId' => $perscomUserId,
+            'class' => $this->class,
+        ]);
+
+        if ($student !== null) {
+            $this->classStudentRepository->remove($student);
+        }
+    }
+
+    #[LiveAction]
+    public function removeInstructor(#[LiveArg] int $perscomUserId): void
+    {
+        $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
+            'entity' => $this->class->getCourse(),
+            'permission' => 'manage_classes'
+        ]);
+
+        $instructor = $this->classInstructorRepository->find([
+            'perscomUserId' => $perscomUserId,
+            'class' => $this->class,
+        ]);
+
+        if ($instructor !== null) {
+            $this->classInstructorRepository->remove($instructor);
+        }
     }
 
     public function isSignedUpAsInstructor(): bool

@@ -45,6 +45,14 @@
                             <i class="ph ph-chalkboard-teacher"></i>
                             {{ 'perscom.course.class.register_as_instructor'|trans({ instructor: instructor.title }) }}
                         </button>
+                    {% else %}
+                        <button
+                            class="btn-outlined w-100 justify-start"
+                            {{ live_action('registerInstructor') }}
+                        >
+                            <i class="ph ph-chalkboard-teacher"></i>
+                            {{ 'perscom.course.class.register_as_instructor'|trans({ instructor: 'Instructor' }) }}
+                        </button>
                     {% endfor %}
                 {% endif %}
             {% endif %}
@@ -56,8 +64,3 @@
         {% endif %}
     </div>
 </div>
-{% macro placeholder(props) %}
-    <div class="flex justify-center items-center" style="min-height: 100px;">
-        {% include '@Forumify/components/loader.html.twig' %}
-    </div>
-{% endmacro %}
