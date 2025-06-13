@@ -88,6 +88,7 @@ class ReportInService
             'type' => 'primary',
             'status_id' => $failureStatus['id'],
             'text' => "Status updated to {$failureStatus['name']} due to a failure to report in.",
+            'sendNotification' => true,
         ]);
 
         foreach ($failures as $perscomUser) {

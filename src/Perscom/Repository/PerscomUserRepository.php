@@ -31,7 +31,7 @@ class PerscomUserRepository extends AbstractRepository
     }
 
     /**
-     * @param array<int> $perscomIds
+     * @param array<int|string> $perscomIds
      * @return array<PerscomUser>
      */
     public function findByPerscomIds(array $perscomIds): array
@@ -44,9 +44,10 @@ class PerscomUserRepository extends AbstractRepository
 
         $missing = [];
         foreach ($perscomIds as $perscomId) {
+            $perscomId = (int)$perscomId;
             $found = false;
             foreach ($result as $found) {
-                if ($found->getId() === (int)$perscomId) {
+                if ($found->getId() === $perscomId) {
                     $found = true;
                     break;
                 }

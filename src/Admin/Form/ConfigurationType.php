@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
+use Forumify\Core\Form\RichTextEditorType;
 use Forumify\Core\Repository\RoleRepository;
 use Forumify\Forum\Repository\ForumRepository;
 use Forumify\PerscomPlugin\Perscom\Form\PerscomFormType;
@@ -13,8 +14,10 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class ConfigurationType extends AbstractType
 {
@@ -43,14 +46,14 @@ class ConfigurationType extends AbstractType
                 'placeholder' => 'Select a form to use for enlistments',
             ])
             ->add('perscom__enlistment__forum', ChoiceType::class, [
-                'label' => 'Target Forum',
+                'label' => 'Enlistment Forum',
                 'help' => 'Automatically post a topic containing the enlistment to this forum.',
                 'required' => false,
                 'choices' => $this->getForumChoices(),
                 'placeholder' => 'Do not create enlistment topics',
             ])
             ->add('perscom__enlistment__role', ChoiceType::class, [
-                'label' => 'User Role',
+                'label' => 'Enlistee Role',
                 'help' => 'Automatically assign this role to the user upon creating an enlistment.',
                 'required' => false,
                 'choices' => $this->getRoleChoices(),
@@ -114,6 +117,40 @@ class ConfigurationType extends AbstractType
                     'label' => 'Failure status',
                     'help' => 'Status to move the user to when they fail to report in. For example: AWOL',
                     'required' => false,
+                ])
+                // Operations
+                ->add('perscom__operations__absent_notification', CheckboxType::class, [
+                    'label' => 'Send absent notifications',
+                    'required' => false,
+                    'help' => 'Send a simple notification when the user is marked absent in an after action report.'
+                ])
+                ->add('perscom__operations__absent_notification_message', TextType::class, [
+                    'label' => 'Absent notification message',
+                    'required' => false,
+                    'help' => 'If absent notifications are turned on, and this field is empty, a standard message will be used. Max 300 characters.',
+                    'constraints' => [new Assert\Length(max: 300)],
+                ])
+                ->add('perscom__operations__consecutive_absent_notification', CheckboxType::class, [
+                    'label' => 'Send consecutive absence notifications',
+                    'required' => false,
+                    'help' => 'Send an email and optionally change the user\'s status when they are marked absent multiple times in a row.'
+                ])
+                ->add('perscom__operations__consecutive_absent_notification_count', NumberType::class, [
+                    'label' => 'Consecutive absence count',
+                    'required' => false,
+                    'help' => 'How many times the user needs to be marked absent in an after action report before being considered consecutively absent. For example, if set to 3, the user will receive their first notification on their third absence.',
+                    'constraints' => [new Assert\PositiveOrZero()],
+                ])
+                ->add('perscom__operations__consecutive_absent_notification_message', RichTextEditorType::class, [
+                    'label' => 'Consecutive absence email content',
+                    'required' => false,
+                    'help' => 'If this is empty, a standard message will be used.',
+                ])
+                ->add('perscom__operations__consecutive_absent_status', StatusType::class, [
+                    'label' => 'Consecutive absence status',
+                    'placeholder' => 'Do not change status',
+                    'required' => false,
+                    'help' => 'Automatically move users with consecutive absences to a different status.'
                 ])
             ;
         }

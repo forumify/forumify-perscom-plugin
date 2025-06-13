@@ -9,6 +9,7 @@
                 <button type="button" class="btn-link" data-tab-id="profile">{{ 'perscom.settings.tab_profile'|trans }}</button>
                 {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
                     <button type="button" class="btn-link" data-tab-id="report-in">{{ 'perscom.settings.tab_report_in'|trans }}</button>
+                    <button type="button" class="btn-link" data-tab-id="operations">{{ 'perscom.settings.tab_operations'|trans }}</button>
                 {% endif %}
             {% endblock %}
             {% block tabpanels %}
@@ -32,6 +33,14 @@
                         {{ form_row(form.perscom__report_in__period) }}
                         {{ form_row(form.perscom__report_in__warning_period) }}
                         {{ form_row(form.perscom__report_in__failure_status) }}
+                    </div>
+                    <div id="operations">
+                        {{ form_row(form.perscom__operations__absent_notification) }}
+                        {{ form_row(form.perscom__operations__absent_notification_message) }}
+                        {{ form_row(form.perscom__operations__consecutive_absent_notification) }}
+                        {{ form_row(form.perscom__operations__consecutive_absent_notification_count) }}
+                        {{ form_row(form.perscom__operations__consecutive_absent_notification_message) }}
+                        {{ form_row(form.perscom__operations__consecutive_absent_status) }}
                     </div>
                 {% endif %}
             {% endblock %}
