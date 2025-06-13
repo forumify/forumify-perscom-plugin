@@ -47,7 +47,7 @@ class PerscomUserRepository extends AbstractRepository
             $perscomId = (int)$perscomId;
             $found = false;
             foreach ($result as $found) {
-                if ($found->getId() === $perscomId) {
+                if ($found->getPerscomId() === (int)$perscomId) {
                     $found = true;
                     break;
                 }
@@ -78,9 +78,8 @@ class PerscomUserRepository extends AbstractRepository
                 }
 
                 $match = new PerscomUser();
-                $match->setId($perscomUser['id']);
+                $match->setPerscomId($perscomUser['id']);
                 $match->setUser($user);
-                $this->save($match);
 
                 $result[] = $match;
                 break;

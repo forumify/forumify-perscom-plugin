@@ -5,15 +5,15 @@
 {% block body %}
     <div class="flex justify-between mb-6">
         {% include '@ForumifyPerscomPlugin/frontend/user/components/header.html.twig' %}
-        {% if forumAccount %}
-            <a class="btn-primary" href="{{ path('forumify_forum_profile', { username: forumAccount.username }) }}">
+        {% if user.user is not null %}
+            <a class="btn-primary" href="{{ path('forumify_forum_profile', { username: user.user.username }) }}">
                 {{ 'perscom.user.forum_profile'|trans }}
             </a>
         {% endif %}
     </div>
-    {% if user.cover_photo_url %}
+    {% if user.uniform %}
         <div class="text-center mb-4">
-            <img style="max-height: 530px; max-width: 100%" src="{{ user.cover_photo_url }}">
+            <img style="max-height: 530px; max-width: 100%" src="{{ asset(user.uniform, 'perscom.asset') }}">
         </div>
     {% endif %}
     <div class="grid gap-4">
@@ -23,7 +23,7 @@
                     <div class="card-title">{{ 'perscom.user.rank'|trans }}</div>
                     <div class="card-body flex flex-col items-center">
                         {% if user.rank.image %}
-                            <img width="125px" height="auto" src="{{ user.rank.image.image_url }}" alt="">
+                            <img width="125px" height="auto" src="{{ asset(user.rank.image, 'perscom.asset') }}" alt="">
                         {% endif %}
                         <div class="text-small">{{ user.rank.name }}</div>
                     </div>
@@ -60,29 +60,33 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
-                <div class="card-title">{{ 'perscom.user.length_in_service'|trans }}</div>
-                <div class="card-body flex flex-col">
-                    <p class="text-bold">{{ 'perscom.user.time_in_service'|trans }}</p>
-                    <p class="mb-2">
-                        {{ [
-                            'date_relative.years'|trans({ count: tis.format('%y') }),
-                            'date_relative.months'|trans({ count: tis.format('%m') }),
-                            'date_relative.days'|trans({ count: tis.format('%d') })
-                        ]|filter(v => v is not empty)|join(', ') }}
-                    </p>
-                    {% if tig %}
-                        <p class="text-bold">{{ 'perscom.user.time_in_grade'|trans }}</p>
-                        <p class="mb-2">
-                            {{ [
-                                'date_relative.years'|trans({ count: tig.format('%y') }),
-                                'date_relative.months'|trans({ count: tig.format('%m') }),
-                                'date_relative.days'|trans({ count: tig.format('%d') })
-                            ]|filter(v => v is not empty)|join(', ') }}
-                        </p>
-                    {% endif %}
+            {% if tis or tig %}
+                <div class="card">
+                    <div class="card-title">{{ 'perscom.user.length_in_service'|trans }}</div>
+                    <div class="card-body flex flex-col">
+                        {% if tis %}
+                            <p class="text-bold">{{ 'perscom.user.time_in_service'|trans }}</p>
+                            <p class="mb-2">
+                                {{ [
+                                    'date_relative.years'|trans({ count: tis.format('%y') }),
+                                    'date_relative.months'|trans({ count: tis.format('%m') }),
+                                    'date_relative.days'|trans({ count: tis.format('%d') })
+                                ]|filter(v => v is not empty)|join(', ') }}
+                            </p>
+                        {% endif %}
+                        {% if tig %}
+                            <p class="text-bold">{{ 'perscom.user.time_in_grade'|trans }}</p>
+                            <p class="mb-2">
+                                {{ [
+                                    'date_relative.years'|trans({ count: tig.format('%y') }),
+                                    'date_relative.months'|trans({ count: tig.format('%m') }),
+                                    'date_relative.days'|trans({ count: tig.format('%d') })
+                                ]|filter(v => v is not empty)|join(', ') }}
+                            </p>
+                        {% endif %}
+                    </div>
                 </div>
-            </div>
+            {% endif %}
             {% if setting('perscom.report_in.enabled') %}
                 <div class="card">
                     <div class="card-title">
@@ -115,22 +119,22 @@
                         {% include '@ForumifyPerscomPlugin/frontend/user/components/assignment.html.twig' %}
                     </div>
                     <div id="service-record">
-                        {{ component('RecordTable', { data: user.service_records }) }}
+                        {{ component('ServiceRecordTable', { user: user }) }}
                     </div>
                     <div id="award-record">
-                        {{ component('AwardRecordTable', { data: user.award_records }) }}
+                        {{ component('AwardRecordTable', { user: user }) }}
                     </div>
                     <div id="combat-record">
-                        {{ component('RecordTable', { data: user.combat_records }) }}
+                        {{ component('CombatRecordTable', { user: user }) }}
                     </div>
                     <div id="rank-record">
-                        {{ component('RankRecordTable', { data: user.rank_records }) }}
+                        {{ component('RankRecordTable', { user: user }) }}
                     </div>
                     <div id="assignment-record">
-                        {{ component('AssignmentRecordTable', { data: user.assignment_records }) }}
+                        {{ component('AssignmentRecordTable', { user: user }) }}
                     </div>
                     <div id="qualification-record">
-                        {{ component('QualificationRecordTable', { data: user.qualification_records }) }}
+                        {{ component('QualificationRecordTable', { user: user }) }}
                     </div>
                 {% endblock %}
             {% endembed %}

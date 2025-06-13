@@ -66,9 +66,8 @@ class PerscomUserService
         }
 
         $perscomUser = new PerscomUser();
-        $perscomUser->setId($perscomUserData['id']);
+        $perscomUser->setPerscomId($perscomUserData['id']);
         $perscomUser->setUser($user);
-        $this->perscomUserRepository->save($perscomUser);
 
         return $perscomUserData;
     }
@@ -86,11 +85,6 @@ class PerscomUserService
                 'email_verified_at' => (new \DateTime())->format(Perscom::DATE_FORMAT),
             ])
             ->json('data');
-
-        $perscomUser = new PerscomUser();
-        $perscomUser->setId($data['id']);
-        $perscomUser->setUser($user);
-        $this->perscomUserRepository->save($perscomUser);
 
         return $data;
     }
@@ -117,6 +111,31 @@ class PerscomUserService
             }
 
             return strcmp($a['name'], $b['name']);
+        });
+    }
+
+    public function sortPerscomUsers(&$users): void
+    {
+        usort($users, static function (PerscomUser $a, PerscomUser $b): int {
+            $aRank = $a->getRank()?->getPosition() ?? 1000;
+            $bRank = $b->getRank()?->getPosition() ?? 1000;
+            if ($aRank !== $bRank) {
+                return $aRank - $bRank;
+            }
+
+            $aPos = $a->getPosition()?->getPosition() ?? 1000;
+            $bPos = $b->getPosition()?->getPosition() ?? 1000;
+            if ($aPos !== $bPos) {
+                return $aPos - $bPos;
+            }
+
+            $aSpec = $a->getSpecialty()?->getPosition() ?? 1000;
+            $bSpec = $b->getSpecialty()?->getPosition() ?? 1000;
+            if ($aSpec !== $bSpec) {
+                return $aSpec - $bSpec;
+            }
+
+            return strcmp($a->getName(), $b->getName());
         });
     }
 }
