@@ -8,10 +8,10 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassInstructor;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseInstructor;
+use Forumify\PerscomPlugin\Perscom\Form\UserType;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -28,7 +28,12 @@ class ClassInstructorResultType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('perscomUserId', HiddenType::class)
+            ->add('perscomUserId', UserType::class, [
+                'autocomplete' => true,
+                'label' => false,
+                'placeholder' => 'Please select a user',
+                'attr' => ['class' => 'd-none']
+            ])
             ->add('present', CheckboxType::class, [
                 'required' => false,
             ])

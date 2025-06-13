@@ -6,9 +6,9 @@ namespace Forumify\PerscomPlugin\Forum\Form;
 
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassStudent;
 use Forumify\PerscomPlugin\Perscom\Form\QualificationType;
+use Forumify\PerscomPlugin\Perscom\Form\UserType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -28,9 +28,13 @@ class ClassStudentResultType extends AbstractType
         $class = $options['course_class'];
 
         $builder
-            ->add('perscomUserId', HiddenType::class)
+            ->add('perscomUserId', UserType::class, [
+                'autocomplete' => true,
+                'label' => false,
+                'placeholder' => 'Please select a user',
+                'attr' => ['class' => 'd-none']
+            ])
             ->add('result', ChoiceType::class, [
-                'placeholder' => 'Please select a result',
                 'choices' => [
                     'Passed' => 'passed',
                     'Failed' => 'failed',

@@ -10,6 +10,12 @@
                 "enabled": true,
                 "autoimport": {}
             },
+            "course_class_report": {
+                "main": "dist/course_class_report_controller.js",
+                "fetch": "lazy",
+                "enabled": true,
+                "autoimport": {}
+            },
             "user_edit": {
                 "main": "dist/user_edit_controller.js",
                 "fetch": "lazy",

@@ -49,13 +49,23 @@ class CourseClass
     /**
      * @var Collection<int, CourseClassInstructor>
      */
-    #[ORM\OneToMany(mappedBy: 'class', targetEntity: CourseClassInstructor::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        mappedBy: 'class',
+        targetEntity: CourseClassInstructor::class,
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+    )]
     private Collection $instructors;
 
     /**
      * @var Collection<int, CourseClassStudent>
      */
-    #[ORM\OneToMany(mappedBy: 'class', targetEntity: CourseClassStudent::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(
+        mappedBy: 'class',
+        targetEntity: CourseClassStudent::class,
+        cascade: ['persist', 'remove'],
+        orphanRemoval: true,
+    )]
     private Collection $students;
 
     #[ORM\Column(type: 'integer', nullable: true)]
@@ -161,6 +171,17 @@ class CourseClass
             : new ArrayCollection($instructors);
     }
 
+    public function addInstructor(CourseClassInstructor $instructor): void
+    {
+        $this->instructors->add($instructor);
+        $instructor->setClass($this);
+    }
+
+    public function removeInstructor(CourseClassInstructor $instructor): void
+    {
+        $this->instructors->removeElement($instructor);
+    }
+
     /**
      * @return Collection<int, CourseClassStudent>
      */
@@ -174,6 +195,17 @@ class CourseClass
         $this->students = $students instanceof Collection
             ? $students
             : new ArrayCollection($students);
+    }
+
+    public function addStudent(CourseClassStudent $student): void
+    {
+        $this->students->add($student);
+        $student->setClass($this);
+    }
+
+    public function removeStudent(CourseClassStudent $student): void
+    {
+        $this->students->removeElement($student);
     }
 
     public function getStudentSlots(): ?int

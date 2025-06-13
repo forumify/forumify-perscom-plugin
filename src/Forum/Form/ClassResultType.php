@@ -35,12 +35,18 @@ class ClassResultType extends AbstractType
                 'entry_options' => [
                     'course_class' => $options['data'],
                 ],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
             ])
             ->add('instructors', CollectionType::class, [
                 'entry_type' => ClassInstructorResultType::class,
                 'entry_options' => [
                     'course_class' => $options['data'],
                 ],
+                'allow_add' => true,
+                'allow_delete' => true,
+                'by_reference' => false,
             ])
         ;
     }
