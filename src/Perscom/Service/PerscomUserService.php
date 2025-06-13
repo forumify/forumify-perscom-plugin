@@ -66,9 +66,8 @@ class PerscomUserService
         }
 
         $perscomUser = new PerscomUser();
-        $perscomUser->setId($perscomUserData['id']);
+        $perscomUser->setPerscomId($perscomUserData['id']);
         $perscomUser->setUser($user);
-        $this->perscomUserRepository->save($perscomUser);
 
         return $perscomUserData;
     }
@@ -86,11 +85,6 @@ class PerscomUserService
                 'email_verified_at' => (new \DateTime())->format(Perscom::DATE_FORMAT),
             ])
             ->json('data');
-
-        $perscomUser = new PerscomUser();
-        $perscomUser->setId($data['id']);
-        $perscomUser->setUser($user);
-        $this->perscomUserRepository->save($perscomUser);
 
         return $data;
     }

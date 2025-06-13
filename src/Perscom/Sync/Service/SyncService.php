@@ -1,0 +1,129 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Forumify\PerscomPlugin\Perscom\Sync\Service;
+
+use Doctrine\ORM\EntityManagerInterface;
+use Forumify\Core\Repository\SettingRepository;
+use Forumify\PerscomPlugin\Perscom\Entity as Entity;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
+use Forumify\PerscomPlugin\Perscom\Perscom;
+use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Perscom\Contracts\ResourceContract;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
+use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+
+class SyncService
+{
+    private readonly Perscom $perscom;
+
+    public function __construct(
+        private readonly SettingRepository $settingRepository,
+        private readonly EntityManagerInterface $em,
+        private readonly NormalizerInterface&DenormalizerInterface $normalizer,
+        PerscomFactory $perscomFactory,
+    ) {
+        $this->perscom = $perscomFactory->getPerscom();
+    }
+
+    public function sync(): void
+    {
+        $this->syncOrganization();
+    }
+
+    private function syncOrganization(): void
+    {
+        $p = $this->perscom;
+        $this->fullSyncEntity($p->awards(), Entity\Award::class, ['image']);
+        $this->fullSyncEntity($p->documents(), Entity\Document::class);
+        $positions = $this->fullSyncEntity($p->positions(), Entity\Position::class);
+        $this->fullSyncEntity($p->qualifications(), Entity\Qualification::class, ['image']);
+        $ranks = $this->fullSyncEntity($p->ranks(), Entity\Rank::class, ['image']);
+        $specialties = $this->fullSyncEntity($p->specialties(), Entity\Specialty::class);
+        $statuses = $this->fullSyncEntity($p->statuses(), Entity\Status::class);
+        $units = $this->fullSyncEntity($p->units(), Entity\Unit::class);
+        $this->fullSyncEntity($p->groups(), Entity\Roster::class, ['units'], context: ['units' => $units]);
+        $this->fullSyncEntity($p->users(), Entity\PerscomUser::class, context: [
+            'positions' => $positions,
+            'ranks' => $ranks,
+            'specialties' => $specialties,
+            'statuses' => $statuses,
+            'units' => $units,
+        ]);
+
+        $this->em->flush();
+        $this->em->clear();
+    }
+
+    /**
+     * @template T of object
+     * @param class-string<T> $entityClass
+     * @return array<int, T> all entities indexed by Perscom ID
+     */
+    private function fullSyncEntity(
+        ResourceContract $resource,
+        string $entityClass,
+        ?array $includes = [],
+        ?array $context = [],
+    ): array {
+        usleep(50000);
+
+        $repository = $this->em->getRepository($entityClass);
+
+        $page = 0;
+        $lastPage = 0;
+        $allItems = [];
+
+        do {
+            $page++;
+            $res = $resource->all(include: $includes, page: $page, limit: 100);
+            $lastPage = $res->array('meta')['last_page'] ?? 0;
+            $perscomItems = $res->array('data') ?? [];
+            $perscomIds = array_column($perscomItems, 'id');
+
+            $existingItems = $repository->findBy(['perscomId' => $perscomIds]);
+            $existingItems = $this->indexByPerscomId($existingItems);
+
+            foreach ($perscomItems as $item) {
+                $existingItem = $existingItems[$item['id']] ?? null;
+                $obj = $this->normalizer->denormalize($item, $entityClass, 'perscom_array', [
+                    AbstractNormalizer::OBJECT_TO_POPULATE => $existingItem,
+                    ...$context,
+                ]);
+
+                $this->em->persist($obj);
+                $existingItems[$item['id']] = $obj;
+            }
+
+            $allItems += $existingItems;
+        } while ($page <= $lastPage);
+
+        $this->em->createQueryBuilder()
+            ->delete($entityClass, 'e')
+            ->where('e.perscomId IS NOT NULL')
+            ->andWhere('e.perscomId NOT IN (:allIds)')
+            ->setParameter('allIds', array_keys($allItems))
+            ->getQuery()
+            ->execute()
+        ;
+
+        return $allItems;
+    }
+
+    /**
+     * @param Entity\PerscomEntityInterface[] $items
+     * @return array<int, PerscomEntityInterface>
+     */
+    private function indexByPerscomId(array $items): array
+    {
+        $arr = [];
+        foreach ($items as $item) {
+            if ($perscomId = $item->getPerscomId()) {
+                $arr[$perscomId] = $item;
+            }
+        }
+        return $arr;
+    }
+}
