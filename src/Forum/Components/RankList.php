@@ -4,39 +4,25 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Components;
 
-use Forumify\Core\Component\List\AbstractList;
-use Forumify\Core\Component\List\ListResult;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Doctrine\ORM\QueryBuilder;
+use Forumify\Core\Component\List\AbstractDoctrineList;
+use Forumify\PerscomPlugin\Perscom\Repository\RankRepository;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
 #[AsLiveComponent('RankList', '@ForumifyPerscomPlugin/frontend/components/rank_list.html.twig')]
-class RankList extends AbstractList
+class RankList extends AbstractDoctrineList
 {
-    private ?ListResult $result = null;
-
-    public function __construct(private readonly PerscomFactory $perscomFactory)
+    public function __construct(private readonly RankRepository $rankRepository)
     {
     }
 
-    public function getResult(): ListResult
+    protected function getQueryBuilder(): QueryBuilder
     {
-        if ($this->result !== null) {
-            return $this->result;
-        }
+        return $this->rankRepository->createQueryBuilder('e');
+    }
 
-        $ranks = $this->perscomFactory
-            ->getPerscom()
-            ->ranks()
-            ->all(['image'], $this->page, $this->size)
-            ->json();
-
-        $this->result = new ListResult(
-            $ranks['data'],
-            $this->page,
-            $this->size,
-            $ranks['meta']['total'],
-        );
-
-        return $this->result;
+    protected function getCount(): int
+    {
+        return $this->rankRepository->count([]);
     }
 }

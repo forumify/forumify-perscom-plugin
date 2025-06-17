@@ -4,39 +4,25 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Components;
 
-use Forumify\Core\Component\List\AbstractList;
-use Forumify\Core\Component\List\ListResult;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Doctrine\ORM\QueryBuilder;
+use Forumify\Core\Component\List\AbstractDoctrineList;
+use Forumify\PerscomPlugin\Perscom\Repository\AwardRepository;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
 #[AsLiveComponent('AwardList', '@ForumifyPerscomPlugin/frontend/components/award_list.html.twig')]
-class AwardList extends AbstractList
+class AwardList extends AbstractDoctrineList
 {
-    private ?ListResult $result = null;
-
-    public function __construct(private readonly PerscomFactory $perscomFactory)
+    public function __construct(private readonly AwardRepository $awardRepository)
     {
     }
 
-    public function getResult(): ListResult
+    protected function getQueryBuilder(): QueryBuilder
     {
-        if ($this->result !== null) {
-            return $this->result;
-        }
+        return $this->awardRepository->createQueryBuilder('e');
+    }
 
-        $awards = $this->perscomFactory
-            ->getPerscom()
-            ->awards()
-            ->all(['image'], $this->page, $this->size)
-            ->json();
-
-        $this->result = new ListResult(
-            $awards['data'],
-            $this->page,
-            $this->size,
-            $awards['meta']['total'],
-        );
-
-        return $this->result;
+    protected function getCount(): int
+    {
+        return $this->awardRepository->count([]);
     }
 }

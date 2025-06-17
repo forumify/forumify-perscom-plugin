@@ -30,7 +30,7 @@ class RankSerializer implements DenormalizerInterface
 
         $rank->setPerscomId($data['id']);
         $rank->setName($data['name'] ?? '');
-        $rank->setDescription($data['name'] ?? '');
+        $rank->setDescription($data['description'] ?? '');
         $rank->setAbbreviation($data['abbreviation'] ?? '');
         $rank->setPaygrade($data['paygrade'] ?? '');
         $rank->setPosition($data['order'] ?? 0);

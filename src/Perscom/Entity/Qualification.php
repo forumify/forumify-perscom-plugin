@@ -9,9 +9,10 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
+use Forumify\PerscomPlugin\Perscom\Repository\QualificationRepository;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: QualificationRepository::class)]
 #[ORM\Table('perscom_qualification')]
 class Qualification implements PerscomEntityInterface, PerscomEntityWithImageInterface, SortableEntityInterface
 {
