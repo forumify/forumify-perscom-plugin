@@ -28,10 +28,6 @@ class OperationsCenterController extends AbstractController
         }
 
         $perscom = $perscomFactory->getPerscom();
-        $perscomUser = $perscom->users()
-            ->get($perscomUser['id'], ['status', 'rank', 'position'])
-            ->json('data');
-
         $announcements = $perscom->announcements()
             ->search(filter: [
                 new FilterObject('expires_at', '>=', (new DateTime())->format(Perscom::DATE_FORMAT)),

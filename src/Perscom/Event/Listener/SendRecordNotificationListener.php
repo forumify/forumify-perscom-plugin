@@ -33,7 +33,7 @@ class SendRecordNotificationListener
         $users = $this->perscomUserRepository->findByPerscomIds($userIds);
         foreach ($users as $user) {
             foreach ($event->records as $record) {
-                if ($record['user_id'] === $user->getId()) {
+                if ($record['user_id'] === $user->getPerscomId()) {
                     $this->sendNotification($event->type, $user->getUser(), $record);
                 }
             }

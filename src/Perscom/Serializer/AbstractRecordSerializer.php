@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 abstract class AbstractRecordSerializer implements DenormalizerInterface
 {
     /**
-     * @template T
+     * @template T of RecordInterface
      * @param class-string<T> $type
      * @return T
      */
@@ -21,7 +21,7 @@ abstract class AbstractRecordSerializer implements DenormalizerInterface
     {
         /** @var RecordInterface $object */
         $object = $context[AbstractNormalizer::OBJECT_TO_POPULATE] ?? new $type();
-        if (!is_array($data) || !$object instanceof RecordInterface) {
+        if (!is_array($data)) {
             throw new RuntimeException('Unable to denormalize record.');
         }
 

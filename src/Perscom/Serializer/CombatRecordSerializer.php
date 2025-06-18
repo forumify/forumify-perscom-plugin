@@ -19,6 +19,7 @@ class CombatRecordSerializer extends AbstractRecordSerializer implements Denorma
 
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): CombatRecord
     {
+        /** @var CombatRecord $record */
         $record = parent::denormalize($data, $type, $format, $context);
 
         return $record;

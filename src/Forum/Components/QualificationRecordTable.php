@@ -44,8 +44,6 @@ class QualificationRecordTable extends AbstractRecordTable
         }
         $image = $image ? "<img src='$image' width='100%' height='auto' style='max-width: 24px; max-height: 24px;'>" : '';
 
-        $qualificationName = $qualificationName ?? 'Unknown';
-
         return "<div class='w-100 flex items-center gap-2'>$image $qualificationName</div>";
     }
 }

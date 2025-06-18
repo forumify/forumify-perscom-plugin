@@ -19,6 +19,7 @@ class ServiceRecordSerializer extends AbstractRecordSerializer implements Denorm
 
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): ServiceRecord
     {
+        /** @var ServiceRecord $record */
         $record = parent::denormalize($data, $type, $format, $context);
 
         return $record;

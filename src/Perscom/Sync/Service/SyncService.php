@@ -31,11 +31,11 @@ class SyncService
 
     public function sync(): void
     {
-        $this->syncOrganization();
-    }
+        $isSyncEnabled = $this->settingRepository->get('perscom.sync.enabled') ?? true;
+        if (!$isSyncEnabled) {
+            return;
+        }
 
-    private function syncOrganization(): void
-    {
         $p = $this->perscom;
         $awards = $this->fullSyncEntity($p->awards(), Entity\Award::class, ['image']);
         $documents = $this->fullSyncEntity($p->documents(), Entity\Document::class);

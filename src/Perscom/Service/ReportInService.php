@@ -5,36 +5,37 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Service;
 
 use DateTime;
-use Exception;
 use Forumify\Core\Entity\Notification;
+use Forumify\Core\Entity\User;
 use Forumify\Core\Notification\GenericEmailNotificationType;
 use Forumify\Core\Notification\NotificationService;
 use Forumify\Core\Repository\SettingRepository;
-use Forumify\Core\Repository\UserRepository;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\ReportIn;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Entity\Status;
+use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\ReportInRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\StatusRepository;
 use Forumify\Plugin\Service\PluginVersionChecker;
-use Perscom\Data\FilterObject;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ReportInService
 {
-    private ?array $failureStatus = null;
+    private ?Status $failureStatus = null;
 
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
         private readonly SettingRepository $settingRepository,
         private readonly PluginVersionChecker $pluginVersionChecker,
         private readonly ReportInRepository $reportInRepository,
-        private readonly UserRepository $userRepository,
         private readonly NotificationService $notificationService,
         private readonly RecordService $recordService,
         private readonly PerscomUserService $perscomUserService,
         private readonly Packages $packages,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly PerscomUserRepository $perscomUserRepository,
+        private readonly StatusRepository $statusRepository,
     ) {
     }
 
@@ -52,12 +53,10 @@ class ReportInService
         $now = new DateTime();
         $failures = [];
         foreach ($usersToCheck as $perscomUser) {
-            $perscomUserId = $perscomUser['id'];
-
-            $lastReportIn = $this->reportInRepository->find($perscomUserId);
+            $lastReportIn = $this->reportInRepository->find($perscomUser->getPerscomId());
             if ($lastReportIn === null) {
                 $reportIn = new ReportIn();
-                $reportIn->setPerscomUserId($perscomUserId);
+                $reportIn->setPerscomUserId($perscomUser->getPerscomId());
                 $reportIn->setLastReportInDate($now);
                 $this->reportInRepository->save($reportIn, false);
                 continue;
@@ -67,13 +66,16 @@ class ReportInService
             if ($diff > $period) {
                 $failures[] = $perscomUser;
 
-                $lastReportIn->setPreviousStatusId($perscomUser['status_id']);
+                $lastReportIn->setPreviousStatusId($perscomUser->getStatus()?->getId());
                 $this->reportInRepository->save($lastReportIn, false);
                 continue;
             }
 
             if ($warningsEnabled && $diff > $warningPeriod) {
-                $this->sendWarning($perscomUser['email'], $period - $diff + 1);
+                $user = $perscomUser->getUser();
+                if ($user !== null) {
+                    $this->sendWarning($user, $period - $diff + 1);
+                }
             }
         }
         $this->reportInRepository->flush();
@@ -84,15 +86,17 @@ class ReportInService
 
         $failureStatus = $this->getFailureStatus();
         $this->recordService->createRecord('assignment', [
-            'users' => array_column($failures, 'id'),
+            'users' => array_map(fn (PerscomUser $user) => $user->getPerscomId(), $failures),
             'type' => 'primary',
-            'status_id' => $failureStatus['id'],
-            'text' => "Status updated to {$failureStatus['name']} due to a failure to report in.",
-            'sendNotification' => true,
+            'status_id' => $failureStatus->getPerscomId(),
+            'text' => "Status updated to {$failureStatus->getName()} due to a failure to report in.",
         ]);
 
         foreach ($failures as $perscomUser) {
-            $this->sendFailure($perscomUser, $period);
+            $user = $perscomUser->getUser();
+            if ($user !== null) {
+                $this->sendFailure($user, $period);
+            }
         }
     }
 
@@ -110,15 +114,15 @@ class ReportInService
             return false;
         }
 
-        $perscomUser = $this->perscomUserService->getLoggedInPerscomUser();
-        if ($perscomUser === null) {
+        $status = $this->perscomUserService->getLoggedInPerscomUser()?->getStatus();
+        if ($status === null) {
             return false;
         }
 
         $enabledStatusIds = $this->settingRepository->get('perscom.report_in.enabled_status');
         $enabledStatusIds[] = (int)$this->settingRepository->get('perscom.report_in.failure_status');
 
-        return in_array($perscomUser['status_id'], $enabledStatusIds, true);
+        return in_array($status->getPerscomId(), $enabledStatusIds, true);
     }
 
     public function reportIn(): bool
@@ -128,7 +132,7 @@ class ReportInService
             return false;
         }
 
-        $perscomUserId = $perscomUser['id'];
+        $perscomUserId = $perscomUser->getPerscomId();
         $lastReportIn = $this->reportInRepository->find($perscomUserId);
         if ($lastReportIn === null) {
             $lastReportIn = new ReportIn();
@@ -153,25 +157,23 @@ class ReportInService
         return $updated;
     }
 
-    private function getFailureStatus(): array
+    private function getFailureStatus(): Status
     {
         if ($this->failureStatus !== null) {
             return $this->failureStatus;
         }
 
         $failureStatusId = (int)$this->settingRepository->get('perscom.report_in.failure_status');
-        try {
-            $this->failureStatus = $this->perscomFactory
-                ->getPerscom()
-                ->statuses()
-                ->get($failureStatusId)
-                ->json('data');
-            return $this->failureStatus;
-        } catch (Exception) {
+        $this->failureStatus = $this->statusRepository->findOneBy(['perscomId' => $failureStatusId]);
+        if ($this->failureStatus === null) {
+            throw new \RuntimeException('No failure status found.');
         }
-        throw new \RuntimeException('No failure status found.');
+        return $this->failureStatus;
     }
 
+    /**
+     * @return PerscomUser[]
+     */
     private function getUsersToCheck(): array
     {
         $enabledStatuses = $this->settingRepository->get('perscom.report_in.enabled_status');
@@ -179,25 +181,19 @@ class ReportInService
             return [];
         }
 
-        try {
-            return $this->perscomFactory
-                ->getPerscom()
-                ->users()
-                ->search(filter: new FilterObject('status_id', 'in', $enabledStatuses), limit: 9999)
-                ->json('data');
-        } catch (Exception) {
-            return [];
-        }
+        return $this->perscomUserRepository
+            ->createQueryBuilder('u')
+            ->join('u.status', 's')
+            ->where('s.perscomId IN (:statuses)')
+            ->setParameter('statuses', $enabledStatuses)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
-    private function sendWarning(string $email, int $daysLeft): void
+    private function sendWarning(User $user, int $daysLeft): void
     {
-        $user = $this->userRepository->findOneBy(['email' => $email]);
-        if ($user === null) {
-            return;
-        }
-
-        $status = $this->getFailureStatus()['name'] ?? '';
+        $status = $this->getFailureStatus()->getName();
         $this->notificationService->sendNotification(new Notification(
             GenericEmailNotificationType::TYPE,
             $user,
@@ -216,14 +212,9 @@ class ReportInService
         ));
     }
 
-    private function sendFailure(array $perscomUser, int $period): void
+    private function sendFailure(User $user, int $period): void
     {
-        $user = $this->userRepository->findOneBy(['email' => $perscomUser['email']]);
-        if ($user === null) {
-            return;
-        }
-
-        $status = $this->getFailureStatus()['name'] ?? '';
+        $status = $this->getFailureStatus()->getName();
         $this->notificationService->sendNotification(new Notification(
             GenericEmailNotificationType::TYPE,
             $user,

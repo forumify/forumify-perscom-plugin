@@ -9,6 +9,7 @@ use Forumify\Core\Security\VoterAttribute;
 use Forumify\PerscomPlugin\Forum\Form\AfterActionReportType;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 use Forumify\PerscomPlugin\Perscom\Entity\MissionRSVP;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
@@ -195,7 +196,7 @@ class AfterActionReportController extends AbstractController
             ? []
             : $missionRSVPRepository->findBy([
                 'mission' => $missionId,
-                'perscomUserId' => array_column($users, 'id'),
+                'perscomUserId' => array_map(fn (PerscomUser $u) => $u->getPerscomId(), $users),
             ]);
 
         $usersToRsvp = [];
@@ -207,10 +208,10 @@ class AfterActionReportController extends AbstractController
         $response = [];
         foreach ($users as $user) {
             $response[] = [
-                'id' => $user['id'],
-                'name' => $user['name'],
-                'rankImage' => !empty($user['rank']['image']) ? $user['rank']['image']['image_url'] : null,
-                'rsvp' => $usersToRsvp[$user['id']] ?? null,
+                'id' => $user->getPerscomId(),
+                'name' => $user->getName(),
+                'rankImage' => $user->getRank()?->getImage(),
+                'rsvp' => $usersToRsvp[$user->getPerscomId()] ?? null,
             ];
         }
 

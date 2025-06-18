@@ -11,6 +11,12 @@ use Doctrine\ORM\Mapping\JoinColumn;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\Core\Entity\User;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\AwardRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\CombatRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\QualificationRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\RankRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 
 #[ORM\Entity(repositoryClass: PerscomUserRepository::class)]
@@ -66,6 +72,24 @@ class PerscomUser implements PerscomEntityInterface
 
     #[ORM\Column(nullable: true)]
     private ?string $perscomUniform = null;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: ServiceRecord::class, fetch: 'EXTRA_LAZY')]
+    private Collection $serviceRecords;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: AwardRecord::class, fetch: 'EXTRA_LAZY')]
+    private Collection $awardRecords;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: CombatRecord::class, fetch: 'EXTRA_LAZY')]
+    private Collection $combatRecords;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: RankRecord::class, fetch: 'EXTRA_LAZY')]
+    private Collection $rankRecords;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: AssignmentRecord::class, fetch: 'EXTRA_LAZY')]
+    private Collection $assignmentRecords;
+
+    #[ORM\OneToMany(mappedBy: 'user', targetEntity: QualificationRecord::class, fetch: 'EXTRA_LAZY')]
+    private Collection $qualificationRecords;
 
     public function __construct()
     {
@@ -190,5 +214,65 @@ class PerscomUser implements PerscomEntityInterface
     public function setPerscomUniform(?string $perscomUniform): void
     {
         $this->perscomUniform = $perscomUniform;
+    }
+
+    public function getServiceRecords(): Collection
+    {
+        return $this->serviceRecords;
+    }
+
+    public function setServiceRecords(Collection $serviceRecords): void
+    {
+        $this->serviceRecords = $serviceRecords;
+    }
+
+    public function getAwardRecords(): Collection
+    {
+        return $this->awardRecords;
+    }
+
+    public function setAwardRecords(Collection $awardRecords): void
+    {
+        $this->awardRecords = $awardRecords;
+    }
+
+    public function getCombatRecords(): Collection
+    {
+        return $this->combatRecords;
+    }
+
+    public function setCombatRecords(Collection $combatRecords): void
+    {
+        $this->combatRecords = $combatRecords;
+    }
+
+    public function getRankRecords(): Collection
+    {
+        return $this->rankRecords;
+    }
+
+    public function setRankRecords(Collection $rankRecords): void
+    {
+        $this->rankRecords = $rankRecords;
+    }
+
+    public function getAssignmentRecords(): Collection
+    {
+        return $this->assignmentRecords;
+    }
+
+    public function setAssignmentRecords(Collection $assignmentRecords): void
+    {
+        $this->assignmentRecords = $assignmentRecords;
+    }
+
+    public function getQualificationRecords(): Collection
+    {
+        return $this->qualificationRecords;
+    }
+
+    public function setQualificationRecords(Collection $qualificationRecords): void
+    {
+        $this->qualificationRecords = $qualificationRecords;
     }
 }

@@ -64,11 +64,7 @@ class RecordService
 
     private function getAuthorId(): ?int
     {
-        $author = $this->perscomUserService->getLoggedInPerscomUser();
-        if ($author === null || empty($author['id'])) {
-            return null;
-        }
-        return $author['id'];
+        return $this->perscomUserService->getLoggedInPerscomUser()?->getPerscomId();
     }
 
     /**

@@ -6,10 +6,8 @@ namespace Forumify\PerscomPlugin\Forum\Controller;
 
 use DateInterval;
 use DateTime;
-use DateTimeInterface;
-use Forumify\Core\Repository\UserRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Repository\AssignmentRecordRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\AwardRecordRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\RankRecordRepository;
@@ -17,7 +15,6 @@ use Forumify\PerscomPlugin\Perscom\Repository\ReportInRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 class UserController extends AbstractController
 {
@@ -25,10 +22,7 @@ class UserController extends AbstractController
         private readonly RankRecordRepository $rankRecordRepository,
         private readonly AwardRecordRepository $awardRecordRepository,
         private readonly AssignmentRecordRepository $assignmentRecordRepository,
-        private readonly PerscomFactory $perscomFactory,
-        private readonly UserRepository $userRepository,
         private readonly ReportInRepository $reportInRepository,
-        private readonly TranslatorInterface $translator,
     ) {
     }
 
@@ -47,7 +41,7 @@ class UserController extends AbstractController
             'tis' => $this->getTimeInService($user),
             'tig' => $this->getTimeInGrade($user),
             'reportInDate' => $lastReportInDate,
-            'secondaryAssignments' => [],
+            'secondaryAssignments' => $this->getSecondaryUnits($user),
         ]);
     }
 
@@ -107,51 +101,34 @@ class UserController extends AbstractController
         return$awardCounts;
     }
 
-    private function transformSecondaryAssignments(array $user): array
+    private function getSecondaryUnits(PerscomUser $user): array
     {
-        $records = $user['secondary_assignment_records'] ?? [];
+        /** @var AssignmentRecord[] */
+        $records = $this->assignmentRecordRepository->findBy([
+            'user' => $user,
+            'type' => 'secondary',
+        ]);
 
         $grouped = [];
         foreach ($records as $record) {
-            $unitId = $record['unit']['id'] ?? null;
+            $unitId = $record->getUnit()?->getPerscomId();
             if ($unitId === null) {
                 continue;
             }
 
             if (!isset($grouped[$unitId])) {
-                $grouped[$unitId] = $record['unit'];
+                $grouped[$unitId] = ['name' => $record->getUnit()->getName()];
             }
 
             $data = [
-                $record['position']['name'] ?? '',
-                $record['speciality']['name'] ?? '',
-                $record['status']['name'] ?? '',
+                $record->getPosition()?->getName(),
+                $record->getSpecialty()?->getName(),
+                $record->getStatus()?->getName(),
             ];
 
             $grouped[$unitId]['records'][] = implode(' | ', array_filter($data));
         }
 
         return $grouped;
-    }
-
-    private function transformAwards(array $user): array
-    {
-        $awards = [];
-        foreach ($user['award_records'] ?? [] as $record) {
-            $award = $record['award'] ?? null;
-            if ($award === null) {
-                continue;
-            }
-
-            $awardId = $award['id'];
-            if (!isset($awards[$awardId])) {
-                $awards[$awardId] = $award;
-                $awards[$awardId]['count'] = 0;
-            }
-            $awards[$awardId]['count']++;
-        }
-
-        uasort($awards, fn (array $a, array $b) => $a['order'] - $b['order']);
-        return $awards;
     }
 }

@@ -14,10 +14,11 @@ use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\UnitRepository;
 use JsonException;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -25,7 +26,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class AfterActionReportService
 {
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
         private readonly SettingRepository $settingRepository,
         private readonly AfterActionReportRepository $afterActionReportRepository,
         private readonly RecordService $recordService,
@@ -34,6 +34,7 @@ class AfterActionReportService
         private readonly NotificationService $notificationService,
         private readonly Packages $packages,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly UnitRepository $unitRepository,
     ) {
     }
 
@@ -54,17 +55,14 @@ class AfterActionReportService
                 $attendance[$state] = [];
             }
         }
-
-        try {
-            $unitId = $aar->getUnitId();
-            $unit = $this->perscomFactory->getPerscom()->units()->get($unitId)->json('data');
-        } catch (Exception) {
-            $unit = null;
-        }
-
         $aar->setAttendance($attendance);
-        $aar->setUnitName($unit['name'] ?? 'unknown');
-        $aar->setUnitPosition($unit['order'] ?? 100);
+
+        if ($isNew) {
+            /** @var Unit|null */
+            $unit = $this->unitRepository->findOneBy(['perscomId' => $aar->getUnitId()]);
+            $aar->setUnitName($unit?->getName() ?? 'unknown');
+            $aar->setUnitPosition($unit?->getPosition() ?? 999);
+        }
         $this->afterActionReportRepository->save($aar);
 
         if (!$isNew) {
@@ -124,25 +122,19 @@ class AfterActionReportService
         return "Operation {$mission->getOperation()->getTitle()}: Mission {$mission->getTitle()}";
     }
 
+    /**
+     * @return PerscomUser[]
+     */
     public function findUsersByUnit(int $unitId): array
     {
-        try {
-            $users = $this->perscomFactory
-                ->getPerscom()
-                ->units()
-                ->get($unitId, [
-                    'users',
-                    'users.rank',
-                    'users.rank.image',
-                    'users.position',
-                    'users.specialty',
-                ])
-                ->json('data')['users'] ?? [];
-        } catch (Exception) {
+        /** @var Unit|null $unit */
+        $unit = $this->unitRepository->findOneBy(['perscomId' => $unitId]);
+        if ($unit === null) {
             return [];
         }
 
-        $this->userService->sortUsers($users);
+        $users = $unit->getUsers()->toArray();
+        $this->userService->sortPerscomUsers($users);
         return $users;
     }
 

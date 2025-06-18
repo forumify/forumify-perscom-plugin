@@ -4,30 +4,33 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Service;
 
+use Exception;
 use Forumify\Core\Entity\User;
 use Forumify\Core\Repository\SettingRepository;
 use Forumify\Core\Repository\UserRepository;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Message\SyncUserMessage;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use League\Flysystem\FilesystemException;
 use League\Flysystem\FilesystemOperator;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Twig\Environment;
 
 class SyncUserService
 {
-    private const USER_INCLUDES = ['rank', 'rank.image'];
-
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
         private readonly PerscomUserService $perscomUserService,
+        private readonly PerscomUserRepository $perscomUserRepository,
         private readonly UserRepository $userRepository,
         private readonly Environment $twig,
         private readonly SettingRepository $settingRepository,
         private readonly MessageBusInterface $messageBus,
         private readonly FilesystemOperator $avatarStorage,
+        private readonly FilesystemOperator $perscomAssetStorage,
         private readonly SluggerInterface $slugger,
+        private readonly Packages $packages,
     ) {
     }
 
@@ -96,23 +99,19 @@ class SyncUserService
         $this->userRepository->save($forumifyUser);
     }
 
+    /**
+     * @return array{0: User|null, 1: PerscomUser|null}
+     */
     private function getUsersFromPerscom(int $userId): array
     {
-        try {
-            $perscomData = $this->perscomFactory
-                ->getPerscom(true)
-                ->users()
-                ->get($userId, self::USER_INCLUDES)
-                ->json('data')
-            ;
-        } catch (\Exception) {
-            return [null, null];
-        }
-
-        $forumifyUser = $this->userRepository->findOneBy(['email' => $perscomData['email']]);
-        return [$forumifyUser, $perscomData];
+        /** @var PerscomUser|null $perscomUser */
+        $perscomUser = $this->perscomUserRepository->findOneBy(['perscomId' => $userId]);
+        return [$perscomUser?->getUser(), $perscomUser];
     }
 
+    /**
+     * @return array{0: User|null, 1: PerscomUser|null}
+     */
     private function getUsersFromForumify(int $userId): array
     {
         $forumifyUser = $this->userRepository->find($userId);
@@ -120,11 +119,11 @@ class SyncUserService
             return [null, null];
         }
 
-        $perscomData = $this->perscomUserService->getPerscomUser($forumifyUser, self::USER_INCLUDES);
-        return [$forumifyUser, $perscomData];
+        $perscomUser = $this->perscomUserService->getPerscomUser($forumifyUser);
+        return [$forumifyUser, $perscomUser];
     }
 
-    private function syncDisplayName(User $user, array $userData): void
+    private function syncDisplayName(User $user, PerscomUser $perscomUser): void
     {
         $template = $this->settingRepository->get('perscom.profile.display_name_format');
         if ($template === null) {
@@ -133,7 +132,7 @@ class SyncUserService
 
         try {
             $twigTemplate = $this->twig->createTemplate($template);
-            $displayName = $twigTemplate->render(['user' => $userData]);
+            $displayName = $twigTemplate->render(['user' => $perscomUser]);
         } catch (\Exception) {
             return;
         }
@@ -141,27 +140,27 @@ class SyncUserService
         $user->setDisplayName($displayName);
     }
 
-    private function syncSignature(User $user, array $userData): void
+    private function syncSignature(User $user, PerscomUser $perscomUser): void
     {
-        $signature = $userData['profile_photo_url'];
-        if (!str_contains($signature, 'ui-avatars.com')) {
+        $signature = $perscomUser->getSignature();
+        if ($signature) {
             $user->setSignature(sprintf(
-                '<p class="ql-align-center"><img src="%s" style="max-width: 1000px; width: 100%%; max-height: 200px; height: auto"/></p>',
-                $signature,
+                '<p class="ql-align-center"><img src="%s" style="max-width: 1000px; width: 100%; max-height: 200px; height: auto"/></p>',
+                $this->packages->getUrl($signature, 'perscom.asset')
             ));
         }
     }
 
-    private function syncAvatar(User $user, array $userData): void
+    private function syncAvatar(User $user, PerscomUser $perscomUser): void
     {
-        $rankImgUrl = $userData['rank']['image']['image_url'] ?? null;
+        $rankImgUrl = $perscomUser->getRank()?->getImage();
         if ($rankImgUrl === null) {
             return;
         }
 
         $ext = pathinfo($rankImgUrl, PATHINFO_EXTENSION);
         $filename = $this->slugger
-            ->slug($userData['rank']['id'] . '-' . $userData['rank']['name'])
+            ->slug($perscomUser->getRank()->getPerscomId() . '-' . $perscomUser->getRank()->getName())
             ->lower()
             ->append('.', $ext)
             ->toString();
@@ -170,8 +169,9 @@ class SyncUserService
             return;
         }
 
-        $rankImg = file_get_contents($rankImgUrl);
-        if ($rankImg === false) {
+        try {
+            $rankImg = $this->perscomAssetStorage->read($rankImgUrl);
+        } catch (Exception) {
             return;
         }
 
