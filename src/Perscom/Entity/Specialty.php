@@ -9,6 +9,8 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
+use Forumify\PerscomPlugin\Perscom\Perscom;
+use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
@@ -29,6 +31,11 @@ class Specialty implements PerscomEntityInterface, SortableEntityInterface
 
     #[ORM\Column]
     private string $abbreviation = '';
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->specialties();
+    }
 
     public function getName(): string
     {

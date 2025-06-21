@@ -10,7 +10,9 @@ use Forumify\PerscomPlugin\Perscom\Entity\Position;
 use Forumify\PerscomPlugin\Perscom\Entity\Specialty;
 use Forumify\PerscomPlugin\Perscom\Entity\Status;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\AssignmentRecordRepository;
+use Perscom\Contracts\ResourceContract;
 
 #[ORM\Entity(repositoryClass: AssignmentRecordRepository::class)]
 #[ORM\Index(fields: ['type'])]
@@ -37,6 +39,11 @@ class AssignmentRecord implements RecordInterface
     #[ORM\ManyToOne(targetEntity: Specialty::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Specialty $specialty = null;
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->assignmentRecords();
+    }
 
     public function getType(): string
     {

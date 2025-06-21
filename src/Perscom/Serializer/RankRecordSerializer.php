@@ -6,10 +6,28 @@ namespace Forumify\PerscomPlugin\Perscom\Serializer;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Record\RankRecord;
 use RuntimeException;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class RankRecordSerializer extends AbstractRecordSerializer implements DenormalizerInterface
+class RankRecordSerializer extends AbstractRecordSerializer
 {
+    /**
+     * @param RankRecord $object
+     * @return array
+     */
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    {
+        $data = parent::normalize($object, $format, $context);
+
+        $data['type'] = $object->getType() === 'promotion' ? 0 : 1;
+        $data['rank_id'] = $object->getRank()->getPerscomId();
+
+        return $data;
+    }
+
+    public function supportsNormalization(mixed $data, ?string $format = null)
+    {
+        return parent::supportsNormalization($data, $format) && $data instanceof RankRecord;
+    }
+
     public function getSupportedTypes(): array
     {
         return [

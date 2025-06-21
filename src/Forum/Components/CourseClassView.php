@@ -53,8 +53,7 @@ class CourseClassView extends AbstractController
     public function canSignUpAsStudent(): bool
     {
         $user = $this->perscomUserService->getLoggedInPerscomUser();
-        if ($user === null) {
-            // How did you even get here? lmao
+        if ($user === null || $user->getPerscomId() === null) {
             return false;
         }
 

@@ -7,12 +7,34 @@ namespace Forumify\PerscomPlugin\Perscom\Serializer;
 use Forumify\PerscomPlugin\Perscom\Entity\Award;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class AwardSerializer implements DenormalizerInterface
+class AwardSerializer implements DenormalizerInterface, NormalizerInterface
 {
     public function __construct(
         private readonly PerscomImageNormalizer $imageNormalizer,
     ) {
+    }
+
+    /**
+     * @param Award $object
+     */
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    {
+        $data = [];
+
+        $data['name'] = $object->getName();
+        $data['description'] = $object->getDescription();
+        $data['order'] = $object->getPosition();
+
+        // TODO image
+
+        return $data;
+    }
+
+    public function supportsNormalization(mixed $data, ?string $format = null): bool
+    {
+        return $data instanceof Award && $format === 'perscom_array';
     }
 
     public function getSupportedTypes(): array

@@ -6,12 +6,11 @@ namespace Forumify\PerscomPlugin\Perscom\Entity\Record;
 
 use DateTime;
 use Forumify\PerscomPlugin\Perscom\Entity\Document;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 
-interface RecordInterface
+interface RecordInterface extends PerscomEntityInterface
 {
-    public function getPerscomId(): ?int;
-    public function setPerscomId(int $id): void;
     public function getAuthor(): ?PerscomUser;
     public function setAuthor(?PerscomUser $author): void;
     public function getUser(): PerscomUser;

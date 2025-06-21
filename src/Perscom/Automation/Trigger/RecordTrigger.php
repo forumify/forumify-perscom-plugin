@@ -31,9 +31,14 @@ class RecordTrigger implements TriggerInterface
 
     public function trigger(RecordsCreatedEvent $event): void
     {
+        // FIXME: type no longer exists on the event, needs to be gotten from the class of entity.
+        return;
+
         $automations = $this->automationRepository->findByTriggerType(self::getType());
         foreach ($automations as $automation) {
             $recordType = $automation->getTriggerArguments()['recordType'] ?? null;
+
+
             if ($recordType === null || $recordType === $event->type) {
                 foreach ($event->records as $record) {
                     $this->automationScheduler->schedule($automation, [

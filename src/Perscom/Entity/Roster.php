@@ -12,6 +12,8 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
+use Forumify\PerscomPlugin\Perscom\Perscom;
+use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
@@ -42,6 +44,11 @@ class Roster implements PerscomEntityInterface, SortableEntityInterface
     public function __construct()
     {
         $this->units = new ArrayCollection();
+    }
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->groups();
     }
 
     public function getName(): string

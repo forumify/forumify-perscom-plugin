@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Event\Listener;
 
-use Forumify\Core\Entity\User;
 use Forumify\Core\Twig\Extension\MenuRuntime;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Event\RecordsCreatedEvent;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -27,22 +27,21 @@ class DeleteMenuCacheSubscriber implements EventSubscriberInterface
         ];
     }
 
-
     public function onRecordsCreated(RecordsCreatedEvent $event): void
     {
-        if ($event->type !== 'assignment') {
+        if ($event->records !== 'assignment') {
             return;
         }
 
-        $userIds = array_column($event->records, 'user_id');
-        $users = $this->perscomUserRepository->findByPerscomIds($userIds);
-        foreach ($users as $user) {
-            $this->clearMenuCache($user->getUser());
-        }
-    }
+        foreach ($event->records as $record) {
+            if (!$record instanceof AssignmentRecord) {
+                continue;
+            }
 
-    private function clearMenuCache(User $user): void
-    {
-        $this->cache->delete(MenuRuntime::createMenuCacheKey($user));
+            $forumUser = $record->getUser()->getUser();
+            if ($forumUser !== null) {
+                $this->cache->delete(MenuRuntime::createMenuCacheKey($forumUser));
+            }
+        }
     }
 }

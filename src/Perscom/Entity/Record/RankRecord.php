@@ -6,7 +6,9 @@ namespace Forumify\PerscomPlugin\Perscom\Entity\Record;
 
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\PerscomPlugin\Perscom\Entity\Rank;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\RankRecordRepository;
+use Perscom\Contracts\ResourceContract;
 
 #[ORM\Entity(repositoryClass: RankRecordRepository::class)]
 #[ORM\Table('perscom_record_rank')]
@@ -20,6 +22,11 @@ class RankRecord implements RecordInterface
 
     #[ORM\Column]
     private string $type = 'promotion';
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->rankRecords();
+    }
 
     public function getRank(): Rank
     {

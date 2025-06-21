@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Repository;
 
-use Forumify\PerscomPlugin\Perscom\Entity\Unit;
+use Forumify\PerscomPlugin\Perscom\Entity\Specialty;
 
-class UnitRepository extends AbstractPerscomRepository
+class SpecialtyRepository extends AbstractPerscomRepository
 {
     public static function getEntityClass(): string
     {
-        return Unit::class;
+        return Specialty::class;
     }
 }

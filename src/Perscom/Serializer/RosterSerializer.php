@@ -8,9 +8,31 @@ use Forumify\PerscomPlugin\Perscom\Entity\Roster;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class RosterSerializer implements DenormalizerInterface
+class RosterSerializer implements DenormalizerInterface, NormalizerInterface
 {
+    /**
+     * @param Roster $object
+     */
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    {
+        $data = [];
+
+        $data['name'] = $object->getName();
+        $data['description'] = $object->getDescription();
+        $data['order'] = $object->getPosition();
+
+        // TODO: units?
+
+        return $data;
+    }
+
+    public function SupportsNormalization(mixed $data, ?string $format = null): bool
+    {
+        return $data instanceof Roster && $format === 'perscom_array';
+    }
+
     public function getSupportedTypes(): array
     {
         return [

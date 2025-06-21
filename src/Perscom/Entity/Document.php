@@ -8,10 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\Core\Entity\User;
+use Forumify\PerscomPlugin\Perscom\Perscom;
+use Forumify\PerscomPlugin\Perscom\Repository\DocumentRepository;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: DocumentRepository::class)]
 #[ORM\Table('perscom_document')]
 class Document implements PerscomEntityInterface
 {
@@ -33,6 +36,11 @@ class Document implements PerscomEntityInterface
 
     #[ORM\Column(type: 'text')]
     private string $content;
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->documents();
+    }
 
     public function getCreatedBy(): ?User
     {

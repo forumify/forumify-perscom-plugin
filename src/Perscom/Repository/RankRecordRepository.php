@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Repository;
 
-use Forumify\Core\Repository\AbstractRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\RankRecord;
 
-class RankRecordRepository extends AbstractRepository
+class RankRecordRepository extends AbstractPerscomRepository
 {
     public static function getEntityClass(): string
     {

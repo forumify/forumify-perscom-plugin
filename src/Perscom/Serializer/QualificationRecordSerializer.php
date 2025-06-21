@@ -6,10 +6,27 @@ namespace Forumify\PerscomPlugin\Perscom\Serializer;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Record\QualificationRecord;
 use RuntimeException;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class QualificationRecordSerializer extends AbstractRecordSerializer implements DenormalizerInterface
+class QualificationRecordSerializer extends AbstractRecordSerializer
 {
+    /**
+     * @param QualificationRecord $object
+     * @return array
+     */
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    {
+        $data = parent::normalize($object, $format, $context);
+
+        $data['qualification_id'] = $object->getQualification()->getPerscomId();
+
+        return $data;
+    }
+
+    public function supportsNormalization(mixed $data, ?string $format = null)
+    {
+        return parent::supportsNormalization($data, $format) && $data instanceof QualificationRecord;
+    }
+
     public function getSupportedTypes(): array
     {
         return [

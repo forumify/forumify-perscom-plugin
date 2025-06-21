@@ -17,7 +17,9 @@ use Forumify\PerscomPlugin\Perscom\Entity\Record\CombatRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\QualificationRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\RankRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
+use Perscom\Contracts\ResourceContract;
 
 #[ORM\Entity(repositoryClass: PerscomUserRepository::class)]
 class PerscomUser implements PerscomEntityInterface
@@ -94,6 +96,11 @@ class PerscomUser implements PerscomEntityInterface
     public function __construct()
     {
         $this->secondaryPositions = new ArrayCollection();
+    }
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->users();
     }
 
     public function getUser(): ?User

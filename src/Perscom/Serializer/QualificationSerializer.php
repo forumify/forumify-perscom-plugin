@@ -7,12 +7,34 @@ namespace Forumify\PerscomPlugin\Perscom\Serializer;
 use Forumify\PerscomPlugin\Perscom\Entity\Qualification;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class QualificationSerializer implements DenormalizerInterface
+class QualificationSerializer implements DenormalizerInterface, NormalizerInterface
 {
     public function __construct(
         private readonly PerscomImageNormalizer $imageNormalizer,
     ) {
+    }
+
+    /**
+     * @param Qualification $object
+     */
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    {
+        $data = [];
+
+        $data['name'] = $object->getName();
+        $data['description'] = $object->getDescription();
+        $data['order'] = $object->getPosition();
+
+        // TODO: image
+
+        return $data;
+    }
+
+    public function supportsNormalization(mixed $data, ?string $format = null): bool
+    {
+        return $data instanceof Qualification && $format === 'perscom_array';
     }
 
     public function getSupportedTypes(): array

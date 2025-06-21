@@ -7,18 +7,47 @@ namespace Forumify\PerscomPlugin\Perscom\Serializer;
 use DateTime;
 use Forumify\Core\Repository\UserRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 use function Symfony\Component\String\u;
 
-class UserSerializer implements DenormalizerInterface
+class UserSerializer implements DenormalizerInterface, NormalizerInterface
 {
     public function __construct(
         private readonly UserRepository $userRepository,
         private readonly FilesystemOperator $perscomAssetStorage,
     ) {
+    }
+
+    /**
+     * @param PerscomUser $object
+     */
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    {
+        $data = [];
+
+        $data['name'] = $object->getName();
+        $data['created_at'] = $object->getCreatedAt()->format(Perscom::DATE_FORMAT);
+        $data['email'] = $object->getUser()->getEmail();
+        $data['email_verified_at'] = $object->getCreatedAt()->format(Perscom::DATE_FORMAT);
+        $data['position'] = $object->getPosition()?->getPerscomId();
+        $data['rank'] = $object->getRank()?->getPerscomId();
+        $data['specialty'] = $object->getSpecialty()?->getPerscomId();
+        $data['status'] = $object->getStatus()?->getPerscomId();
+        $data['unit'] = $object->getUnit()?->getPerscomId();
+
+        // TODO: uniform/signature
+
+        return $data;
+    }
+
+    public function supportsNormalization(mixed $data, ?string $format = null): bool
+    {
+        return $data instanceof PerscomUser && $format === 'perscom_array';
     }
 
     public function getSupportedTypes(): array

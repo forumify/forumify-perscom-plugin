@@ -10,7 +10,9 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\UnitRepository;
+use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UnitRepository::class)]
@@ -31,6 +33,11 @@ class Unit implements PerscomEntityInterface, SortableEntityInterface
 
     #[ORM\OneToMany(mappedBy: 'unit', targetEntity: PerscomUser::class)]
     private Collection $users;
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->units();
+    }
 
     public function getName(): string
     {

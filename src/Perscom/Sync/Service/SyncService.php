@@ -11,49 +11,60 @@ use Forumify\PerscomPlugin\Perscom\Entity as Entity;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Sync\Exception\SyncLockedException;
+use Perscom\Contracts\Batchable;
 use Perscom\Contracts\ResourceContract;
+use Perscom\Data\ResourceObject;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
+use Symfony\Component\Lock\LockFactory;
 
 class SyncService
 {
+    public const SYNC_LOCK_NAME = 'perscom.sync.mutex';
+
+    private bool $isRunning = false;
     private readonly Perscom $perscom;
 
     public function __construct(
         private readonly SettingRepository $settingRepository,
         private readonly EntityManagerInterface $em,
         private readonly NormalizerInterface&DenormalizerInterface $normalizer,
+        private readonly LockFactory $lockFactory,
         PerscomFactory $perscomFactory,
     ) {
         $this->perscom = $perscomFactory->getPerscom(true);
     }
 
-    public function sync(): void
+    public function syncAll(): void
     {
-        $isSyncEnabled = $this->settingRepository->get('perscom.sync.enabled') ?? true;
-        if (!$isSyncEnabled) {
+        if (!$this->isSyncEnabled()) {
             return;
         }
+        $this->isRunning = true;
+
+        $mutex = $this->lockFactory->createLock(self::SYNC_LOCK_NAME, 1800);
+        $mutex->acquire(true);
 
         $p = $this->perscom;
-        $awards = $this->fullSyncEntity($p->awards(), Entity\Award::class, ['image']);
-        $documents = $this->fullSyncEntity($p->documents(), Entity\Document::class);
-        $positions = $this->fullSyncEntity($p->positions(), Entity\Position::class);
-        $qualifications = $this->fullSyncEntity($p->qualifications(), Entity\Qualification::class, ['image']);
-        $ranks = $this->fullSyncEntity($p->ranks(), Entity\Rank::class, ['image']);
-        $specialties = $this->fullSyncEntity($p->specialties(), Entity\Specialty::class);
-        $statuses = $this->fullSyncEntity($p->statuses(), Entity\Status::class);
-        $units = $this->fullSyncEntity($p->units(), Entity\Unit::class);
-        $this->fullSyncEntity($p->groups(), Entity\Roster::class, ['units'], context: ['units' => $units]);
-        $users = $this->fullSyncEntity($p->users(), Entity\PerscomUser::class, context: [
+        $awards = $this->syncAllOfResource($p->awards(), Entity\Award::class, ['image']);
+        $documents = $this->syncAllOfResource($p->documents(), Entity\Document::class);
+        $positions = $this->syncAllOfResource($p->positions(), Entity\Position::class);
+        $qualifications = $this->syncAllOfResource($p->qualifications(), Entity\Qualification::class, ['image']);
+        $ranks = $this->syncAllOfResource($p->ranks(), Entity\Rank::class, ['image']);
+        $specialties = $this->syncAllOfResource($p->specialties(), Entity\Specialty::class);
+        $statuses = $this->syncAllOfResource($p->statuses(), Entity\Status::class);
+        $units = $this->syncAllOfResource($p->units(), Entity\Unit::class);
+        $this->syncAllOfResource($p->groups(), Entity\Roster::class, ['units'], context: ['units' => $units]);
+        $users = $this->syncAllOfResource($p->users(), Entity\PerscomUser::class, context: [
             'positions' => $positions,
             'ranks' => $ranks,
             'specialties' => $specialties,
             'statuses' => $statuses,
             'units' => $units,
         ]);
-        $this->fullSyncEntity(
+        $this->syncAllOfResource(
             $p->assignmentRecords(),
             Entity\Record\AssignmentRecord::class,
             context: [
@@ -66,7 +77,7 @@ class SyncService
             ],
             batchSize: 1000,
         );
-        $this->fullSyncEntity(
+        $this->syncAllOfResource(
             $p->awardRecords(),
             Entity\Record\AwardRecord::class,
             context: [
@@ -76,7 +87,7 @@ class SyncService
             ],
             batchSize: 1000,
         );
-        $this->fullSyncEntity(
+        $this->syncAllOfResource(
             $p->combatRecords(),
             Entity\Record\CombatRecord::class,
             context: [
@@ -85,7 +96,7 @@ class SyncService
             ],
             batchSize: 1000,
         );
-        $this->fullSyncEntity(
+        $this->syncAllOfResource(
             $p->qualificationRecords(),
             Entity\Record\QualificationRecord::class,
             context: [
@@ -95,7 +106,7 @@ class SyncService
             ],
             batchSize: 1000,
         );
-        $this->fullSyncEntity(
+        $this->syncAllOfResource(
             $p->rankRecords(),
             Entity\Record\RankRecord::class,
             context: [
@@ -105,7 +116,7 @@ class SyncService
             ],
             batchSize: 1000,
         );
-        $this->fullSyncEntity(
+        $this->syncAllOfResource(
             $p->serviceRecords(),
             Entity\Record\ServiceRecord::class,
             context: [
@@ -117,6 +128,109 @@ class SyncService
 
         // Ensure the entity manager is cleared to avoid leaking memory in message handlers
         $this->em->clear();
+        $mutex->release();
+    }
+
+    /**
+     * @var array{
+     *      create: PerscomEntityInterface[],
+     *      update: PerscomEntityInterface[],
+     *      delete: array<class-string<PerscomEntityInterface>, int[]>,
+     *  }
+     */
+    public function syncToPerscom(array $changeSet): void
+    {
+        $mutex = $this->lockFactory->createLock(self::SYNC_LOCK_NAME);
+        $locked = $mutex->acquire(false);
+        if (!$locked) {
+            throw new SyncLockedException();
+        }
+
+        $toCreate = $this->indexByClass($changeSet['create']);
+        foreach ($toCreate as $class => $entities) {
+            $resource = $class::getPerscomResource($this->perscom);
+            if ($resource instanceof Batchable) {
+                $this->batchCreate($resource, $entities);
+            } else {
+                $this->batchCreateSeq($resource, $entities);
+            }
+        }
+
+        $toUpdate = $this->indexByClass($changeSet['update']);
+        foreach ($toUpdate as $class => $entities) {
+            $resource = $class::getPerscomResource($this->perscom);
+            if ($resource instanceof Batchable) {
+                $this->batchUpdate($resource, $entities);
+            } else {
+                $this->batchUpdateSeq($resource, $entities);
+            }
+        }
+
+        foreach ($changeSet['delete'] as $class => $ids) {
+            $resource = $class::getPerscomResource($this->perscom);
+            if ($resource instanceof Batchable) {
+                $resource->batchDelete($ids);
+            } else {
+                foreach ($ids as $id) {
+                    $resource->delete($id);
+                }
+            }
+        }
+
+        $mutex->release();
+    }
+
+    /**
+     * @var array<PerscomEntityInterface> $entities
+     */
+    public function batchCreate(Batchable $resource, array $entities): void
+    {
+        $resources = array_map(
+            fn (PerscomEntityInterface $entity) => new ResourceObject(
+                null,
+                $this->normalizer->normalize($entity, 'perscom_array', ['action' => 'create']),
+            ),
+            $entities,
+        );
+        $resource->batchCreate($resources);
+    }
+
+    /**
+     * @var array<PerscomEntityInterface> $entities
+     */
+    public function batchCreateSeq(ResourceContract $resource, array $entities): void
+    {
+        foreach ($entities as $entity) {
+            $resource->create($this->normalizer->normalize($entity, 'perscom_array', ['action' => 'create']));
+        }
+    }
+
+    /**
+     * @var array<PerscomEntityInterface> $entities
+     */
+    public function batchUpdate(Batchable $resource, array $entities): void
+    {
+        $resources = array_map(
+            fn (PerscomEntityInterface $entity) => new ResourceObject(
+                $entity->getPerscomId(),
+                $this->normalizer->normalize($entity, 'perscom_array', ['action' => 'update']),
+            ),
+            $entities,
+        );
+        $resource->batchUpdate($resources);
+    }
+
+    /**
+     * @var array<PerscomEntityInterface> $entities
+     */
+    public function batchUpdateSeq(ResourceContract $resource, array $entities): void
+    {
+        foreach ($entities as $entity) {
+            $resource->update(
+                $entity->getPerscomId(),
+                $this->normalizer->normalize($entity, 'perscom_array', ['action' => 'update']),
+            );
+        }
     }
 
     /**
@@ -124,7 +238,7 @@ class SyncService
      * @param class-string<T> $entityClass
      * @return array<int, T> all entities indexed by Perscom ID
      */
-    private function fullSyncEntity(
+    private function syncAllOfResource(
         ResourceContract $resource,
         string $entityClass,
         ?array $includes = [],
@@ -184,7 +298,7 @@ class SyncService
     }
 
     /**
-     * @param Entity\PerscomEntityInterface[] $items
+     * @param PerscomEntityInterface[] $items
      * @return array<int, PerscomEntityInterface>
      */
     private function indexByPerscomId(array $items): array
@@ -196,5 +310,31 @@ class SyncService
             }
         }
         return $arr;
+    }
+
+    /**
+     * @template T of PerscomEntityInterface
+     * @param array<T>
+     * @return array<class-string<T>, T[]>
+     */
+    private function indexByClass(array $entities): array
+    {
+        $arr = [];
+        foreach ($entities as $entity) {
+            $arr[get_class($entity)][] = $entity;
+        }
+        return $arr;
+    }
+
+    /**
+     * Used to disable doctrine listeners in the same process as the full sync.
+     *
+     * The setting can be used when connecting development environments to a production PERSCOM.io,
+     * there is no UI for this setting to avoid users disabling sync and potentially running this
+     * plugin as a standalone piece of software without a PERSCOM.io subscription.
+     */
+    public function isSyncEnabled(): bool
+    {
+        return !$this->isRunning && ($this->settingRepository->get('perscom.sync.enabled') ?? true);
     }
 }

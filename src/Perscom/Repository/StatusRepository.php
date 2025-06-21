@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Repository;
 
-use Forumify\Core\Repository\AbstractRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\Status;
 
-class StatusRepository extends AbstractRepository
+class StatusRepository extends AbstractPerscomRepository
 {
     public static function getEntityClass(): string
     {

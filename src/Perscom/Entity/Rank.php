@@ -9,7 +9,9 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\RankRepository;
+use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RankRepository::class)]
@@ -39,6 +41,11 @@ class Rank implements PerscomEntityInterface, PerscomEntityWithImageInterface, S
 
     #[ORM\Column(nullable: true)]
     private ?string $image = null;
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->ranks();
+    }
 
     public function getName(): string
     {

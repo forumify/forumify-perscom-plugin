@@ -6,10 +6,28 @@ namespace Forumify\PerscomPlugin\Perscom\Serializer;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AwardRecord;
 use RuntimeException;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class AwardRecordSerializer extends AbstractRecordSerializer implements DenormalizerInterface
+class AwardRecordSerializer extends AbstractRecordSerializer
 {
+    /**
+     * @param AwardRecord $object
+     * @return array
+     */
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    {
+        $data = parent::normalize($object, $format, $context);
+
+        $data['award_id'] = $object->getAward()->getPerscomId();
+
+        return $data;
+    }
+
+    public function supportsNormalization(mixed $data, ?string $format = null)
+    {
+        return parent::supportsNormalization($data, $format) && $data instanceof AwardRecord;
+    }
+
+
     public function getSupportedTypes(): array
     {
         return [

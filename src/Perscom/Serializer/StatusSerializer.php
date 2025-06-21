@@ -7,9 +7,29 @@ namespace Forumify\PerscomPlugin\Perscom\Serializer;
 use Forumify\PerscomPlugin\Perscom\Entity\Status;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class StatusSerializer implements DenormalizerInterface
+class StatusSerializer implements DenormalizerInterface, NormalizerInterface
 {
+    /**
+     * @param Status $object
+     */
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    {
+        $data = [];
+
+        $data['name'] = $object->getName();
+        $data['color'] = $object->getColor();
+        $data['order'] = $object->getPosition();
+
+        return $data;
+    }
+
+    public function supportsNormalization(mixed $data, ?string $format = null): bool
+    {
+        return $data instanceof Status && $format === 'perscom_array';
+    }
+
     public function getSupportedTypes(): array
     {
         return [

@@ -7,9 +7,29 @@ namespace Forumify\PerscomPlugin\Perscom\Serializer;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
+use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
-class UnitSerializer implements DenormalizerInterface
+class UnitSerializer implements DenormalizerInterface, NormalizerInterface
 {
+    /**
+     * @param Unit $object
+     */
+    public function normalize(mixed $object, ?string $format = null, array $context = []): array
+    {
+        $data = [];
+
+        $data['name'] = $object->getName();
+        $data['description'] = $object->getDescription();
+        $data['order'] = $object->getPosition();
+
+        return $data;
+    }
+
+    public function supportsNormalization(mixed $data, ?string $format = null): bool
+    {
+        return $data instanceof Unit && $format === 'perscom_array';
+    }
+
     public function getSupportedTypes(): array
     {
         return [

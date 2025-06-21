@@ -4,10 +4,9 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Repository;
 
-use Forumify\Core\Repository\AbstractRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\Qualification;
 
-class QualificationRepository extends AbstractRepository
+class QualificationRepository extends AbstractPerscomRepository
 {
     public static function getEntityClass(): string
     {

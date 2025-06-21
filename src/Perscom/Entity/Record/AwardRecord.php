@@ -6,7 +6,9 @@ namespace Forumify\PerscomPlugin\Perscom\Entity\Record;
 
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\PerscomPlugin\Perscom\Entity\Award;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\AwardRecordRepository;
+use Perscom\Contracts\ResourceContract;
 
 #[ORM\Entity(repositoryClass: AwardRecordRepository::class)]
 #[ORM\Table('perscom_record_award')]
@@ -17,6 +19,11 @@ class AwardRecord implements RecordInterface
     #[ORM\ManyToOne(targetEntity: Award::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Award $award;
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->awardRecords();
+    }
 
     public function getAward(): Award
     {

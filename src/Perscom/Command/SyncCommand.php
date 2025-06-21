@@ -21,7 +21,7 @@ class SyncCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $this->syncService->sync();
+        $this->syncService->syncAll();
         return self::SUCCESS;
     }
 }

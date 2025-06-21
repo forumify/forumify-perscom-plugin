@@ -5,9 +5,8 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Serializer;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
-use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 
-class ServiceRecordSerializer extends AbstractRecordSerializer implements DenormalizerInterface
+class ServiceRecordSerializer extends AbstractRecordSerializer
 {
     public function getSupportedTypes(): array
     {
@@ -17,12 +16,9 @@ class ServiceRecordSerializer extends AbstractRecordSerializer implements Denorm
         ];
     }
 
-    public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): ServiceRecord
+    public function supportsNormalization(mixed $data, ?string $format = null)
     {
-        /** @var ServiceRecord $record */
-        $record = parent::denormalize($data, $type, $format, $context);
-
-        return $record;
+        return parent::supportsNormalization($data, $format) && $data instanceof ServiceRecord;
     }
 
     public function supportsDenormalization(mixed $data, string $type, ?string $format = null): bool

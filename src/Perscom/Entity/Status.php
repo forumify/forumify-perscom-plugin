@@ -9,7 +9,9 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
+use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\StatusRepository;
+use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: StatusRepository::class)]
@@ -27,6 +29,11 @@ class Status implements PerscomEntityInterface, SortableEntityInterface
 
     #[ORM\Column]
     private string $color = '';
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->statuses();
+    }
 
     public function getName(): string
     {

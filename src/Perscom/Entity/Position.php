@@ -9,6 +9,8 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
+use Forumify\PerscomPlugin\Perscom\Perscom;
+use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity]
@@ -26,6 +28,11 @@ class Position implements PerscomEntityInterface, SortableEntityInterface
 
     #[ORM\Column(type: 'text')]
     private string $description = '';
+
+    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    {
+        return $perscom->positions();
+    }
 
     public function getName(): string
     {
