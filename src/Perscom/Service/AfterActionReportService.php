@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Service;
 
-use Exception;
 use Forumify\Core\Entity\Notification;
 use Forumify\Core\Notification\GenericEmailNotificationType;
 use Forumify\Core\Notification\GenericNotificationType;
@@ -14,10 +13,12 @@ use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Entity\Status;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\StatusRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\UnitRepository;
 use JsonException;
 use Symfony\Component\Asset\Packages;
@@ -35,6 +36,7 @@ class AfterActionReportService
         private readonly Packages $packages,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly UnitRepository $unitRepository,
+        private readonly StatusRepository $statusRepository,
     ) {
     }
 
@@ -246,13 +248,9 @@ class AfterActionReportService
             return;
         }
 
-        try {
-            $consecutiveStatus = $this->perscomFactory
-                ->getPerscom()
-                ->statuses()
-                ->get($consecutiveStatusId)
-                ->json('data');
-        } catch (Exception) {
+        /** @var Status|null $status */
+        $consecutiveStatus = $this->statusRepository->find($consecutiveStatusId);
+        if ($consecutiveStatus === null) {
             return;
         }
 
@@ -260,8 +258,8 @@ class AfterActionReportService
         $this->recordService->createRecord('assignment', [
             'users' => $absentUserIds,
             'type' => 'primary',
-            'status_id' => $consecutiveStatusId,
-            'text' => "Status updated to {$consecutiveStatus['name']} due to consecutive absences.",
+            'status' => $consecutiveStatus,
+            'text' => "Status updated to {$consecutiveStatus->getName()} due to consecutive absences.",
             'sendNotification' => true,
         ]);
     }

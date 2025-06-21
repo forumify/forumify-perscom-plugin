@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Form;
 
-use Forumify\PerscomPlugin\Perscom\Perscom;
-use Perscom\Contracts\Searchable;
-use Perscom\Data\SortObject;
+use Forumify\PerscomPlugin\Perscom\Entity\Award;
 
 class AwardType extends AbstractPerscomEntityType
 {
-    protected function getResource(Perscom $perscom): Searchable
+    protected function getEntityClass(): string
     {
-        return $perscom->awards();
-    }
-
-    protected function getSorting(): ?array
-    {
-        return [new SortObject('name')];
+        return Award::class;
     }
 }

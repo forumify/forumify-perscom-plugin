@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Form;
 
-use Forumify\PerscomPlugin\Perscom\Perscom;
-use Perscom\Contracts\Searchable;
-use Perscom\Data\SortObject;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 
 class PerscomFormType extends AbstractPerscomEntityType
 {
-    protected function getResource(Perscom $perscom): Searchable
+    protected function getEntityClass(): string
     {
-        return $perscom->forms();
-    }
-
-    protected function getSorting(): ?array
-    {
-        return [new SortObject('name')];
+        return PerscomUser::class; // FIXME: obviously dont want users in here lmao
     }
 }

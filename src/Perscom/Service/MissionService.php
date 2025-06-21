@@ -7,18 +7,15 @@ namespace Forumify\PerscomPlugin\Perscom\Service;
 use Forumify\Calendar\Entity\CalendarEvent;
 use Forumify\Calendar\Repository\CalendarEventRepository;
 use Forumify\Core\Entity\Notification;
-use Forumify\Core\Entity\User;
 use Forumify\Core\Notification\NotificationService;
 use Forumify\Core\Repository\ACLRepository;
 use Forumify\Core\Repository\SettingRepository;
 use Forumify\Core\Repository\UserRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Notification\MissionCreatedNotificationType;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
-use Perscom\Data\FilterObject;
-use Saloon\Exceptions\Request\FatalRequestException;
-use Saloon\Exceptions\Request\RequestException;
+use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MissionService
@@ -27,11 +24,11 @@ class MissionService
         private readonly MissionRepository $missionRepository,
         private readonly NotificationService $notificationService,
         private readonly ACLRepository $ACLRepository,
-        private readonly PerscomFactory $perscomFactory,
         private readonly SettingRepository $settingRepository,
         private readonly UserRepository $userRepository,
         private readonly CalendarEventRepository $calendarEventRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly PerscomUserRepository $perscomUserRepository,
     ) {
     }
 
@@ -88,17 +85,13 @@ class MissionService
             return [];
         }
 
-        try {
-            $perscomUsers = $this->getActiveDutyPerscomUsersByForumifyUser($usersWithAccess);
-            $perscomEmails = array_map('strtolower', array_column($perscomUsers, 'email'));
-        } catch (\Exception) {
-            return [];
-        }
+        $perscomUsers = $this->getActiveDutyPerscomUsersByForumifyUser($usersWithAccess);
 
         $recipients = [];
-        foreach ($usersWithAccess as $user) {
-            if (in_array(strtolower($user->getEmail()), $perscomEmails, true)) {
-                $recipients[] = $user;
+        foreach ($perscomUsers as $user) {
+            $fUser = $user->getUser();
+            if ($fUser !== null) {
+                $recipients[] = $fUser;
             }
         }
 
@@ -127,23 +120,25 @@ class MissionService
     }
 
     /**
-     * @throws FatalRequestException
-     * @throws RequestException
-     * @throws \JsonException
+     * @return PerscomUser[]
      */
     private function getActiveDutyPerscomUsersByForumifyUser(array $users): array
     {
-        $emails = array_map(fn (User $user) => $user->getEmail(), $users);
-        $filters = [new FilterObject('email', 'in', $emails)];
+        $qb = $this
+            ->perscomUserRepository
+            ->createQueryBuilder('pu')
+            ->where('pu.user IN (:users)')
+            ->setParameter('users', $users)
+        ;
 
         $enlistmentStatuses = $this->settingRepository->get('perscom.enlistment.status') ?? [];
         if (!empty($enlistmentStatuses)) {
-            $filters[] = new FilterObject('status_id', 'not in', $enlistmentStatuses, 'and');
+            $qb
+                ->andWhere('pu.status IN (:statuses)')
+                ->setParameter('statuses', $enlistmentStatuses)
+            ;
         }
 
-        return $this->perscomFactory->getPerscom()
-            ->users()
-            ->search(filter: $filters, limit: 9999)
-            ->json('data');
+        return $qb->getQuery()->getResult();
     }
 }

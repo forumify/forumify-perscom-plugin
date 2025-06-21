@@ -114,15 +114,15 @@ class ReportInService
             return false;
         }
 
-        $status = $this->perscomUserService->getLoggedInPerscomUser()?->getStatus();
-        if ($status === null) {
+        $statusId = $this->perscomUserService->getLoggedInPerscomUser()?->getStatus()?->getId();
+        if ($statusId === null) {
             return false;
         }
 
         $enabledStatusIds = $this->settingRepository->get('perscom.report_in.enabled_status');
         $enabledStatusIds[] = (int)$this->settingRepository->get('perscom.report_in.failure_status');
 
-        return in_array($status->getPerscomId(), $enabledStatusIds, true);
+        return in_array($statusId, $enabledStatusIds, true);
     }
 
     public function reportIn(): bool
@@ -164,7 +164,7 @@ class ReportInService
         }
 
         $failureStatusId = (int)$this->settingRepository->get('perscom.report_in.failure_status');
-        $this->failureStatus = $this->statusRepository->findOneBy(['perscomId' => $failureStatusId]);
+        $this->failureStatus = $this->statusRepository->find($failureStatusId);
         if ($this->failureStatus === null) {
             throw new \RuntimeException('No failure status found.');
         }
@@ -181,14 +181,7 @@ class ReportInService
             return [];
         }
 
-        return $this->perscomUserRepository
-            ->createQueryBuilder('u')
-            ->join('u.status', 's')
-            ->where('s.perscomId IN (:statuses)')
-            ->setParameter('statuses', $enabledStatuses)
-            ->getQuery()
-            ->getResult()
-        ;
+        return $this->perscomUserRepository->findBy(['status' => $enabledStatuses]);
     }
 
     private function sendWarning(User $user, int $daysLeft): void

@@ -9,6 +9,8 @@ use Exception;
 use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Perscom\Entity as Entity;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomSyncResult;
+use Forumify\PerscomPlugin\Perscom\Entity\Status;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Sync\Exception\SyncLockedException;
@@ -20,12 +22,17 @@ use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Lock\LockFactory;
 
+use function Symfony\Component\String\u;
+
 class SyncService
 {
     public const SYNC_LOCK_NAME = 'perscom.sync.mutex';
+    public const SETTING_SYNC_ENABLED = 'perscom.sync.enabled';
+    public const SETTING_IS_INITIAL_SYNC_COMPLETED = 'perscom.sync.is_initial_completed';
 
     private bool $isRunning = false;
     private readonly Perscom $perscom;
+    private PerscomSyncResult $result;
 
     public function __construct(
         private readonly SettingRepository $settingRepository,
@@ -44,9 +51,30 @@ class SyncService
         }
         $this->isRunning = true;
 
+        $result = new PerscomSyncResult();
+        $this->result = $result;
+
         $mutex = $this->lockFactory->createLock(self::SYNC_LOCK_NAME, 1800);
         $mutex->acquire(true);
 
+        try {
+            $this->syncEntities();
+        } catch (Exception $ex) {
+            $result->setSuccess(false);
+            $result->logMessage($ex->getMessage() . "\nTrace: " . $ex->getTraceAsString());
+        }
+
+        $result->setEnded();
+        $this->em->persist($result);
+        $this->em->flush();
+
+        // Ensure the entity manager is cleared to avoid leaking memory in message handlers
+        $this->em->clear();
+        $mutex->release();
+    }
+
+    private function syncEntities(): void
+    {
         $p = $this->perscom;
         $awards = $this->syncAllOfResource($p->awards(), Entity\Award::class, ['image']);
         $documents = $this->syncAllOfResource($p->documents(), Entity\Document::class);
@@ -126,9 +154,52 @@ class SyncService
             batchSize: 1000,
         );
 
-        // Ensure the entity manager is cleared to avoid leaking memory in message handlers
-        $this->em->clear();
-        $mutex->release();
+        if (!($this->settingRepository->get(self::SETTING_IS_INITIAL_SYNC_COMPLETED) ?? false)) {
+            $this->postInitialSync($statuses);
+        }
+    }
+
+    /**
+     * @param array<int, Status> $statuses
+     */
+    private function postInitialSync(array $statuses): void
+    {
+        $newSettings = [];
+
+        $enlistmentStatusIds = $this->settingRepository->get('perscom.enlistment.status');
+        if ($enlistmentStatusIds) {
+            $newSettings['perscom.enlistment.status'] = [];
+            foreach ($enlistmentStatusIds as $statusId) {
+                $status = $statuses[$statusId] ?? null;
+                if ($status !== null) {
+                    $newSettings['perscom.enlistment.status'][] = $status->getId();
+                }
+            }
+        }
+
+        $consecutiveAbsentStatusId = $this->settingRepository->get('perscom.operations.consecutive_absent_status');
+        if ($consecutiveAbsentStatusId) {
+            $newSettings['perscom.operations.consecutive_absent_status'] = ($statuses[$consecutiveAbsentStatusId] ?? null)?->getId();
+        }
+
+        $reportInEnabledStatusIds = $this->settingRepository->get('perscom.report_in.enabled_status');
+        if ($reportInEnabledStatusIds) {
+            $newSettings['perscom.report_in.enabled_status'] = [];
+            foreach ($reportInEnabledStatusIds as $statusId) {
+                $status = $statuses[$statusId] ?? null;
+                if ($status !== null) {
+                    $newSettings['perscom.report_in.enabled_status'][] = $status->getId();
+                }
+            }
+        }
+
+        $reportInFailureStatusId = $this->settingRepository->get('perscom.report_in.failure_status');
+        if ($reportInFailureStatusId) {
+            $newSettings['perscom.report_in.failure_status'] = ($statuses[$reportInFailureStatusId] ?? null)?->getId();
+        }
+
+        $newSettings[self::SETTING_IS_INITIAL_SYNC_COMPLETED] = true;
+        $this->settingRepository->setBulk($newSettings);
     }
 
     /**
@@ -268,16 +339,27 @@ class SyncService
                     continue;
                 }
 
+                /** @var PerscomEntityInterface $existingItem */
                 $existingItem = $existingItems[$item['id']] ?? null;
+                $existingItemUpdatedAt = $existingItem?->getUpdatedAt() ?? $existingItem?->getCreatedAt();
+                if ($existingItemUpdatedAt && $existingItemUpdatedAt > $this->result->getStart()) {
+                    // If the item was changed AFTER the sync started, the mutex will delay the sync to perscom.
+                    // And it's possible that the data on forumify is fresher than that on PERSCOM.io
+                    continue;
+                }
+
                 try {
                     $obj = $this->normalizer->denormalize($item, $entityClass, 'perscom_array', [
                         AbstractNormalizer::OBJECT_TO_POPULATE => $existingItem,
                         ...$context,
                     ]);
-
                     $this->em->persist($obj);
                     $existingItems[$item['id']] = $obj;
-                } catch (Exception) {
+                } catch (Exception $ex) {
+                    $itemType = u($entityClass)->afterLast('\\')->toString();
+                    $this->result->logMessage(
+                        "Skipping $itemType with perscom id {$item['id']}: {$ex->getMessage()}"
+                    );
                 }
             }
 
@@ -335,6 +417,6 @@ class SyncService
      */
     public function isSyncEnabled(): bool
     {
-        return !$this->isRunning && ($this->settingRepository->get('perscom.sync.enabled') ?? true);
+        return !$this->isRunning && ($this->settingRepository->get(self::SETTING_SYNC_ENABLED) ?? true);
     }
 }

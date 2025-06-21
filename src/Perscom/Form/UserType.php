@@ -4,19 +4,12 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Form;
 
-use Forumify\PerscomPlugin\Perscom\Perscom;
-use Perscom\Contracts\Searchable;
-use Symfony\Component\OptionsResolver\OptionsResolver;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 
 class UserType extends AbstractPerscomEntityType
 {
-    public function configureOptions(OptionsResolver $resolver): void
+    protected function getEntityClass(): string
     {
-        parent::configureOptions($resolver);
-    }
-
-    protected function getResource(Perscom $perscom): Searchable
-    {
-        return $perscom->users();
+        return PerscomUser::class;
     }
 }

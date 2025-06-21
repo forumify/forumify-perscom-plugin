@@ -28,7 +28,7 @@ class RosterSerializer implements DenormalizerInterface, NormalizerInterface
         return $data;
     }
 
-    public function SupportsNormalization(mixed $data, ?string $format = null): bool
+    public function supportsNormalization(mixed $data, ?string $format = null): bool
     {
         return $data instanceof Roster && $format === 'perscom_array';
     }
