@@ -4,16 +4,14 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\MenuBuilder;
 
-use DateInterval;
 use Forumify\Admin\MenuBuilder\AdminMenuBuilderInterface;
 use Forumify\Core\MenuBuilder\Menu;
 use Forumify\Core\MenuBuilder\MenuItem;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
 use Forumify\Plugin\Service\PluginVersionChecker;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
 {
@@ -22,6 +20,7 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
         private readonly PerscomFactory $perscomFactory,
         private readonly CacheInterface $cache,
         private readonly PluginVersionChecker $pluginVersionChecker,
+        private readonly FormRepository $formRepository,
     ) {
     }
 
@@ -31,8 +30,8 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
 
         $submissionMenu = new Menu('Submissions', ['icon' => 'ph ph-table', 'permission' => 'perscom-io.admin.submissions.view']);
         $submissionMenu->addItem(new MenuItem('View All', $u('perscom_admin_submission_list')));
-        foreach ($this->getSubmissionForms() as $form) {
-            $submissionMenu->addItem(new MenuItem($form, $u('perscom_admin_submission_list', ['form' => $form])));
+        foreach ($this->formRepository->findAll() as $form) {
+            $submissionMenu->addItem(new MenuItem($form->getName(), $u('perscom_admin_submission_list', ['form' => $form->getName()])));
         }
 
         $perscomMenu = new Menu('PERSCOM', ['icon' => 'ph ph-shield-chevron', 'permission' => 'perscom-io.admin.view'], [
@@ -63,20 +62,5 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
         ]));
 
         $menu->addItem($perscomMenu);
-    }
-
-    private function getSubmissionForms(): array
-    {
-        return $this->cache->get('perscom.admin.forms', function (ItemInterface $item): array {
-            try {
-                $forms = $this->perscomFactory->getPerscom()->forms()->all(limit: 999)->json()['data'] ?? [];
-            } catch (\Exception) {
-                $item->expiresAfter(new DateInterval('PT15M'));
-                return [];
-            }
-
-            $item->expiresAfter(new DateInterval('PT1H'));
-            return array_combine(array_column($forms, 'id'), array_column($forms, 'name'));
-        });
     }
 }

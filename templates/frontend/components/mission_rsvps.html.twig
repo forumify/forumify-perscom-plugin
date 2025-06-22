@@ -1,15 +1,16 @@
 <div {{ attributes }}>
-    {% for unit in this.RSVPs %}
+    {% for rsvp in this.RSVPs %}
         <div class="mb-2">
-            <h5>{{ unit.name }}</h5>
+            <h5>{{ rsvp.unit.name }}</h5>
             <ul>
-                {% for user in unit.users %}
+                {% for userRsvp in rsvp.users %}
+                    {% set user = userRsvp.user %}
                     <li class="flex items-center gap-1">
                         {% if user.rank is not null and user.rank.image is not null %}
                             <img width="24px" height="24px" src="{{ asset(user.rank.image, 'perscom.asset') }}">
                         {% endif %}
                         {{ user.name }}
-                        {% if user.rsvp.going %}
+                        {% if userRsvp.rsvp.going %}
                             <i class="ph ph-check-circle" style="color: green"></i>
                         {% else %}
                             <i class="ph ph-x-circle" style="color: red"></i>
