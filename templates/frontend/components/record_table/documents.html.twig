@@ -14,9 +14,9 @@
                     {% endif %}
                 </div>
                 <div class="card-body text-left">
-                    {% if item is not null and item.image is defined and item.image is not null and item.image.image_url %}
+                    {% if item is not null and item.image is defined and item.image is not null %}
                         <div class="text-center mb-6">
-                            <img width="25%" height="auto" src="{{ item.image.image_url }}" alt="">
+                            <img width="25%" height="auto" src="{{ asset(item.image.image, 'perscom.asset') }}" alt="">
                         </div>
                     {% endif %}
                     {{ record.document_parsed|rich }}

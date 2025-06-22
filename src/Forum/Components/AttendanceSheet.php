@@ -6,7 +6,6 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 
 use DateTime;
 use Forumify\PerscomPlugin\Perscom\Entity\Operation;
-use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Form\UnitType;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;

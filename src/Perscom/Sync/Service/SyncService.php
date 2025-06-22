@@ -162,57 +162,8 @@ class SyncService
 
         $isInitialSyncDone = $this->settingRepository->get(SyncService::SETTING_IS_INITIAL_SYNC_COMPLETED) ?? false;
         if (!$isInitialSyncDone) {
-            $this->postInitialSync($statuses, $forms);
+            $this->settingRepository->set(SyncService::SETTING_IS_INITIAL_SYNC_COMPLETED, true);
         }
-    }
-
-    /**
-     * @param array<int, Entity\Status> $statuses
-     * @param array<int, Entity\Form> $forms
-     */
-    private function postInitialSync(array $statuses, array $forms): void
-    {
-        $newSettings = [];
-
-        $enlistmentStatusIds = $this->settingRepository->get('perscom.enlistment.status');
-        if ($enlistmentStatusIds) {
-            $newSettings['perscom.enlistment.status'] = [];
-            foreach ($enlistmentStatusIds as $statusId) {
-                $status = $statuses[$statusId] ?? null;
-                if ($status !== null) {
-                    $newSettings['perscom.enlistment.status'][] = $status->getId();
-                }
-            }
-        }
-
-        $consecutiveAbsentStatusId = $this->settingRepository->get('perscom.operations.consecutive_absent_status');
-        if ($consecutiveAbsentStatusId) {
-            $newSettings['perscom.operations.consecutive_absent_status'] = ($statuses[$consecutiveAbsentStatusId] ?? null)?->getId();
-        }
-
-        $reportInEnabledStatusIds = $this->settingRepository->get('perscom.report_in.enabled_status');
-        if ($reportInEnabledStatusIds) {
-            $newSettings['perscom.report_in.enabled_status'] = [];
-            foreach ($reportInEnabledStatusIds as $statusId) {
-                $status = $statuses[$statusId] ?? null;
-                if ($status !== null) {
-                    $newSettings['perscom.report_in.enabled_status'][] = $status->getId();
-                }
-            }
-        }
-
-        $reportInFailureStatusId = $this->settingRepository->get('perscom.report_in.failure_status');
-        if ($reportInFailureStatusId) {
-            $newSettings['perscom.report_in.failure_status'] = ($statuses[$reportInFailureStatusId] ?? null)?->getId();
-        }
-
-        $enlistmentFormId = $this->settingRepository->get('perscom.enlistment.form');
-        if ($enlistmentFormId) {
-            $newSettings['perscom.enlistment.form'] = ($forms[$enlistmentFormId] ?? null)?->getId();
-        }
-
-        $newSettings[self::SETTING_IS_INITIAL_SYNC_COMPLETED] = true;
-        $this->settingRepository->setBulk($newSettings);
     }
 
     /**
@@ -261,6 +212,7 @@ class SyncService
             }
         }
 
+        $this->em->flush();
         $mutex->release();
     }
 
@@ -276,7 +228,11 @@ class SyncService
             ),
             $entities,
         );
-        $resource->batchCreate($resources);
+        $result = $resource->batchCreate($resources)->array('data');
+
+        foreach ($result as $key => $res) {
+            $entities[$key]->setPerscomId($res['id']);
+        }
     }
 
     /**
@@ -285,7 +241,11 @@ class SyncService
     public function batchCreateSeq(ResourceContract $resource, array $entities): void
     {
         foreach ($entities as $entity) {
-            $resource->create($this->normalizer->normalize($entity, 'perscom_array', ['action' => 'create']));
+            $result = $resource
+                ->create($this->normalizer->normalize($entity, 'perscom_array', ['action' => 'create']))
+                ->array('data')
+            ;
+            $entity->setPerscomId($result['id']);
         }
     }
 

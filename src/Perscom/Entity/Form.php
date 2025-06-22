@@ -10,10 +10,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Perscom;
+use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
 use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: FormRepository::class)]
 #[ORM\Table('perscom_form')]
 class Form implements PerscomEntityInterface
 {

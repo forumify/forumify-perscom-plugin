@@ -5,8 +5,8 @@
             <ul>
                 {% for user in unit.users %}
                     <li class="flex items-center gap-1">
-                        {% if user.rank is defined and user.rank.image is not null %}
-                            <img width="24px" height="24px" src="{{ user.rank.image.image_url }}">
+                        {% if user.rank is not null and user.rank.image is not null %}
+                            <img width="24px" height="24px" src="{{ asset(user.rank.image, 'perscom.asset') }}">
                         {% endif %}
                         {{ user.name }}
                         {% if user.rsvp.going %}

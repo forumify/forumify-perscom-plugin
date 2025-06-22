@@ -11,15 +11,15 @@ use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 use Forumify\PerscomPlugin\Perscom\Entity\MissionRSVP;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRSVPRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Forumify\Plugin\Attribute\PluginVersion;
-use Perscom\Data\FilterObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -32,9 +32,10 @@ class AfterActionReportController extends AbstractController
     public function __construct(
         private readonly AfterActionReportRepository $afterActionReportRepository,
         private readonly MissionRepository $missionRepository,
-        private readonly PerscomFactory $perscomFactory,
         private readonly AfterActionReportService $afterActionReportService,
         private readonly PerscomUserService $userService,
+        private readonly PerscomUserRepository $userRepository,
+        private readonly Packages $packages,
     ) {
     }
 
@@ -53,20 +54,10 @@ class AfterActionReportController extends AbstractController
             }
         }
 
-        $users = $this->perscomFactory
-            ->getPerscom()
-            ->users()
-            ->search(
-                filter: new FilterObject('id', 'in', $allUserIds),
-                include: [
-                    'rank',
-                    'rank.image',
-                    'position',
-                    'specialty',
-                ]
-            )
-            ->json('data');
-        $users = array_combine(array_column($users, 'id'), $users);
+        /** @var PerscomUser[] $users */
+        $users = $this->userRepository->findByPerscomIds($allUserIds);
+        $allUserIds = array_map(fn (PerscomUser $user) => $user->getPerscomId(), $users);
+        $users = array_combine($allUserIds, $users);
 
         $attendance = $aar->getAttendance();
         foreach ($attendance as &$list) {
@@ -78,15 +69,7 @@ class AfterActionReportController extends AbstractController
 
         foreach ($attendance as &$list) {
             $list = array_filter($list);
-            $this->userService->sortUsers($list);
-
-            foreach ($list as $k => $user) {
-                $list[$k] = [
-                    'id' => $user['id'],
-                    'name' => $user['name'],
-                    'rankImage' => !empty($user['rank']['image']) ? $user['rank']['image']['image_url'] : null,
-                ];
-            }
+            $this->userService->sortPerscomUsers($list);
         }
         unset($list);
 
@@ -207,12 +190,19 @@ class AfterActionReportController extends AbstractController
 
         $response = [];
         foreach ($users as $user) {
-            $response[] = [
+            $row = [
                 'id' => $user->getPerscomId(),
                 'name' => $user->getName(),
-                'rankImage' => $user->getRank()?->getImage(),
                 'rsvp' => $usersToRsvp[$user->getPerscomId()] ?? null,
+                'rankImage' => null,
             ];
+
+            $rankImg = $user->getRank()?->getImage();
+            if ($rankImg) {
+                $row['rankImage'] = $this->packages->getUrl($rankImg, 'perscom.asset');
+            }
+
+            $response[] = $row;
         }
 
         return new JsonResponse($response);

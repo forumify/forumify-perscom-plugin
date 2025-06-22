@@ -9,9 +9,10 @@ use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Perscom;
+use Forumify\PerscomPlugin\Perscom\Repository\FormSubmissionRepository;
 use Perscom\Contracts\ResourceContract;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: FormSubmissionRepository::class)]
 #[ORM\Table('perscom_form_submission')]
 class FormSubmission implements PerscomEntityInterface
 {

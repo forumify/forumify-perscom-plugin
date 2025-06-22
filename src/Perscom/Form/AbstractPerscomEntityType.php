@@ -32,6 +32,10 @@ abstract class AbstractPerscomEntityType extends AbstractType
 
         $choices = [];
         foreach ($data as $row) {
+            if (empty($row['key']) || empty($row['label'])) {
+                continue;
+            }
+
             $choices[$row['label']] = $row['key'];
         }
 
@@ -67,7 +71,7 @@ abstract class AbstractPerscomEntityType extends AbstractType
 
     protected function getIdField(): string
     {
-        return 'id';
+        return 'perscomId';
     }
 
     public function getParent(): string
