@@ -7,18 +7,14 @@ namespace Forumify\PerscomPlugin\Admin\MenuBuilder;
 use Forumify\Admin\MenuBuilder\AdminMenuBuilderInterface;
 use Forumify\Core\MenuBuilder\Menu;
 use Forumify\Core\MenuBuilder\MenuItem;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
 use Forumify\Plugin\Service\PluginVersionChecker;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Cache\CacheInterface;
 
 class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly PerscomFactory $perscomFactory,
-        private readonly CacheInterface $cache,
         private readonly PluginVersionChecker $pluginVersionChecker,
         private readonly FormRepository $formRepository,
     ) {

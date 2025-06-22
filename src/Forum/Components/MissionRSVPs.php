@@ -9,7 +9,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\MissionRSVP;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
-use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -23,13 +22,12 @@ class MissionRSVPs
     use DefaultActionTrait;
 
     public function __construct(
-        private readonly PerscomUserService $perscomUserService,
         private readonly PerscomUserRepository $perscomUserRepository,
     ) {
     }
 
     /**
-     * @return array<int, array{unit: Unit, users: PerscomUser[]}>
+     * @return array<int, array{ unit: Unit, rsvps: array<array{ rsvp: MissionRSVP, user: PerscomUser }>}>
      */
     public function getRSVPs(): array
     {
@@ -60,23 +58,24 @@ class MissionRSVPs
 
     /**
      * @param array<array{ rsvp: MissionRSVP, user: PerscomUser }> $rsvps
-     * @return array<int, array{ unit: Unit, rsvps: array{ rsvp: MissionRSVP, user: PerscomUser }}>
+     * @return array<int, array{ unit: Unit, rsvps: array<array{ rsvp: MissionRSVP, user: PerscomUser }>}>
      */
     private function groupByUnit(array $rsvps): array
     {
         $units = [];
         foreach ($rsvps as $rsvp) {
             $user = $rsvp['user'];
-            $unitId = $user->getUnit()?->getPerscomId();
-            if ($unitId === null) {
+            $unit = $user->getUnit();
+            if ($unit === null) {
                 continue;
             }
 
+            $unitId = $unit->getPerscomId();
             if (!isset($units[$unitId])) {
-                $units[$unitId]['unit'] = $user->getUnit();
+                $units[$unitId]['unit'] = $unit;
             }
 
-            $units[$unitId]['users'][] = $rsvp;
+            $units[$unitId]['rsvps'][] = $rsvp;
         }
 
         uasort($units, fn (array $a, array $b): int => $a['unit']->getPosition() <=> $b['unit']->getPosition());

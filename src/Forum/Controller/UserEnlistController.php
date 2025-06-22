@@ -9,7 +9,6 @@ use Forumify\PerscomPlugin\Forum\Form\Enlistment;
 use Forumify\PerscomPlugin\Forum\Form\EnlistmentType;
 use Forumify\PerscomPlugin\Perscom\Entity\EnlistmentTopic;
 use Forumify\PerscomPlugin\Perscom\Repository\EnlistmentTopicRepository;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomEnlistService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +20,6 @@ class UserEnlistController extends AbstractController
     #[Route('/enlist', 'enlist')]
     public function __invoke(
         PerscomEnlistService $perscomEnlistService,
-        PerscomFactory $perscomFactory,
         EnlistmentTopicRepository $enlistmentTopicRepository,
         Request $request,
     ): Response {
@@ -40,7 +38,7 @@ class UserEnlistController extends AbstractController
 
         if ($enlistmentTopic !== null && $request->get('force_new') === null) {
             $submission = $perscomEnlistService->getCurrentEnlistment($enlistmentTopic->getSubmissionId());
-            if (!empty($submission)) {
+            if ($submission !== null) {
                 return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
                     'successMessage' => $enlistmentForm['success_message'] ?? '',
                     'enlistmentTopic' => $enlistmentTopic,

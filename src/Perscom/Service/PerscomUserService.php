@@ -38,17 +38,6 @@ class PerscomUserService
         $user = $this->security->getUser();
         $name = ucfirst($firstName) . ' ' . ucfirst($lastName);
 
-        // TODO: move to entity listener
-        // $data = $this->perscomFactory
-        //    ->getPerscom()
-        //    ->users()
-        //    ->create([
-        //        'name' => $name,
-        //        'email' => $user->getEmail(),
-        //        'email_verified_at' => (new \DateTime())->format(Perscom::DATE_FORMAT),
-        //    ])
-        //    ->json('data');
-
         $perscomUser = new PerscomUser();
         $perscomUser->setUser($user);
         $perscomUser->setName($name);

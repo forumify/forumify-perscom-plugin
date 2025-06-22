@@ -6,6 +6,9 @@ namespace Forumify\PerscomPlugin\Perscom\Repository;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Rank;
 
+/**
+ * @extends AbstractPerscomRepository<Rank>
+ */
 class RankRepository extends AbstractPerscomRepository
 {
     public static function getEntityClass(): string

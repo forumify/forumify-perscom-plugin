@@ -3,7 +3,7 @@
         <div class="mb-2">
             <h5>{{ rsvp.unit.name }}</h5>
             <ul>
-                {% for userRsvp in rsvp.users %}
+                {% for userRsvp in rsvp.rsvps %}
                     {% set user = userRsvp.user %}
                     <li class="flex items-center gap-1">
                         {% if user.rank is not null and user.rank.image is not null %}

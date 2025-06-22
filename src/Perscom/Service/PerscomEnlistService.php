@@ -16,7 +16,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Event\UserEnlistedEvent;
 use Forumify\PerscomPlugin\Perscom\Repository\EnlistmentTopicRepository;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\FormSubmissionRepository;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
@@ -24,7 +23,6 @@ use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 class PerscomEnlistService
 {
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
         private readonly PerscomUserService $perscomUserService,
         private readonly SettingRepository $settingRepository,
         private readonly ForumRepository $forumRepository,
@@ -57,17 +55,9 @@ class PerscomEnlistService
         return $this->formRepository->find($formId);
     }
 
-    public function getCurrentEnlistment(int $submissionId): ?array
+    public function getCurrentEnlistment(int $submissionId): ?FormSubmission
     {
-        try {
-            return $this->perscomFactory
-                ->getPerscom()
-                ->submissions()
-                ->get($submissionId, ['statuses'])
-                ->json('data');
-        } catch (\Exception) {
-            return null;
-        }
+        return $this->formSubmissionRepository->findOneByPerscomId($submissionId);
     }
 
     public function enlist(Enlistment $enlistment): ?EnlistmentTopic
