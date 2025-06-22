@@ -58,7 +58,7 @@ perscom:
             view:
                 title: 'Submission'
                 user: 'User'
-                status_history: 'Status History'
+                status_reason: 'Status Reason'
                 status_created: 'Submission status updated.'
         awards:
             list:

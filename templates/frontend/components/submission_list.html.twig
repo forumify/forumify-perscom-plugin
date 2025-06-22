@@ -11,10 +11,9 @@
                         <div class="mb-4">
                             <h2>
                                 {{ item.form.name }}
-                                {% set status = item.statuses|first %}
-                                {% if status %}
+                                {% if item.status %}
                                     {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
-                                        status: item.statuses[0],
+                                        status: item.status,
                                         class: 'text-small'
                                     } only %}
                                 {% endif %}
@@ -23,27 +22,18 @@
                                 submission: item
                             } %}
                         </div>
-                        <h3>{{ 'perscom.opcenter.status_history'|trans }}</h3>
-                        <ul>
-                            {% for status in item.statuses|sort((a, b) => b.updated_at <=> a.updated_at) %}
-                                <li class="mb-2">
-                                    <h4 class="mb-0">{{ status.name }}</h4>
-                                    <p class="text-small mb-2">{{ status.record.updated_at|perscom_date|format_date }}</p>
-                                    <p>
-                                        {{ status.record.text }}
-                                    </p>
-                                </li>
-                            {% endfor %}
-                        </ul>
+                        {% if item.statusReason %}
+                            <h3>{{ 'perscom.opcenter.status_reason'|trans }}</h3>
+                            <p>{{ item.statusReason }}</p>
+                        {% endif %}
                     </div>
                 {% endblock %}
             {% endembed %}
-            <p class="text-small">{{ item.created_at|format_date }}</p>
+            <p class="text-small">{{ item.createdAt|format_date }}</p>
         </div>
-        {% set status = item.statuses|first %}
-        {% if status %}
+        {% if item.status %}
             {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
-                status: status,
+                status: item.status,
                 class: 'text-small'
             } only %}
         {% endif %}

@@ -10,7 +10,6 @@ use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Perscom\Entity as Entity;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomSyncResult;
-use Forumify\PerscomPlugin\Perscom\Entity\Status;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Sync\Exception\SyncLockedException;
@@ -154,15 +153,24 @@ class SyncService
             batchSize: 1000,
         );
 
-        if (!($this->settingRepository->get(self::SETTING_IS_INITIAL_SYNC_COMPLETED) ?? false)) {
-            $this->postInitialSync($statuses);
+        $forms = $this->syncAllOfResource($p->forms(), Entity\Form::class, ['fields'], ['statuses' => $statuses]);
+        $this->syncAllOfResource($p->submissions(), Entity\FormSubmission::class, ['statuses', 'statuses.record'], [
+            'users' => $users,
+            'statuses' => $statuses,
+            'forms' => $forms,
+        ]);
+
+        $isInitialSyncDone = $this->settingRepository->get(SyncService::SETTING_IS_INITIAL_SYNC_COMPLETED) ?? false;
+        if (!$isInitialSyncDone) {
+            $this->postInitialSync($statuses, $forms);
         }
     }
 
     /**
-     * @param array<int, Status> $statuses
+     * @param array<int, Entity\Status> $statuses
+     * @param array<int, Entity\Form> $forms
      */
-    private function postInitialSync(array $statuses): void
+    private function postInitialSync(array $statuses, array $forms): void
     {
         $newSettings = [];
 
@@ -196,6 +204,11 @@ class SyncService
         $reportInFailureStatusId = $this->settingRepository->get('perscom.report_in.failure_status');
         if ($reportInFailureStatusId) {
             $newSettings['perscom.report_in.failure_status'] = ($statuses[$reportInFailureStatusId] ?? null)?->getId();
+        }
+
+        $enlistmentFormId = $this->settingRepository->get('perscom.enlistment.form');
+        if ($enlistmentFormId) {
+            $newSettings['perscom.enlistment.form'] = ($forms[$enlistmentFormId] ?? null)?->getId();
         }
 
         $newSettings[self::SETTING_IS_INITIAL_SYNC_COMPLETED] = true;

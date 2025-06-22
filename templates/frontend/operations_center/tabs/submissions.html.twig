@@ -7,7 +7,7 @@
             {{ component('Perscom\\ReportInButton') }}
         {% endif %}
         {% for form in forms %}
-            <a href="{{ path('perscom_form_submission_create', { formId: form.id }) }}" class="btn-outlined w-100 justify-start">
+            <a href="{{ path('perscom_form_submission_create', { id: form.id }) }}" class="btn-outlined w-100 justify-start">
                 <i class="ph ph-arrow-elbow-down-right"></i>
                 {{ form.name }}
             </a>

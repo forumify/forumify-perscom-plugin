@@ -11,10 +11,12 @@ use Forumify\Forum\Repository\ForumRepository;
 use Forumify\Forum\Service\CreateTopicService;
 use Forumify\PerscomPlugin\Perscom\Entity\EnlistmentTopic;
 use Forumify\PerscomPlugin\Forum\Form\Enlistment;
+use Forumify\PerscomPlugin\Perscom\Entity\Form;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Event\UserEnlistedEvent;
 use Forumify\PerscomPlugin\Perscom\Repository\EnlistmentTopicRepository;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class PerscomEnlistService
@@ -27,6 +29,7 @@ class PerscomEnlistService
         private readonly CreateTopicService $createTopicService,
         private readonly EnlistmentTopicRepository $enlistmentTopicRepository,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly FormRepository $formRepository,
     ) {
     }
 
@@ -45,14 +48,10 @@ class PerscomEnlistService
         return $statusId === null || in_array($statusId, $allowedEnlistmentStatuses, true);
     }
 
-    public function getEnlistmentForm(): ?array
+    public function getEnlistmentForm(): ?Form
     {
         $formId = $this->settingRepository->get('perscom.enlistment.form');
-
-        return $this->perscomFactory->getPerscom()
-            ->forms()
-            ->get($formId, ['fields'])
-            ->json('data') ?? [];
+        return $this->formRepository->find($formId);
     }
 
     public function getCurrentEnlistment(int $submissionId): ?array
@@ -123,9 +122,8 @@ class PerscomEnlistService
     {
         $content = '';
 
-        /** @var array $form */
         $form = $this->getEnlistmentForm();
-        foreach ($form['fields'] as $field) {
+        foreach (($form->getFields() ?? []) as $field) {
             $label = $field['name'];
             $value = $submission[$field['key']] ?? '';
 

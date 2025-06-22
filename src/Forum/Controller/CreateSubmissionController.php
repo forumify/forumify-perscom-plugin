@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Controller;
 
 use Forumify\PerscomPlugin\Forum\Form\PerscomFormType;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Entity\Form;
+use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
+use Forumify\PerscomPlugin\Perscom\Repository\FormSubmissionRepository;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,37 +16,32 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CreateSubmissionController extends AbstractController
 {
-    #[Route('/form/{formId}/create-submission', 'form_submission_create')]
-    public function __invoke(
-        int $formId,
-        Request $request,
-        PerscomUserService $perscomUserService,
-        PerscomFactory $perscomFactory
-    ): Response {
-        $perscomUser = $perscomUserService->getLoggedInPerscomUser();
+    public function __construct(
+        private readonly PerscomUserService $perscomUserService,
+        private readonly FormSubmissionRepository $formSubmissionRepository,
+    ) {
+    }
+
+    #[Route('/form/{id}/create-submission', 'form_submission_create')]
+    public function __invoke(Form $perscomForm, Request $request): Response
+    {
+        $perscomUser = $this->perscomUserService->getLoggedInPerscomUser();
         if ($perscomUser === null) {
             throw $this->createAccessDeniedException('You need to have a PERSCOM user to create form submissions');
         }
 
-        try {
-            $perscomForm = $perscomFactory->getPerscom()
-                ->forms()
-                ->get($formId, ['fields'])
-                ->json('data');
-        } catch (\Exception) {
-            throw $this->createNotFoundException("Form with id '$formId' does not exist");
-        }
-
-        $form = $this->createForm(PerscomFormType::class, null, ['perscom_form' => $perscomForm]);
+        $form = $this->createForm(PerscomFormType::class, null, ['perscomForm' => $perscomForm]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $perscomFactory->getPerscom()
-                ->submissions()
-                ->create([
-                    'form_id' => $perscomForm['id'],
-                    'user_id' => $perscomUser['id'],
-                    ...$form->getData()
-                ]);
+            $submission = new FormSubmission();
+            $submission->setForm($perscomForm);
+            $submission->setUser($perscomUser);
+            if ($perscomForm->getDefaultStatus()) {
+                $submission->setStatus($perscomForm->getDefaultStatus());
+            }
+            $submission->setData($form->getData());
+
+            $this->formSubmissionRepository->save($submission);
 
             $this->addFlash('success', 'perscom.opcenter.submission_created');
             return $this->redirectToRoute('perscom_operations_center');

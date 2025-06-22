@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Form;
 
 use DateTime;
+use Forumify\PerscomPlugin\Perscom\Entity\Form;
 use Forumify\PerscomPlugin\Perscom\Perscom;
-use RuntimeException;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -47,16 +47,18 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults([
-            'perscom_form' => null,
-            'allowed_types' => [],
-        ]);
+        $resolver->setDefaults(['allowedTypes' => []]);
+        $resolver->setDefined('perscomForm');
+        $resolver->setAllowedTypes('perscomForm', Form::class);
     }
 
+    /**
+     * @param array{perscomForm: Form, allowedTypes: array<string>} $options
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        foreach ($options['perscom_form']['fields'] ?? [] as $field) {
-            if (!empty($options['allowed_types']) && !in_array($field['type'], $options['allowed_types'], true)) {
+        foreach ($options['perscomForm']->getFields() ?? [] as $field) {
+            if (!empty($options['allowedTypes']) && !in_array($field['type'], $options['allowedTypes'], true)) {
                 continue;
             }
 

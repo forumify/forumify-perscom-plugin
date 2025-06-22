@@ -23,7 +23,7 @@ class RosterSerializer implements DenormalizerInterface, NormalizerInterface
         $data['description'] = $object->getDescription();
         $data['order'] = $object->getPosition();
 
-        // TODO: units?
+        // NOTE: units are not synced with PERSCOM.io until we can update them from the parent roster
 
         return $data;
     }
@@ -43,13 +43,23 @@ class RosterSerializer implements DenormalizerInterface, NormalizerInterface
 
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): Roster
     {
-        /** @var Roster $roster */
-        $roster = $context[AbstractNormalizer::OBJECT_TO_POPULATE] ?? new Roster();
+        $isNew = false;
+        /** @var Roster|null $roster */
+        $roster = $context[AbstractNormalizer::OBJECT_TO_POPULATE] ?? null;
+        if ($roster === null) {
+            $isNew = true;
+            $roster = new Roster();
+        }
 
         $roster->setPerscomId($data['id']);
         $roster->setName($data['name'] ?? '');
         $roster->setDescription($data['description'] ?? '');
         $roster->setPosition($data['order'] ?? 0);
+
+        // NOTE: since we don't send updates for roster units to PERSCOM.io, we also shouldn't sync them anymore.
+        if (!$isNew) {
+            return $roster;
+        }
 
         /** @var Unit[] $allUnits */
         $allUnits = $context['units'] ?? [];
