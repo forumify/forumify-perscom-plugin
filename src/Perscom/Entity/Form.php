@@ -109,7 +109,7 @@ class Form implements PerscomEntityInterface
         return $this->fields ?? [];
     }
 
-    public function setFields(array $fields): void
+    public function setFields(?array $fields): void
     {
         $this->fields = $fields;
     }

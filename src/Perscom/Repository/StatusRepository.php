@@ -6,6 +6,9 @@ namespace Forumify\PerscomPlugin\Perscom\Repository;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Status;
 
+/**
+ * @extends AbstractPerscomRepository<Status>
+ */
 class StatusRepository extends AbstractPerscomRepository
 {
     public static function getEntityClass(): string

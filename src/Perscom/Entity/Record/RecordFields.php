@@ -21,10 +21,6 @@ trait RecordFields
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?PerscomUser $author = null;
 
-    #[ORM\ManyToOne(targetEntity: PerscomUser::class, fetch: 'EAGER')]
-    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
-    private PerscomUser $user;
-
     #[ORM\Column(type: 'text')]
     private string $text = '';
 

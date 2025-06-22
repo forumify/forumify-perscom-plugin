@@ -85,10 +85,6 @@ class FormSubmissionSerializer implements NormalizerInterface, DenormalizerInter
 
     private function setFormData(FormSubmission $submission, Form $form, array $data): void
     {
-        if (!is_array($form->getFields())) {
-            return;
-        }
-
         $formData = [];
         foreach ($form->getFields() as $field) {
             $key = $field['key'];

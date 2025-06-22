@@ -216,11 +216,11 @@ class SyncService
     }
 
     /**
-     * @var array{
+     * @param array{
      *      create: PerscomEntityInterface[],
      *      update: PerscomEntityInterface[],
      *      delete: array<class-string<PerscomEntityInterface>, int[]>,
-     *  }
+     *  } $changeSet
      */
     public function syncToPerscom(array $changeSet): void
     {
@@ -253,7 +253,7 @@ class SyncService
         foreach ($changeSet['delete'] as $class => $ids) {
             $resource = $class::getPerscomResource($this->perscom);
             if ($resource instanceof Batchable) {
-                $resource->batchDelete($ids);
+                $resource->batchDelete(array_map(fn (int $id) => new ResourceObject($id), $ids));
             } else {
                 foreach ($ids as $id) {
                     $resource->delete($id);
@@ -265,7 +265,7 @@ class SyncService
     }
 
     /**
-     * @var array<PerscomEntityInterface> $entities
+     * @param array<PerscomEntityInterface> $entities
      */
     public function batchCreate(Batchable $resource, array $entities): void
     {
@@ -280,7 +280,7 @@ class SyncService
     }
 
     /**
-     * @var array<PerscomEntityInterface> $entities
+     * @param array<PerscomEntityInterface> $entities
      */
     public function batchCreateSeq(ResourceContract $resource, array $entities): void
     {
@@ -290,7 +290,7 @@ class SyncService
     }
 
     /**
-     * @var array<PerscomEntityInterface> $entities
+     * @param array<PerscomEntityInterface> $entities
      */
     public function batchUpdate(Batchable $resource, array $entities): void
     {
@@ -305,7 +305,7 @@ class SyncService
     }
 
     /**
-     * @var array<PerscomEntityInterface> $entities
+     * @param array<PerscomEntityInterface> $entities
      */
     public function batchUpdateSeq(ResourceContract $resource, array $entities): void
     {
@@ -352,7 +352,7 @@ class SyncService
                     continue;
                 }
 
-                /** @var PerscomEntityInterface $existingItem */
+                /** @var PerscomEntityInterface|null $existingItem */
                 $existingItem = $existingItems[$item['id']] ?? null;
                 $existingItemUpdatedAt = $existingItem?->getUpdatedAt() ?? $existingItem?->getCreatedAt();
                 if ($existingItemUpdatedAt && $existingItemUpdatedAt > $this->result->getStart()) {
@@ -409,7 +409,7 @@ class SyncService
 
     /**
      * @template T of PerscomEntityInterface
-     * @param array<T>
+     * @param array<T> $entities
      * @return array<class-string<T>, T[]>
      */
     private function indexByClass(array $entities): array

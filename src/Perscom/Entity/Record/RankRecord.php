@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Entity\Record;
 
 use Doctrine\ORM\Mapping as ORM;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Rank;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\RankRecordRepository;
@@ -15,6 +16,10 @@ use Perscom\Contracts\ResourceContract;
 class RankRecord implements RecordInterface
 {
     use RecordFields;
+
+    #[ORM\ManyToOne(targetEntity: PerscomUser::class, inversedBy: 'rankRecords', fetch: 'EAGER')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private PerscomUser $user;
 
     #[ORM\ManyToOne(targetEntity: Rank::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]

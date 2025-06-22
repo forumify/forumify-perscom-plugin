@@ -6,6 +6,9 @@ namespace Forumify\PerscomPlugin\Perscom\Repository;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Qualification;
 
+/**
+ * @extends AbstractPerscomRepository<Qualification>
+ */
 class QualificationRepository extends AbstractPerscomRepository
 {
     public static function getEntityClass(): string

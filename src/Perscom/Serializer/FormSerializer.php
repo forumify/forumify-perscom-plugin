@@ -41,7 +41,7 @@ class FormSerializer implements NormalizerInterface, DenormalizerInterface
     }
 
     /**
-     * @var array<string, mixed> $data
+     * @param array<string, mixed> $data
      */
     public function denormalize(mixed $data, string $type, ?string $format = null, array $context = []): Form
     {

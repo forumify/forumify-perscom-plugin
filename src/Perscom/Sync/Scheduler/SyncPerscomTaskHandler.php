@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Sync\Scheduler;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Forumify\Core\Notification\ContextSerializer;
 use Forumify\PerscomPlugin\Perscom\Sync\Exception\SyncLockedException;
 use Forumify\PerscomPlugin\Perscom\Sync\Message\SyncToPerscomMessage;
@@ -19,7 +18,6 @@ class SyncPerscomTaskHandler
 {
     public function __construct(
         private readonly SyncService $syncService,
-        private readonly EntityManagerInterface $entityManager,
         private readonly ContextSerializer $contextSerializer,
         private readonly MessageBusInterface $messageBus,
     ) {

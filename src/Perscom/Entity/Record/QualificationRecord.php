@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Entity\Record;
 
 use Doctrine\ORM\Mapping as ORM;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Qualification;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\QualificationRecordRepository;
@@ -15,6 +16,10 @@ use Perscom\Contracts\ResourceContract;
 class QualificationRecord implements RecordInterface
 {
     use RecordFields;
+
+    #[ORM\ManyToOne(targetEntity: PerscomUser::class, inversedBy: 'qualificationRecords', fetch: 'EAGER')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private PerscomUser $user;
 
     #[ORM\ManyToOne(targetEntity: Qualification::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]

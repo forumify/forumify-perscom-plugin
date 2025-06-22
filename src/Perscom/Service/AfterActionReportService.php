@@ -248,7 +248,7 @@ class AfterActionReportService
             return;
         }
 
-        /** @var Status|null $status */
+        /** @var Status|null $consecutiveStatus */
         $consecutiveStatus = $this->statusRepository->find($consecutiveStatusId);
         if ($consecutiveStatus === null) {
             return;

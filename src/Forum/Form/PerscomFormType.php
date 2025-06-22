@@ -53,11 +53,15 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
     }
 
     /**
-     * @param array{perscomForm: Form, allowedTypes: array<string>} $options
+     * @param array{
+     *      perscomForm: Form,
+     *      allowedTypes: array<string>,
+     *      disabled: bool
+     *  } $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        foreach ($options['perscomForm']->getFields() ?? [] as $field) {
+        foreach ($options['perscomForm']->getFields() as $field) {
             if (!empty($options['allowedTypes']) && !in_array($field['type'], $options['allowedTypes'], true)) {
                 continue;
             }

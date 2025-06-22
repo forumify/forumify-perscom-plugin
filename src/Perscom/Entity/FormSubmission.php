@@ -19,7 +19,7 @@ class FormSubmission implements PerscomEntityInterface
     use PerscomId;
     use TimestampableEntityTrait;
 
-    #[ORM\ManyToOne(targetEntity: Form::class)]
+    #[ORM\ManyToOne(targetEntity: Form::class, inversedBy: 'submissions')]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Form $form;
 
@@ -67,7 +67,7 @@ class FormSubmission implements PerscomEntityInterface
         return $this->data;
     }
 
-    public function setData(array $data): void
+    public function setData(?array $data): void
     {
         $this->data = $data;
     }

@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Perscom\Entity\Record;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Position;
 use Forumify\PerscomPlugin\Perscom\Entity\Specialty;
 use Forumify\PerscomPlugin\Perscom\Entity\Status;
@@ -39,6 +40,10 @@ class AssignmentRecord implements RecordInterface
     #[ORM\ManyToOne(targetEntity: Specialty::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private ?Specialty $specialty = null;
+
+    #[ORM\ManyToOne(targetEntity: PerscomUser::class, inversedBy: 'assignmentRecords', fetch: 'EAGER')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
+    private PerscomUser $user;
 
     public static function getPerscomResource(Perscom $perscom): ResourceContract
     {

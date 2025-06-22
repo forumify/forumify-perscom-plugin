@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Service;
 
+use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
-use Exception;
-use Forumify\Core\Repository\AbstractRepository;
-use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AwardRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\CombatRecord;
@@ -17,20 +15,14 @@ use Forumify\PerscomPlugin\Perscom\Entity\Record\RecordInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
 use Forumify\PerscomPlugin\Perscom\Event\RecordsCreatedEvent;
 use Forumify\PerscomPlugin\Perscom\Exception\PerscomException;
-use Forumify\PerscomPlugin\Perscom\Perscom;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
-use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
-use Perscom\Data\ResourceObject;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class RecordService
 {
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
         private readonly PerscomUserService $perscomUserService,
         private readonly EventDispatcherInterface $eventDispatcher,
-        private readonly PerscomUserRepository $perscomUserRepository,
         private readonly EntityManagerInterface $entityManager,
     ) {
     }
@@ -46,9 +38,7 @@ class RecordService
             return;
         }
 
-        $data['created_at'] = $data['created_at']->format(Perscom::DATE_FORMAT);
-
-        $class = $this->typeToClass($type);
+        $class = self::typeToClass($type);
 
         $records = [];
         foreach ($users as $user) {
@@ -56,6 +46,7 @@ class RecordService
             $record = new $class();
             $record->setUser($user);
             $record->setText($data['text'] ?? '');
+            $record->setCreatedAt($data['created_at']);
 
             if ($record instanceof AwardRecord) {
                 $record->setAward($data['award']);
@@ -101,7 +92,7 @@ class RecordService
     /**
      * @return class-string<RecordInterface>
      */
-    private function typeToClass(string $type): string
+    public static function typeToClass(string $type): string
     {
         return match ($type) {
             'service' => ServiceRecord::class,
@@ -110,6 +101,22 @@ class RecordService
             'combat' => CombatRecord::class,
             'rank' => RankRecord::class,
             'qualification' => QualificationRecord::class,
+            default => ServiceRecord::class,
+        };
+    }
+
+    public static function classToType(RecordInterface $record): string
+    {
+        $class = ClassUtils::getRealClass(get_class($record));
+
+        return match ($class) {
+            ServiceRecord::class => 'service',
+            AwardRecord::class => 'award',
+            AssignmentRecord::class => 'assignment',
+            CombatRecord::class => 'combat',
+            RankRecord::class => 'rank',
+            QualificationRecord::class => 'qualification',
+            default => 'service',
         };
     }
 }
