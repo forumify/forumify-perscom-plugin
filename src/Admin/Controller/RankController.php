@@ -15,7 +15,7 @@ class RankController extends AbstractCrudController
 {
     protected ?string $permissionView = 'perscom-io.admin.organization.ranks.view';
     protected ?string $permissionCreate = 'perscom-io.admin.organization.ranks.create';
-    protected ?string $permissionEdit = 'perscom-io.admin.organization.ranks.edit';
+    protected ?string $permissionEdit = 'perscom-io.admin.organization.ranks.manage';
     protected ?string $permissionDelete = 'perscom-io.admin.organization.ranks.delete';
     protected function getTranslationPrefix(): string
     {
