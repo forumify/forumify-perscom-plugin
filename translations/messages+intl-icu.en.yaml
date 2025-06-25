@@ -70,6 +70,10 @@ perscom:
         qualifications:
             list:
                 title: 'Qualifications'
+        rank:
+            crud:
+                single: 'rank'
+                plural: 'ranks'
         units:
             list:
                 title: 'Units'

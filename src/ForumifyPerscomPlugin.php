@@ -44,7 +44,14 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                     'assign_statuses',
                 ],
                 'organization' => [
-                    'view',
+                    'view', [
+                        'ranks' => [
+                            'view',
+                            'manage',
+                            'delete',
+                            'create'
+                        ]
+                    ]
                 ],
                 'operations' => [
                     'view',
