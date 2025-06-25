@@ -77,9 +77,10 @@ perscom:
         units:
             list:
                 title: 'Units'
-        statuses:
-            list:
-                title: 'Statuses'
+        status:
+            crud:
+                single: 'status'
+                plural: 'statuses'
         specialties:
             list:
                 title: 'Specialties'
