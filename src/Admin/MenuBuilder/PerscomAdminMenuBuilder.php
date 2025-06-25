@@ -55,6 +55,7 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
             new MenuItem('Statuses', $u('perscom_admin_status_list')),
             new MenuItem('Awards', $u('perscom_admin_award_list')),
             new MenuItem('Qualifications', $u('perscom_admin_qualification_list')),
+            new MenuItem('Ranks', $u('perscom_admin_rank_list')),
         ]));
 
         $menu->addItem($perscomMenu);
