@@ -14,7 +14,6 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -31,6 +30,11 @@ class ConfigurationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('perscom__opcenter__announcement', RichTextEditorType::class, [
+                'label' => 'Announcement',
+                'help' => 'Content to show on the operations center.',
+                'required' => false,
+            ])
             // Enlistment
             ->add('perscom__enlistment__status', StatusType::class, [
                 'label' => 'Eligible Status',

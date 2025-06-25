@@ -10,17 +10,11 @@
         {% endblock %}
     </div>
     {% block opcenter_announcements %}
-        {% for announcement in announcements %}
-            {%- set class -%}
-                {%- if announcement.color is same as 'failure' -%}alert-error{%- endif -%}
-                {%- if announcement.color is same as 'warning' -%}alert-warning{%- endif -%}
-                {%- if announcement.color is same as 'info' -%}alert-info{%- endif -%}
-            {%- endset -%}
-            <div class="{{ class }} mb-4">
-                <h3 class="mb-2">{{ announcement.title }}</h3>
-                {{ announcement.content|perscom_text }}
+        {% if announcement %}
+            <div class="mb-4">
+                {{ announcement|rich }}
             </div>
-        {% endfor %}
+        {% endif %}
     {% endblock %}
     {% embed '@Forumify/components/tabs.html.twig' %}
         {% block tabs %}

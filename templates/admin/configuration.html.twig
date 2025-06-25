@@ -5,7 +5,7 @@
     <div class="box">
         {% embed '@Forumify/components/tabs.html.twig' %}
             {% block tabs %}
-                <button type="button" class="btn-link" data-tab-id="enlistment">{{ 'perscom.settings.tab_enlistment'|trans }}</button>
+                <button type="button" class="btn-link" data-tab-id="general">{{ 'perscom.settings.tab_general'|trans }}</button>
                 <button type="button" class="btn-link" data-tab-id="profile">{{ 'perscom.settings.tab_profile'|trans }}</button>
                 {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
                     <button type="button" class="btn-link" data-tab-id="report-in">{{ 'perscom.settings.tab_report_in'|trans }}</button>
@@ -13,10 +13,12 @@
                 {% endif %}
             {% endblock %}
             {% block tabpanels %}
-                <div id="enlistment">
+                <div id="general">
+                    {{ form_row(form.perscom__opcenter__announcement) }}
+                    <h2>{{ 'perscom.settings.enlistment'|trans }}</h2>
                     {{ form_row(form.perscom__enlistment__status) }}
                     {{ form_row(form.perscom__enlistment__form) }}
-                    <h2 class="mb-2">{{ 'perscom.settings.automations'|trans }}</h2>
+                    <h3 class="mb-2">{{ 'perscom.settings.enlistment_automations'|trans }}</h2>
                     {{ form_row(form.perscom__enlistment__forum) }}
                     {{ form_row(form.perscom__enlistment__role) }}
                 </div>
