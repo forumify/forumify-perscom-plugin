@@ -14,7 +14,7 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 
 #[AsLiveComponent('PerscomRankTable', '@Forumify/components/table/table.html.twig')]
-#[IsGranted('perscom-io.admin.organization.view')]
+#[IsGranted('perscom-io.admin.organization.ranks.view')]
 class PerscomRankTable extends AbstractDoctrineTable
 {
     public function __construct(
@@ -54,7 +54,7 @@ class PerscomRankTable extends AbstractDoctrineTable
 
     private function renderActions(int $id): string
     {
-        if (!$this->security->isGranted('perscom-io.admin.organization.manage')) {
+        if (!$this->security->isGranted('perscom-io.admin.organization.ranks.manage')) {
             return '';
         }
 
@@ -67,7 +67,7 @@ class PerscomRankTable extends AbstractDoctrineTable
 
     protected function renderSortColumn(int $id): string
     {
-        if (!$this->security->isGranted('perscom-io.admin.organization.manage')) {
+        if (!$this->security->isGranted('perscom-io.admin.organization.ranks.manage')) {
             return '';
         }
 
@@ -93,7 +93,7 @@ class PerscomRankTable extends AbstractDoctrineTable
     }
 
     #[LiveAction]
-    #[IsGranted('perscom-io.admin.organization.manage')]
+    #[IsGranted('perscom-io.admin.organization.ranks.manage')]
     public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
     {
         $rank = $this->rankRepository->find($id);

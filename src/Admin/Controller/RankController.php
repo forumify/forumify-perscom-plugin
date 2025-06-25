@@ -10,9 +10,13 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/ranks', 'rank')]
-#[IsGranted('perscom-io.admin.organization.view')]
+#[IsGranted('perscom-io.admin.organization.ranks.view')]
 class RankController extends AbstractCrudController
 {
+    protected ?string $permissionView = 'perscom-io.admin.organization.ranks.view';
+    protected ?string $permissionCreate = 'perscom-io.admin.organization.ranks.create';
+    protected ?string $permissionEdit = 'perscom-io.admin.organization.ranks.edit';
+    protected ?string $permissionDelete = 'perscom-io.admin.organization.ranks.delete';
     protected function getTranslationPrefix(): string
     {
         return 'perscom.' . parent::getTranslationPrefix();
@@ -30,6 +34,8 @@ class RankController extends AbstractCrudController
 
     protected function getForm(?object $data): FormInterface
     {
-        return $this->createForm(RankType::class, $data);
+        return $this->createForm(RankType::class, $data, [
+            'image_required' => $data === null
+        ]);
     }
 }
