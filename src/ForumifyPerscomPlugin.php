@@ -51,7 +51,11 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                             'delete',
                             'create'
                         ],
+<<<<<<< 2.0-crud-statues -- Incoming Change
                         'statuses' => [
+=======
+                        'awards' => [
+>>>>>>> 2.0 -- Current Change
                             'view',
                             'manage',
                             'delete',

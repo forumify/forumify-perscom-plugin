@@ -1,15 +1,14 @@
 perscom:
     settings:
         tab_settings: 'Settings'
-        tab_general: 'General'
+        tab_enlistment: 'Enlistment'
         tab_profile: 'Profile'
         tab_report_in: 'Report In'
         tab_operations: 'Operations'
         tab_courses: 'Courses'
         title: 'PERSCOM.io Plugin Configuration'
-        enlistment: 'Enlistment'
-        license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefore you need a PERSCOM.io subscription to use this plugin.'
-        enlistment_automations: 'Automations'
+        license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
+        automations: 'Automations'
         profile:
             display_name_format_help: >
                 Format to use. This code is in twig, and is given the user's PERSCOM object in context.<br/>
@@ -61,9 +60,10 @@ perscom:
                 user: 'User'
                 status_reason: 'Status Reason'
                 status_created: 'Submission status updated.'
-        awards:
-            list:
-                title: 'Awards'
+        award:
+            crud:
+                single: 'award'
+                plural: 'awards'
         positions:
             list:
                 title: 'Positions'
