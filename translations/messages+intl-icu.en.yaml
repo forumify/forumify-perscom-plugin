@@ -82,9 +82,10 @@ perscom:
             crud:
                 single: 'status'
                 plural: 'statuses'
-        specialties:
-            list:
-                title: 'Specialties'
+        specialty:
+            crud:
+                single: 'specialty'
+                plural: 'specialties'
         configuration:
             title: 'Configuration'
         course:
