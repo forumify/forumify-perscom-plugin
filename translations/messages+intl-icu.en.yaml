@@ -76,9 +76,10 @@ perscom:
             crud:
                 single: 'rank'
                 plural: 'ranks'
-        units:
-            list:
-                title: 'Units'
+        unit:
+            crud:
+                single: 'unit'
+                plural: 'units'
         status:
             crud:
                 single: 'status'
