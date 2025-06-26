@@ -6,6 +6,9 @@ namespace Forumify\PerscomPlugin\Perscom\Repository;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 
+/**
+ * @extends AbstractPerscomRepository<Unit>
+ */
 class UnitRepository extends AbstractPerscomRepository
 {
     public static function getEntityClass(): string
