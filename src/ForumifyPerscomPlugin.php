@@ -44,24 +44,31 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                     'assign_statuses',
                 ],
                 'organization' => [
-                    'view', [
-                        'ranks' => [
-                            'view',
-                            'manage',
-                            'delete',
-                            'create'
-                        ],
-<<<<<<< 2.0-crud-statues -- Incoming Change
-                        'statuses' => [
-=======
-                        'awards' => [
->>>>>>> 2.0 -- Current Change
-                            'view',
-                            'manage',
-                            'delete',
-                            'create'
-                        ]
-                    ]
+                    'view',
+                    'ranks' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'qualifications' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'statuses' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'awards' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
                 ],
                 'operations' => [
                     'view',

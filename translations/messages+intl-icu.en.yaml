@@ -67,9 +67,10 @@ perscom:
         positions:
             list:
                 title: 'Positions'
-        qualifications:
-            list:
-                title: 'Qualifications'
+        qualification:
+            crud:
+                single: 'qualification'
+                plural: 'qualifications'
         rank:
             crud:
                 single: 'rank'
