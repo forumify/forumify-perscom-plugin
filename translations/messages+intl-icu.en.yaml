@@ -64,9 +64,10 @@ perscom:
             crud:
                 single: 'award'
                 plural: 'awards'
-        positions:
-            list:
-                title: 'Positions'
+        position:
+            crud:
+                single: 'position'
+                plural: 'positions'
         qualification:
             crud:
                 single: 'qualification'

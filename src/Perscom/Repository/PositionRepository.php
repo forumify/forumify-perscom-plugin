@@ -6,6 +6,9 @@ namespace Forumify\PerscomPlugin\Perscom\Repository;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Position;
 
+/**
+ * @extends AbstractPerscomRepository<Position>
+ */
 class PositionRepository extends AbstractPerscomRepository
 {
     public static function getEntityClass(): string

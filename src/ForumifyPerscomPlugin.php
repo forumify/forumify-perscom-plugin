@@ -74,6 +74,12 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                         'manage',
                         'delete',
                         'create',
+                    ],
+                    'positions' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
                     ]
                 ],
                 'operations' => [
