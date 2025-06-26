@@ -10,10 +10,11 @@ use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Perscom;
+use Forumify\PerscomPlugin\Perscom\Repository\SpecialtyRepository;
 use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: SpecialtyRepository::class)]
 #[ORM\Table('perscom_specialty')]
 class Specialty implements PerscomEntityInterface, SortableEntityInterface
 {
