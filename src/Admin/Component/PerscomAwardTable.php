@@ -20,7 +20,7 @@ class PerscomAwardTable extends AbstractDoctrineTable
     public function __construct(
         private readonly Security $security,
         private readonly AwardRepository $awardRepository,
-    ){
+    ) {
         $this->sort = ['position' => self::SORT_ASC];
     }
 
@@ -103,5 +103,4 @@ class PerscomAwardTable extends AbstractDoctrineTable
 
         $this->awardRepository->reorder($award, $direction);
     }
-
 }

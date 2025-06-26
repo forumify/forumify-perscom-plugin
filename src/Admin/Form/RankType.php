@@ -34,14 +34,14 @@ class RankType extends AbstractType
 
         $builder
             ->add('name', TextType::class)
-            ->add('description', RichTextEditorType::class,[
+            ->add('description', RichTextEditorType::class, [
                 'required' => false
             ])
-            ->add('abbreviation', TextType::class,[
+            ->add('abbreviation', TextType::class, [
                 'required' => false,
                 'help' => 'Adds an abbreviation to the rank'
             ])
-            ->add('paygrade', TextType::class,[
+            ->add('paygrade', TextType::class, [
                 'required' => false,
                 'help' => 'add a paygrade to the rank, ie: PV1 = OR-1 (NATO) or E-1 (US Army)'
             ])

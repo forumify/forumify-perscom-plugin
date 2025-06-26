@@ -17,10 +17,10 @@ use Symfony\UX\LiveComponent\Attribute\LiveArg;
 #[IsGranted('perscom-io.admin.organization.qualifications.view')]
 class PerscomQualificationTable extends AbstractDoctrineTable
 {
-    public function __construct (
+    public function __construct(
         private readonly Security $security,
         private readonly QualificationRepository $qualificationRepository
-    ){
+    ) {
         $this->sort = ['position' => self::SORT_ASC];
     }
     protected function getEntityClass(): string

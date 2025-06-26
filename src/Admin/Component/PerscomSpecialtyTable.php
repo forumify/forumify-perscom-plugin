@@ -20,7 +20,7 @@ class PerscomSpecialtyTable extends AbstractDoctrineTable
     public function __construct(
         private readonly Security $security,
         private readonly SpecialtyRepository $specialtyRepository,
-    ){
+    ) {
         $this->sort = ['position' => self::SORT_ASC];
     }
 

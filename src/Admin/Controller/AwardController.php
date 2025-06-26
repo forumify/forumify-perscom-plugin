@@ -11,7 +11,6 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Form\FormInterface;
 
-
 #[Route('/awards', 'award')]
 #[IsGranted('perscom-io.admin.organization.awards.view')]
 class AwardController extends AbstractCrudController
@@ -42,5 +41,4 @@ class AwardController extends AbstractCrudController
             'image_required' => $data === null
         ]);
     }
-
 }
