@@ -24,6 +24,9 @@ class AwardCrudSubscriber implements EventSubscriberInterface
         return [PreSaveCrudEvent::getName(Award::class) => 'preSaveAward'];
     }
 
+    /**
+     * @param PreSaveCrudEvent<Award> $event
+     */
     public function preSaveAward(PreSaveCrudEvent $event): void
     {
         $award = $event->getEntity();
@@ -32,6 +35,7 @@ class AwardCrudSubscriber implements EventSubscriberInterface
         if ($newImage instanceof UploadedFile) {
             $image = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newImage);
             $award->setImage($image);
+            $award->setImageId(null);
         }
     }
 }

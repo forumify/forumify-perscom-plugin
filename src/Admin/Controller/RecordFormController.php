@@ -8,7 +8,6 @@ use DateTime;
 use Forumify\PerscomPlugin\Admin\Form\RecordType;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Exception\PerscomUserNotFoundException;
-use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,7 +34,7 @@ class RecordFormController extends AbstractController
         $userIds = $request->get('users', '');
         $userIds = array_filter(explode(',', $userIds));
         if (!empty($userIds)) {
-            $data['users'] = $this->perscomUserRepository->findBy(['perscomId' => $userIds]);
+            $data['users'] = $this->perscomUserRepository->findBy(['id' => $userIds]);
         }
 
         $form = $this->createForm(RecordType::class, $data, ['type' => $type]);

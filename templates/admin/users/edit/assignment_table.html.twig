@@ -1,41 +1,49 @@
-<p class="mb-2">Secondary Assignments</p>
+<h2 class="mb-2">Secondary Assignments</h2>
 <table class="mb-4">
-    <tbody>
-    {% for child in form.children %}
-        {% set id = child.vars.value %}
-        {% set record = user.secondary_assignment_records|filter(r => r.id == id)|first %}
-        <tr id="assignment-record-{{ id }}">
-            <td>
-                {% if record.status %}
-                    {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
-                        status: record.status
-                    } %}
-                {% endif %}
-            </td>
-            <td>{{ record.unit ? record.unit.name : '' }}</td>
-            <td>{{ record.position ? record.position.name : '' }}</td>
-            <td>{{ record.specialty ? record.specialty.name : '' }}</td>
-            <td class="text-right">
-                {{ form_widget(child) }}
-                <button
-                    type="button"
-                    class="btn-link btn-icon btn-small"
-                    {{ stimulus_action('forumify/forumify-perscom-plugin/user_edit', 'removeAssignment', null, {
-                        toRemove: id
-                    }) }}
-                >
-                    <i class="ph ph-trash"></i>
-                </button>
-            </td>
-        </tr>
-    {% else %}
-        <tr>
-            <td class="text-small">
-                {{ 'perscom.admin.users.edit.no_secondary_assignments'|trans }}
-            </td>
-        </tr>
-    {% endfor %}
-    </tbody>
+<thead>
+<tr>
+    <th class="text-left">Status</th>
+    <th class="text-left">Unit</th>
+    <th class="text-left">Position</th>
+    <th class="text-left">Specialty</th>
+    <th></th>
+</tr>
+</thead>
+<tbody>
+    {% if secondaryAssignmentRecords is defined %}
+        {% for record in secondaryAssignmentRecords %}
+            <tr id="assignment-record-{{ record.id }}">
+                <td>
+                    {% if record.status %}
+                        {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
+                            status: record.status
+                        } %}
+                    {% endif %}
+                </td>
+                <td>{{ record.unit ? record.unit.name : '' }}</td>
+                <td>{{ record.position ? record.position.name : '' }}</td>
+                <td>{{ record.specialty ? record.specialty.name : '' }}</td>
+                <td class="text-right">
+                    <button
+                        type="button"
+                        class="btn-link btn-icon btn-small"
+                        {{ stimulus_action('forumify/forumify-perscom-plugin/user_edit', 'removeAssignment', null, {
+                            toRemove: record.id
+                        }) }}
+                    >
+                        <i class="ph ph-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td class="text-small" colspan="5">
+                    {{ 'perscom.admin.users.edit.no_secondary_assignments'|trans }}
+                </td>
+            </tr>
+        {% endfor %}
+    {% endif %}
+</tbody>
 </table>
 
 

@@ -1,6 +1,6 @@
 <div class="flex">
     {% if is_granted('perscom-io.admin.users.manage') %}
-        <a class="btn-link btn-icon btn-small" href="{{ path('perscom_admin_user_edit', { id: row.id }) }}">
+        <a class="btn-link btn-icon btn-small" href="{{ path('perscom_admin_user_edit', { identifier: row.id }) }}">
             <i class="ph ph-pencil-simple-line"></i>
         </a>
     {% endif %}

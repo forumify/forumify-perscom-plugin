@@ -21,6 +21,10 @@ perscom:
                 </ul>
     admin:
         requires_perscom_account: 'This action requires a PERSCOM account that matches your email.'
+        perscom_user:
+            crud:
+                plural: 'Users'
+                single: 'User'
         users:
             not_found: 'User can not be found.'
             list:

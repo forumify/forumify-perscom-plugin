@@ -21,7 +21,6 @@ class UserDeleteController extends AbstractController
     ) {
     }
 
-    #[Route('users/{id}/delete', 'user_delete')]
     public function __invoke(Request $request, int $id): Response
     {
         $perscom = $this->perscomFactory->getPerscom();

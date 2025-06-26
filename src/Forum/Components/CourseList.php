@@ -8,7 +8,6 @@ use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseRepository;
 use Forumify\Plugin\Attribute\PluginVersion;

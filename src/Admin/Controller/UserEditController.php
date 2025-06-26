@@ -26,7 +26,6 @@ class UserEditController extends AbstractController
     {
     }
 
-    #[Route('users/{id}', 'user_edit')]
     public function __invoke(PerscomFactory $perscomFactory, SyncUserService $syncUserService, Request $request, int $id): Response
     {
         $perscom = $perscomFactory->getPerscom(true);

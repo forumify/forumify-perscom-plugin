@@ -24,6 +24,9 @@ class QualificationCrudSubscriber implements EventSubscriberInterface
         return [PreSaveCrudEvent::getName(Qualification::class) => 'preSaveQualification'];
     }
 
+    /**
+     * @param PreSaveCrudEvent<Qualification> $event
+     */
     public function preSaveQualification(PreSaveCrudEvent $event): void
     {
         $qualification = $event->getEntity();
@@ -32,6 +35,7 @@ class QualificationCrudSubscriber implements EventSubscriberInterface
         if ($newImage instanceof UploadedFile) {
             $image = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newImage);
             $qualification->setImage($image);
+            $qualification->setImageId(null);
         }
     }
 }

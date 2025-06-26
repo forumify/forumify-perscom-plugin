@@ -21,7 +21,7 @@
 {% endif %}
 {% if user is defined and is_granted('perscom-io.admin.users.delete') %}
     <hr>
-    <a class="btn-link" href="{{ path('perscom_admin_user_delete', { id: user.id }) }}">
+    <a class="btn-link" href="{{ path('perscom_admin_user_delete', { identifier: user.id }) }}">
         <i class="ph ph-x"></i>{{ 'perscom.admin.users.list.actions.delete'|trans }}
     </a>
 {% endif %}

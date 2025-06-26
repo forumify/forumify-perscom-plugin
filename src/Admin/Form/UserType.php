@@ -4,43 +4,46 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
-use Forumify\PerscomPlugin\Forum\Form\PerscomFormType;
-use Forumify\PerscomPlugin\Perscom\Form\PositionType;
-use Forumify\PerscomPlugin\Perscom\Form\RankType;
-use Forumify\PerscomPlugin\Perscom\Form\SpecialtyType;
-use Forumify\PerscomPlugin\Perscom\Form\StatusType;
-use Forumify\PerscomPlugin\Perscom\Form\UnitType;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Entity\Position;
+use Forumify\PerscomPlugin\Perscom\Entity\Rank;
+use Forumify\PerscomPlugin\Perscom\Entity\Specialty;
+use Forumify\PerscomPlugin\Perscom\Entity\Status;
+use Forumify\PerscomPlugin\Perscom\Entity\Unit;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
 {
+    public function __construct(
+        private readonly Packages $packages,
+    ) {
+    }
+
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => UserData::class,
-            'user' => null,
+            'data_class' => PerscomUser::class,
         ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $user = $options['user'] ?? null;
+        /** @var PerscomUser|null $user */
+        $user = $options['data'] ?? null;
 
         $builder
             // general
             ->add('name', TextType::class)
-            ->add('email', TextType::class, [
-                'disabled' => true,
-                'help' => 'perscom.admin.users.edit.email_help',
-            ])
-            ->add('rank', RankType::class, [
+            ->add('rank', EntityType::class, [
+                'class' => Rank::class,
+                'choice_label' => 'name',
                 'required' => false,
                 'help' => 'perscom.admin.users.edit.rank_help',
             ])
@@ -48,54 +51,50 @@ class UserType extends AbstractType
                 'widget' => 'single_text',
                 'help' => 'perscom.admin.users.edit.created_at_help',
             ])
-            ->add('customFields', PerscomFormType::class, [
-                'help' => 'perscom.admin.users.edit.custom_fields_help',
-                'perscom_form' => $user,
-                'disabled' => true,
-                'allowed_types' => [
-                    'boolean',
-                    'email',
-                    'number',
-                    'password',
-                    'select',
-                    'text',
-                    'textarea',
-                ],
-            ])
             // assignment
-            ->add('specialty', SpecialtyType::class, [
+            ->add('specialty', EntityType::class, [
+                'class' => Specialty::class,
+                'choice_label' => 'name',
                 'required' => false,
                 'disabled' => true,
             ])
-            ->add('status', StatusType::class, [
+            ->add('status', EntityType::class, [
+                'class' => Status::class,
+                'choice_label' => 'name',
                 'required' => false,
                 'disabled' => true,
             ])
-            ->add('position', PositionType::class, [
+            ->add('position', EntityType::class, [
+                'class' => Position::class,
+                'choice_label' => 'name',
                 'required' => false,
                 'disabled' => true,
             ])
-            ->add('unit', UnitType::class, [
+            ->add('unit', EntityType::class, [
+                'class' => Unit::class,
+                'choice_label' => 'name',
                 'required' => false,
                 'disabled' => true,
-            ])
-            ->add('secondaryAssignments', CollectionType::class, [
-                'entry_type' => HiddenType::class,
-                'label' => false,
-                'allow_delete' => true,
-                'required' => false,
             ])
             // uniform
-            ->add('uniform', FileType::class, [
+            ->add('newUniform', FileType::class, [
+                'mapped' => false,
+                'label' => 'Uniform',
                 'required' => false,
                 'attr' => [
-                    'preview' => $user['cover_photo_url'] ?? null,
+                    'preview' => $user->getUniform()
+                        ? $this->packages->getUrl($user->getUniform(), 'perscom.asset')
+                        : null
                 ],
             ])
-            ->add('signature', FileType::class, [
+            ->add('newSignature', FileType::class, [
+                'mapped' => false,
+                'label' => 'Signature',
                 'required' => false,
                 'attr' => [
-                    'preview' => $user['profile_photo_url'] ?? null,
+                    'preview' => $user->getSignature()
+                        ? $this->packages->getUrl($user->getSignature(), 'perscom.asset')
+                        : null
                 ],
             ]);
     }
