@@ -50,6 +50,12 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                             'manage',
                             'delete',
                             'create'
+                        ],
+                        'awards' => [
+                            'view',
+                            'manage',
+                            'delete',
+                            'create'
                         ]
                     ]
                 ],
