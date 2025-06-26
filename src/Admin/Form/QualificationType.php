@@ -34,7 +34,7 @@ class QualificationType extends AbstractType
 
         $builder
             ->add('name', TextType::class)
-            ->add('description', RichTextEditorType::class,[
+            ->add('description', RichTextEditorType::class, [
                 'required' => false
             ])
             ->add('newImage', FileType::class, [

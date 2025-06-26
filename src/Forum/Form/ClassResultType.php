@@ -20,8 +20,7 @@ class ClassResultType extends AbstractType
     public function __construct(
         private readonly PerscomCourseExtensionRuntime $courseExtension,
         private readonly Packages $packages,
-    )
-    {
+    ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void

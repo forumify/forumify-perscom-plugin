@@ -10,10 +10,11 @@ use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Perscom;
+use Forumify\PerscomPlugin\Perscom\Repository\PositionRepository;
 use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: PositionRepository::class)]
 #[ORM\Table('perscom_position')]
 class Position implements PerscomEntityInterface, SortableEntityInterface
 {
