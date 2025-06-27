@@ -8,8 +8,9 @@ use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
+use Forumify\PerscomPlugin\Perscom\Repository\PerscomSyncResultRepository;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: PerscomSyncResultRepository::class)]
 #[ORM\Table('perscom_sync_result')]
 class PerscomSyncResult
 {
@@ -18,11 +19,11 @@ class PerscomSyncResult
     #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
     private DateTimeImmutable $start;
 
-    #[ORM\Column(type: Types::DATETIME_IMMUTABLE)]
-    private DateTimeImmutable $end;
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?DateTimeImmutable $end = null;
 
-    #[ORM\Column(type: Types::BOOLEAN)]
-    private bool $success = true;
+    #[ORM\Column(type: Types::BOOLEAN, nullable: true)]
+    private ?bool $success = null;
 
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private string $errorMessage = '';
@@ -37,7 +38,7 @@ class PerscomSyncResult
         return $this->start;
     }
 
-    public function getEnd(): DateTimeImmutable
+    public function getEnd(): ?DateTimeImmutable
     {
         return $this->end;
     }
@@ -47,12 +48,12 @@ class PerscomSyncResult
         $this->end = new DateTimeImmutable();
     }
 
-    public function isSuccess(): bool
+    public function isSuccess(): ?bool
     {
         return $this->success;
     }
 
-    public function setSuccess(bool $success): void
+    public function setSuccess(?bool $success): void
     {
         $this->success = $success;
     }

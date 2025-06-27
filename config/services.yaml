@@ -12,7 +12,3 @@ services:
             - '../src/**/DataFixture/'
             - '../src/**/DependencyInjection/'
             - '../src/**/Entity/'
-
-    Forumify\PerscomPlugin\Admin\Controller\UserEditController:
-        arguments:
-            $tempUploadDir: '%temp_upload_dir%'

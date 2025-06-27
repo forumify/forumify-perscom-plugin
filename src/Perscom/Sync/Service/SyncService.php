@@ -43,33 +43,54 @@ class SyncService
         $this->perscom = $perscomFactory->getPerscom(true);
     }
 
-    public function syncAll(): void
+    public function syncAll(?int $resultId = null): void
     {
         if (!$this->isSyncEnabled()) {
             return;
         }
-        $this->isRunning = true;
 
-        $result = new PerscomSyncResult();
-        $this->result = $result;
+        $this->isRunning = true;
+        $this->setResultForSync($resultId);
 
         $mutex = $this->lockFactory->createLock(self::SYNC_LOCK_NAME, 1800);
         $mutex->acquire(true);
 
+        set_time_limit(0);
+        ini_set('memory_limit', -1);
+
         try {
             $this->syncEntities();
+            $this->result->setSuccess(true);
         } catch (Exception $ex) {
-            $result->setSuccess(false);
-            $result->logMessage($ex->getMessage() . "\nTrace: " . $ex->getTraceAsString());
+            $this->result->setSuccess(false);
+            $this->result->logMessage($ex->getMessage() . "\nTrace: " . $ex->getTraceAsString());
         }
 
-        $result->setEnded();
-        $this->em->persist($result);
+        $this->result->setEnded();
+        $this->em->persist($this->result);
         $this->em->flush();
 
         // Ensure the entity manager is cleared to avoid leaking memory in message handlers
         $this->em->clear();
         $mutex->release();
+    }
+
+    private function setResultForSync(?int $resultId): void
+    {
+        if ($resultId) {
+            $result = $this->em->getRepository(PerscomSyncResult::class)->find($resultId);
+            if ($result !== null) {
+                $this->result = $result;
+                return;
+            }
+        }
+
+        $result = new PerscomSyncResult();
+        $this->result = $result;
+        $this->em->persist($result);
+        $this->em->flush();
+
+        $this->result = $result;
     }
 
     private function syncEntities(): void

@@ -1,0 +1,14 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+{% block title_page %}PERSCOM.io sync{% endblock %}
+{% block body %}
+    <h1 class="flex justify-between flex-wrap items-center">
+        <span>PERSCOM.io sync</span>
+        <a class="btn-primary" href="{{ path('perscom_admin_sync_initiate') }}">Trigger Manual Sync</a>
+    </h1>
+    {% if setting('perscom.sync.enabled') is not null and setting('perscom.sync.enabled') == false %}
+        <div class="alert-error mb-4">Sync to PERSCOM.io is not enabled!</div>
+    {% endif %}
+    {% include '@ForumifyPerscomPlugin/frontend/components/sync_warning.html.twig' %}
+    <div class="alert-info mb-4">To keep data up to date, this plugin uses 2 way data synchronization. When you edit an item here on your website, it will automatically be sent to PERSCOM.io. All changes from PERSCOM.io are also replicated daily to your website. If you can not wait until the next automatic sync, you can use the "Trigger Manual Sync" button on the top right corner of this page to initiate it manually.</div>
+    {{ component('PerscomSyncResultTable') }}
+{% endblock %}

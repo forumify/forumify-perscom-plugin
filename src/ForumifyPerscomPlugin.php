@@ -30,6 +30,7 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
             ],
             'admin' => [
                 'view',
+                'run_sync',
                 'configuration' => [
                     'manage',
                 ],

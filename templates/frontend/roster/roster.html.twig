@@ -1,4 +1,5 @@
 {% extends '@Forumify/frontend/base.html.twig' %}
 {% block body %}
+    {% include '@ForumifyPerscomPlugin/frontend/components/sync_warning.html.twig' %}
     {{ component('Forumify\\Perscom\\Roster') }}
 {% endblock %}

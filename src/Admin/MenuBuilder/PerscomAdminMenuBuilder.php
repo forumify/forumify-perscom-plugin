@@ -58,6 +58,11 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
             new MenuItem('Ranks', $u('perscom_admin_rank_list')),
         ]));
 
+        $perscomMenu->addItem(new MenuItem('Sync', $u('perscom_admin_sync'), [
+            'icon' => 'ph ph-link',
+            'permission' => 'perscom-io.admin.run_sync',
+        ]));
+
         $menu->addItem($perscomMenu);
     }
 }
