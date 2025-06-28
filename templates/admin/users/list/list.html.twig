@@ -3,6 +3,7 @@
     {{ 'perscom.admin.users.list.title'|trans }}
 {% endblock %}
 {% block body %}
+    {% include '@ForumifyPerscomPlugin/frontend/components/sync_warning.html.twig' %}
     <div class="flex justify-between items-center mb-4">
         <h2 class="mb-0">{{ 'perscom.admin.users.list.title'|trans }}</h2>
         {% if is_granted('perscom-io.admin.users.assign_records') %}

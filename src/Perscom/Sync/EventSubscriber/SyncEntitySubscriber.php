@@ -8,6 +8,7 @@ use Doctrine\Bundle\DoctrineBundle\Attribute\AsDoctrineListener;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\OnFlushEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
 use Forumify\Core\Notification\ContextSerializer;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
@@ -15,6 +16,7 @@ use Forumify\PerscomPlugin\Perscom\Sync\Message\SyncToPerscomMessage;
 use Forumify\PerscomPlugin\Perscom\Sync\Service\SyncService;
 use Symfony\Component\Messenger\MessageBusInterface;
 
+#[AsDoctrineListener(event: Events::preUpdate)]
 #[AsDoctrineListener(event: Events::onFlush)]
 #[AsDoctrineListener(event: Events::postFlush)]
 class SyncEntitySubscriber
@@ -31,6 +33,20 @@ class SyncEntitySubscriber
         private readonly MessageBusInterface $messageBus,
         private readonly ContextSerializer $contextSerializer,
     ) {
+    }
+
+    public function preUpdate(PreUpdateEventArgs $args): void
+    {
+        $entity = $args->getObject();
+        if (!$entity instanceof PerscomEntityInterface) {
+            return;
+        }
+
+        if (!$this->syncService->isSyncEnabled()) {
+            return;
+        }
+
+        $entity->setDirty();
     }
 
     public function onFlush(OnFlushEventArgs $args): void

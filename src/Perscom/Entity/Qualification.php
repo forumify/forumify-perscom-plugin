@@ -19,7 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Qualification implements PerscomEntityInterface, PerscomEntityWithImageInterface, SortableEntityInterface
 {
     use IdentifiableEntityTrait;
-    use PerscomId;
+    use PerscomEntityTrait;
+    use PerscomImageTrait;
     use SortableEntityTrait;
     use TimestampableEntityTrait;
 
@@ -30,11 +31,10 @@ class Qualification implements PerscomEntityInterface, PerscomEntityWithImageInt
     #[ORM\Column(type: 'text')]
     private string $description = '';
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $imageId = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?string $image = null;
+    public function getImageEndpoint(): string
+    {
+        return "qualifications/{$this->getPerscomId()}/image";
+    }
 
     public static function getPerscomResource(Perscom $perscom): ResourceContract
     {
@@ -59,25 +59,5 @@ class Qualification implements PerscomEntityInterface, PerscomEntityWithImageInt
     public function setDescription(string $description): void
     {
         $this->description = $description;
-    }
-
-    public function getImageId(): ?int
-    {
-        return $this->imageId;
-    }
-
-    public function setImageId(?int $imageId): void
-    {
-        $this->imageId = $imageId;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(?string $image): void
-    {
-        $this->image = $image;
     }
 }

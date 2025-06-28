@@ -36,14 +36,14 @@ class UserCrudSubscriber implements EventSubscriberInterface
         if ($newUniform instanceof UploadedFile) {
             $uniform = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newUniform);
             $user->setUniform($uniform);
-            $user->setPerscomUniform(null);
+            $user->setUniformDirty(true);
         }
 
         $newSignature = $form->get('newSignature')->getData();
         if ($newSignature instanceof UploadedFile) {
             $signature = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newSignature);
             $user->setSignature($signature);
-            $user->setPerscomSignature(null);
+            $user->setSignatureDirty(true);
         }
     }
 }

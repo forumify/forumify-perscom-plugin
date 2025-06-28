@@ -51,7 +51,7 @@ class QualificationType extends AbstractType
                         new Assert\NotBlank(allowNull: false),
                     ]: []),
                     new Assert\Image(
-                        maxSize: '10M',
+                        maxSize: '1M',
                     ),
                 ],
             ])

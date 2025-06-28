@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Entity;
 
+use DateTime;
 use DateTimeImmutable;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -70,6 +71,7 @@ class PerscomSyncResult
 
     public function logMessage(string $message): void
     {
-        $this->errorMessage .= "\n\n$message";
+        $date = (new DateTime())->format('Y-m-d H:i:s.u');
+        $this->errorMessage .= "[$date]: $message\n";
     }
 }

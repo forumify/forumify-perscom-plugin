@@ -15,6 +15,8 @@ use Symfony\Component\Form\FormInterface;
 #[IsGranted('perscom-io.admin.organization.awards.view')]
 class AwardController extends AbstractCrudController
 {
+    protected string $listTemplate = '@ForumifyPerscomPlugin/admin/crud/list.html.twig';
+
     protected ?string $permissionView = 'perscom-io.admin.organization.awards.view';
     protected ?string $permissionCreate = 'perscom-io.admin.organization.awards.create';
     protected ?string $permissionEdit = 'perscom-io.admin.organization.awards.manage';

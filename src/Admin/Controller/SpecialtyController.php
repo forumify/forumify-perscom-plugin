@@ -15,6 +15,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('perscom-io.admin.organization.specialties.view')]
 class SpecialtyController extends AbstractCrudController
 {
+    protected string $listTemplate = '@ForumifyPerscomPlugin/admin/crud/list.html.twig';
+
     protected ?string $permissionView = 'perscom-io.admin.organization.specialties.view';
     protected ?string $permissionCreate = 'perscom-io.admin.organization.specialties.create';
     protected ?string $permissionEdit = 'perscom-io.admin.organization.specialties.manage';

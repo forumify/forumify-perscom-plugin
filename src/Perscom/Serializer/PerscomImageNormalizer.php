@@ -64,6 +64,7 @@ class PerscomImageNormalizer implements DenormalizerInterface
 
         $object->setImageId($imageId);
         $object->setImage($imagePath);
+        $object->setImageDirty(false);
 
         return $object;
     }

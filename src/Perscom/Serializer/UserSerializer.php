@@ -95,6 +95,10 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
             return;
         }
 
+        if ($user->isSignatureDirty()) {
+            return;
+        }
+
         $imageId = $data['profile_photo'];
         if ($imageId === $user->getPerscomSignature()) {
             return;
@@ -113,6 +117,7 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
 
         $user->setPerscomSignature($imageId);
         $user->setSignature($imagePath);
+        $user->setSignatureDirty(false);
     }
 
     private function handleUniform(array $data, PerscomUser $user): void
@@ -123,6 +128,10 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
                 $user->setUniform(null);
                 $user->setPerscomUniform(null);
             }
+            return;
+        }
+
+        if ($user->isUniformDirty()) {
             return;
         }
 
@@ -144,6 +153,7 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
 
         $user->setPerscomUniform($imageId);
         $user->setUniform($imagePath);
+        $user->setUniformDirty(false);
     }
 
     public function supportsDenormalization(mixed $data, string $type, ?string $format = null): bool

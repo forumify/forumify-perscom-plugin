@@ -19,7 +19,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Form implements PerscomEntityInterface
 {
     use IdentifiableEntityTrait;
-    use PerscomId;
+    use PerscomEntityTrait;
     use TimestampableEntityTrait;
 
     #[Assert\NotBlank(allowNull: false)]

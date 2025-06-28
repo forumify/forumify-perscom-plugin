@@ -15,6 +15,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('perscom-io.admin.organization.units.view')]
 class UnitController extends AbstractCrudController
 {
+    protected string $listTemplate = '@ForumifyPerscomPlugin/admin/crud/list.html.twig';
+
     protected ?string $permissionView = 'perscom-io.admin.organization.units.view';
     protected ?string $permissionCreate = 'perscom-io.admin.organization.units.create';
     protected ?string $permissionEdit = 'perscom-io.admin.organization.units.manage';

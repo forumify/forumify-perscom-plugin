@@ -25,7 +25,7 @@ use Perscom\Contracts\ResourceContract;
 class PerscomUser implements PerscomEntityInterface
 {
     use IdentifiableEntityTrait;
-    use PerscomId;
+    use PerscomEntityTrait;
     use TimestampableEntityTrait;
 
     #[ORM\OneToOne(targetEntity: User::class)]
@@ -69,11 +69,17 @@ class PerscomUser implements PerscomEntityInterface
     #[ORM\Column(nullable: true)]
     private ?string $perscomSignature = null;
 
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $signatureDirty = true;
+
     #[ORM\Column(nullable: true)]
     private ?string $uniform = null;
 
     #[ORM\Column(nullable: true)]
     private ?string $perscomUniform = null;
+
+    #[ORM\Column(type: 'boolean', options: ['default' => true])]
+    private bool $uniformDirty = true;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ServiceRecord::class, fetch: 'EXTRA_LAZY')]
     private Collection $serviceRecords;
@@ -203,6 +209,16 @@ class PerscomUser implements PerscomEntityInterface
         $this->perscomSignature = $perscomSignature;
     }
 
+    public function isSignatureDirty(): bool
+    {
+        return $this->signatureDirty;
+    }
+
+    public function setSignatureDirty(bool $signatureDirty): void
+    {
+        $this->signatureDirty = $signatureDirty;
+    }
+
     public function getUniform(): ?string
     {
         return $this->uniform;
@@ -221,6 +237,16 @@ class PerscomUser implements PerscomEntityInterface
     public function setPerscomUniform(?string $perscomUniform): void
     {
         $this->perscomUniform = $perscomUniform;
+    }
+
+    public function isUniformDirty(): bool
+    {
+        return $this->uniformDirty;
+    }
+
+    public function setUniformDirty(bool $uniformDirty): void
+    {
+        $this->uniformDirty = $uniformDirty;
     }
 
     public function getServiceRecords(): Collection

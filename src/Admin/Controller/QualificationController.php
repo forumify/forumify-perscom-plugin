@@ -15,10 +15,13 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('perscom-io.admin.organization.view')]
 class QualificationController extends AbstractCrudController
 {
+    protected string $listTemplate = '@ForumifyPerscomPlugin/admin/crud/list.html.twig';
+
     protected ?string $permissionView = 'perscom-io.admin.organization.qualifications.view';
     protected ?string $permissionCreate = 'perscom-io.admin.organization.qualifications.create';
     protected ?string $permissionEdit = 'perscom-io.admin.organization.qualifications.manage';
     protected ?string $permissionDelete = 'perscom-io.admin.organization.qualifications.delete';
+
     protected function getTranslationPrefix(): string
     {
         return 'perscom.' . parent::getTranslationPrefix();

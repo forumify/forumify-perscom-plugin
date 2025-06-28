@@ -1,5 +1,6 @@
 {% extends '@Forumify/admin/base.html.twig' %}
 {% block body %}
+    {% include '@ForumifyPerscomPlugin/frontend/components/sync_warning.html.twig' %}
     <h1 class="mb-4">{{ 'perscom.settings.title'|trans }}</h1>
     {{ form_start(form) }}
     <div class="box">

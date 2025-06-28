@@ -17,7 +17,7 @@ use Perscom\Contracts\ResourceContract;
 class FormSubmission implements PerscomEntityInterface
 {
     use IdentifiableEntityTrait;
-    use PerscomId;
+    use PerscomEntityTrait;
     use TimestampableEntityTrait;
 
     #[ORM\ManyToOne(targetEntity: Form::class, inversedBy: 'submissions')]

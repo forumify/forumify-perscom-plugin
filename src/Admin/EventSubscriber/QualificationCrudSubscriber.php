@@ -35,7 +35,7 @@ class QualificationCrudSubscriber implements EventSubscriberInterface
         if ($newImage instanceof UploadedFile) {
             $image = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newImage);
             $qualification->setImage($image);
-            $qualification->setImageId(null);
+            $qualification->setImageDirty();
         }
     }
 }

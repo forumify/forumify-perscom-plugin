@@ -21,7 +21,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Roster implements PerscomEntityInterface, SortableEntityInterface
 {
     use IdentifiableEntityTrait;
-    use PerscomId;
+    use PerscomEntityTrait;
     use SortableEntityTrait;
     use TimestampableEntityTrait;
 

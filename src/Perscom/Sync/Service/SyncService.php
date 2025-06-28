@@ -12,6 +12,7 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomSyncResult;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Sync\EventSubscriber\Event\PostSyncToPerscomEvent;
 use Forumify\PerscomPlugin\Perscom\Sync\Exception\SyncLockedException;
 use Perscom\Contracts\Batchable;
 use Perscom\Contracts\ResourceContract;
@@ -20,6 +21,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Lock\LockFactory;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 use function Symfony\Component\String\u;
 
@@ -38,6 +40,7 @@ class SyncService
         private readonly EntityManagerInterface $em,
         private readonly NormalizerInterface&DenormalizerInterface $normalizer,
         private readonly LockFactory $lockFactory,
+        private readonly EventDispatcherInterface $eventDispatcher,
         PerscomFactory $perscomFactory,
     ) {
         $this->perscom = $perscomFactory->getPerscom(true);
@@ -58,6 +61,9 @@ class SyncService
         set_time_limit(0);
         ini_set('memory_limit', -1);
 
+        $start = microtime(true);
+        $this->result->logMessage('Sync started.');
+
         try {
             $this->syncEntities();
             $this->result->setSuccess(true);
@@ -67,6 +73,9 @@ class SyncService
         }
 
         $this->result->setEnded();
+        $this->result->logMessage('Sync finished.');
+        $this->result->logMessage('Completed in: ' . number_format(microtime(true) - $start, 3) . ' seconds.');
+
         $this->em->persist($this->result);
         $this->em->flush();
 
@@ -202,6 +211,8 @@ class SyncService
             throw new SyncLockedException();
         }
 
+        $this->isRunning = true;
+
         $toCreate = $this->indexByClass($changeSet['create']);
         foreach ($toCreate as $class => $entities) {
             $resource = $class::getPerscomResource($this->perscom);
@@ -233,6 +244,8 @@ class SyncService
             }
         }
 
+        $this->eventDispatcher->dispatch(new PostSyncToPerscomEvent($changeSet));
+
         $this->em->flush();
         $mutex->release();
     }
@@ -245,14 +258,16 @@ class SyncService
         $resources = array_map(
             fn (PerscomEntityInterface $entity) => new ResourceObject(
                 null,
-                $this->normalizer->normalize($entity, 'perscom_array', ['action' => 'create']),
+                $this->normalizer->normalize($entity, 'perscom_array'),
             ),
             $entities,
         );
         $result = $resource->batchCreate($resources)->array('data');
 
         foreach ($result as $key => $res) {
-            $entities[$key]->setPerscomId($res['id']);
+            $entity = $entities[$key];
+            $entity->setPerscomId($res['id']);
+            $entity->setDirty(false);
         }
     }
 
@@ -263,10 +278,11 @@ class SyncService
     {
         foreach ($entities as $entity) {
             $result = $resource
-                ->create($this->normalizer->normalize($entity, 'perscom_array', ['action' => 'create']))
+                ->create($this->normalizer->normalize($entity, 'perscom_array'))
                 ->array('data')
             ;
             $entity->setPerscomId($result['id']);
+            $entity->setDirty(false);
         }
     }
 
@@ -278,11 +294,15 @@ class SyncService
         $resources = array_map(
             fn (PerscomEntityInterface $entity) => new ResourceObject(
                 $entity->getPerscomId(),
-                $this->normalizer->normalize($entity, 'perscom_array', ['action' => 'update']),
+                $this->normalizer->normalize($entity, 'perscom_array'),
             ),
             $entities,
         );
         $resource->batchUpdate($resources);
+
+        foreach ($entities as $entity) {
+            $entity->setDirty(false);
+        }
     }
 
     /**
@@ -293,8 +313,9 @@ class SyncService
         foreach ($entities as $entity) {
             $resource->update(
                 $entity->getPerscomId(),
-                $this->normalizer->normalize($entity, 'perscom_array', ['action' => 'update']),
+                $this->normalizer->normalize($entity, 'perscom_array'),
             );
+            $entity->setDirty(false);
         }
     }
 
@@ -311,6 +332,8 @@ class SyncService
         ?int $batchSize = 100,
     ): array {
         usleep(100000); // 100ms cooldown to avoid rate limits :)
+        $itemType = u($entityClass)->afterLast('\\')->toString();
+        $this->result->logMessage("$itemType: Starting sync");
 
         $repository = $this->em->getRepository($entityClass);
 
@@ -335,24 +358,22 @@ class SyncService
 
                 /** @var PerscomEntityInterface|null $existingItem */
                 $existingItem = $existingItems[$item['id']] ?? null;
-                $existingItemUpdatedAt = $existingItem?->getUpdatedAt() ?? $existingItem?->getCreatedAt();
-                if ($existingItemUpdatedAt && $existingItemUpdatedAt > $this->result->getStart()) {
-                    // If the item was changed AFTER the sync started, the mutex will delay the sync to perscom.
-                    // And it's possible that the data on forumify is fresher than that on PERSCOM.io
+                if ($existingItem?->isDirty()) {
                     continue;
                 }
 
                 try {
+                    /** @var PerscomEntityInterface $obj */
                     $obj = $this->normalizer->denormalize($item, $entityClass, 'perscom_array', [
                         AbstractNormalizer::OBJECT_TO_POPULATE => $existingItem,
                         ...$context,
                     ]);
+                    $obj->setDirty(false);
                     $this->em->persist($obj);
                     $existingItems[$item['id']] = $obj;
                 } catch (Exception $ex) {
-                    $itemType = u($entityClass)->afterLast('\\')->toString();
                     $this->result->logMessage(
-                        "Skipping $itemType with perscom id {$item['id']}: {$ex->getMessage()}"
+                        "$itemType: Skipping item with perscom id {$item['id']}: {$ex->getMessage()}"
                     );
                 }
             }
@@ -370,6 +391,7 @@ class SyncService
             ->execute()
         ;
 
+        $this->result->logMessage("$itemType: Finished");
         return $allItems;
     }
 

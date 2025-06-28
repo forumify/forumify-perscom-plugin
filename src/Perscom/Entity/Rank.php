@@ -19,7 +19,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 class Rank implements PerscomEntityInterface, PerscomEntityWithImageInterface, SortableEntityInterface
 {
     use IdentifiableEntityTrait;
-    use PerscomId;
+    use PerscomEntityTrait;
+    use PerscomImageTrait;
     use SortableEntityTrait;
     use TimestampableEntityTrait;
 
@@ -36,11 +37,10 @@ class Rank implements PerscomEntityInterface, PerscomEntityWithImageInterface, S
     #[ORM\Column]
     private string $paygrade = '';
 
-    #[ORM\Column(type: 'integer', nullable: true)]
-    private ?int $imageId = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?string $image = null;
+    public function getImageEndpoint(): string
+    {
+        return "ranks/{$this->getPerscomId()}/image";
+    }
 
     public static function getPerscomResource(Perscom $perscom): ResourceContract
     {
@@ -85,25 +85,5 @@ class Rank implements PerscomEntityInterface, PerscomEntityWithImageInterface, S
     public function setPaygrade(string $paygrade): void
     {
         $this->paygrade = $paygrade;
-    }
-
-    public function getImageId(): ?int
-    {
-        return $this->imageId;
-    }
-
-    public function setImageId(?int $imageId): void
-    {
-        $this->imageId = $imageId;
-    }
-
-    public function getImage(): ?string
-    {
-        return $this->image;
-    }
-
-    public function setImage(?string $image): void
-    {
-        $this->image = $image;
     }
 }

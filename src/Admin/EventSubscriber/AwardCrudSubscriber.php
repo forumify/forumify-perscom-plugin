@@ -35,7 +35,7 @@ class AwardCrudSubscriber implements EventSubscriberInterface
         if ($newImage instanceof UploadedFile) {
             $image = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newImage);
             $award->setImage($image);
-            $award->setImageId(null);
+            $award->setImageDirty();
         }
     }
 }

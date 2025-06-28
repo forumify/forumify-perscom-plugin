@@ -18,6 +18,7 @@ use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints as Assert;
 
 class UserType extends AbstractType
 {
@@ -82,9 +83,14 @@ class UserType extends AbstractType
                 'label' => 'Uniform',
                 'required' => false,
                 'attr' => [
-                    'preview' => $user->getUniform()
+                    'preview' => $user?->getUniform()
                         ? $this->packages->getUrl($user->getUniform(), 'perscom.asset')
                         : null
+                ],
+                'constraints' => [
+                    new Assert\Image(
+                        maxSize: '1M',
+                    ),
                 ],
             ])
             ->add('newSignature', FileType::class, [
@@ -92,10 +98,16 @@ class UserType extends AbstractType
                 'label' => 'Signature',
                 'required' => false,
                 'attr' => [
-                    'preview' => $user->getSignature()
+                    'preview' => $user?->getSignature()
                         ? $this->packages->getUrl($user->getSignature(), 'perscom.asset')
                         : null
                 ],
-            ]);
+                'constraints' => [
+                    new Assert\Image(
+                        maxSize: '1M',
+                    ),
+                ],
+            ])
+        ;
     }
 }

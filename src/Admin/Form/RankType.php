@@ -39,11 +39,11 @@ class RankType extends AbstractType
             ])
             ->add('abbreviation', TextType::class, [
                 'required' => false,
-                'help' => 'Adds an abbreviation to the rank'
+                'help' => 'Add an abbreviation to the rank; e.g., PFC'
             ])
             ->add('paygrade', TextType::class, [
                 'required' => false,
-                'help' => 'add a paygrade to the rank, ie: PV1 = OR-1 (NATO) or E-1 (US Army)'
+                'help' => 'Add a paygrade to the rank; e.g., PV1 = OR-1 (NATO) or E-1 (US Army)'
             ])
             ->add('newImage', FileType::class, [
                 'mapped' => false,
@@ -59,7 +59,7 @@ class RankType extends AbstractType
                         new Assert\NotBlank(allowNull: false),
                     ]: []),
                     new Assert\Image(
-                        maxSize: '10M',
+                        maxSize: '1M',
                     ),
                 ],
             ])

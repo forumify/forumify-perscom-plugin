@@ -24,6 +24,9 @@ class RankCrudSubscriber implements EventSubscriberInterface
         return [PreSaveCrudEvent::getName(Rank::class) => 'preSaveRank'];
     }
 
+    /**
+     * @param PreSaveCrudEvent<Rank> $event
+     */
     public function preSaveRank(PreSaveCrudEvent $event): void
     {
         $rank = $event->getEntity();
@@ -32,6 +35,7 @@ class RankCrudSubscriber implements EventSubscriberInterface
         if ($newImage instanceof UploadedFile) {
             $image = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newImage);
             $rank->setImage($image);
+            $rank->setImageDirty();
         }
     }
 }

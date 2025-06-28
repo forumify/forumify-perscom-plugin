@@ -1,0 +1,5 @@
+{% extends '@Forumify/admin/crud/list.html.twig' %}
+{% block body %}
+    {% include '@ForumifyPerscomPlugin/frontend/components/sync_warning.html.twig' %}
+    {{ parent() }}
+{% endblock %}

@@ -8,13 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Entity\Document;
-use Forumify\PerscomPlugin\Perscom\Entity\PerscomId;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 
 trait RecordFields
 {
     use IdentifiableEntityTrait;
-    use PerscomId;
+    use PerscomEntityTrait;
     use TimestampableEntityTrait;
 
     #[ORM\ManyToOne(targetEntity: PerscomUser::class)]

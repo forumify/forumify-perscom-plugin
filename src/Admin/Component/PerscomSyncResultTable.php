@@ -30,7 +30,7 @@ class PerscomSyncResultTable extends AbstractDoctrineTable
     protected function buildTable(): void
     {
         $this
-            ->addColumn('start',[
+            ->addColumn('start', [
                 'field' => 'start',
                 'label' => 'Started at',
                 'searchable' => false,
