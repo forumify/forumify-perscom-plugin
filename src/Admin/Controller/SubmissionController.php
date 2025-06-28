@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Controller;
 
-use Forumify\PerscomPlugin\Admin\Form\StatusRecord;
-use Forumify\PerscomPlugin\Admin\Form\StatusRecordType;
+use Forumify\PerscomPlugin\Admin\Form\SubmissionStatusType;
 use Forumify\PerscomPlugin\Admin\Service\SubmissionStatusUpdateService;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
+use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,40 +18,38 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('perscom-io.admin.submissions.view')]
 class SubmissionController extends AbstractController
 {
-    #[Route('', 'list')]
-    public function list(): Response
+    public function __construct(private readonly FormRepository $formRepository)
     {
-        return $this->render('@ForumifyPerscomPlugin/admin/submissions/list/list.html.twig');
+    }
+
+    #[Route('', 'list')]
+    public function list(Request $request): Response
+    {
+        $formId = $request->get('form');
+        $form = $formId !== null ? $this->formRepository->find($formId) : null;
+
+        return $this->render('@ForumifyPerscomPlugin/admin/submissions/list/list.html.twig', [
+            'form' => $form,
+        ]);
     }
 
     #[Route('/{id}', 'view')]
     public function view(
-        PerscomFactory $perscomFactory,
         SubmissionStatusUpdateService $submissionStatusUpdateService,
-        int $id,
+        FormSubmission $submission,
         Request $request
     ): Response {
-        $perscom = $perscomFactory->getPerscom();
-        $submission = $perscom
-            ->submissions()
-            ->get($id, ['form', 'form.fields', 'user', 'statuses', 'statuses.record'])
-            ->json('data');
-
-        usort($submission['statuses'], static fn ($a, $b) => $b['record']['updated_at'] <=> $a['record']['updated_at']);
-
-        $record = new StatusRecord();
-        $record->submission = $submission;
-        $form = $this->createForm(StatusRecordType::class, $record);
+        $form = $this->createForm(SubmissionStatusType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->denyAccessUnlessGranted('perscom-io.admin.submissions.assign_statuses');
 
             $statusRecord = $form->getData();
-            $submissionStatusUpdateService->createStatusRecord($statusRecord);
+            $submissionStatusUpdateService->createStatusRecord($submission, $statusRecord);
 
             $this->addFlash('success', 'perscom.admin.submissions.view.status_created');
-            return $this->redirectToRoute('perscom_admin_submission_view', ['id' => $id]);
+            return $this->redirectToRoute('perscom_admin_submission_view', ['id' => $submission->getId()]);
         }
 
         return $this->render('@ForumifyPerscomPlugin/admin/submissions/view/view.html.twig', [

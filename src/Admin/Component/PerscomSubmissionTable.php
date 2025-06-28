@@ -4,43 +4,50 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Component;
 
+use DateTime;
+use Doctrine\ORM\QueryBuilder;
+use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Forumify\Core\Component\Table\AbstractTable;
+use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Twig\Environment;
 
 #[AsLiveComponent('PerscomSubmissionTable', '@Forumify/components/table/table.html.twig')]
 #[IsGranted('perscom-io.admin.submissions.view')]
-class PerscomSubmissionTable extends AbstractPerscomTable
+class PerscomSubmissionTable extends AbstractDoctrineTable
 {
+    #[LiveProp]
+    public ?int $form = null;
+
     public function __construct(
         private readonly TranslatorInterface $translator,
         private readonly Environment $twig,
-        private readonly RequestStack $requestStack,
     ) {
-        $this->sort = ['created_at' => AbstractTable::SORT_DESC];
+        $this->sort = ['createdAt' => AbstractTable::SORT_DESC];
+    }
 
-        $formSearch = $this->requestStack->getCurrentRequest()?->get('form');
-        if ($formSearch !== null) {
-            $this->search = ['form__name' => $formSearch];
-        }
+    protected function getEntityClass(): string
+    {
+        return FormSubmission::class;
     }
 
     protected function buildTable(): void
     {
         $this
             ->addColumn('user__name', [
-                'field' => '[user?][name]',
+                'field' => 'user?.name',
                 'label' => 'Name',
             ])
             ->addColumn('form__name', [
-                'field' => '[form?][name]',
+                'field' => 'form?.name',
                 'label' => 'Form',
             ])
             ->addColumn('status', [
-                'field' => '[statuses][0?]',
+                'field' => 'status',
                 'searchable' => false,
                 'sortable' => false,
                 'renderer' => fn ($status) => $status !== null
@@ -51,38 +58,34 @@ class PerscomSubmissionTable extends AbstractPerscomTable
                     : '',
             ])
             ->addColumn('created_at', [
-                'field' => '[created_at]',
+                'field' => 'createdAt',
                 'label' => 'Created At',
                 'searchable' => false,
-                'renderer' => fn (string $date) => $this->translator->trans('date_time_short', ['date' => new \DateTime($date)]),
+                'renderer' => fn (?DateTime $date) => $this->translator->trans('date_time_short', ['date' => $date]),
             ])
             ->addColumn('actions', [
+                'field' => 'id',
                 'label' => '',
-                'renderer' => fn ($_, $row) => $this->twig->render('@ForumifyPerscomPlugin/admin/submissions/list/actions.html.twig', [
-                    'submission' => $row,
-                ]),
+                'renderer' => $this->renderActions(...),
                 'searchable' => false,
                 'sortable' => false,
             ]);
     }
 
-    protected function getData(int $limit, int $offset, array $search, array $sort): array
+    private function renderActions(int $id): string
     {
-        $data = parent::getData($limit, $offset, $search, $sort);
-        foreach ($data as &$row) {
-            usort($row['statuses'], static fn ($a, $b) => $b['record']['updated_at'] <=> $a['record']['updated_at']);
+        return $this->renderAction('perscom_admin_submission_view', ['id' => $id], 'eye');
+    }
+
+    protected function getQuery(array $search): QueryBuilder
+    {
+        $qb = parent::getQuery($search);
+        if ($this->form !== null) {
+            $qb->andWhere('e.form = :form')
+                ->setParameter('form', $this->form)
+            ;
         }
 
-        return $data;
-    }
-
-    protected function getResource(): string
-    {
-        return 'submissions';
-    }
-
-    protected function getInclude(): array
-    {
-        return ['user', 'form', 'statuses', 'statuses.record'];
+        return $qb;
     }
 }

@@ -3,8 +3,13 @@
     {{ 'perscom.admin.submissions.list.title'|trans }}
 {% endblock %}
 {% block body %}
-    <h2 class="mb-4">
+    {% if form %}
+        <div class="breadcrumbs text-small">
+            <a href="{{ path('perscom_admin_submission_list') }}">Submissions</a> &gt; {{ form.name }}
+        </div>
+    {% endif %}
+    <h1>
         {{ 'perscom.admin.submissions.list.title'|trans }}
-    </h2>
-    {{ component('PerscomSubmissionTable') }}
+    </h1>
+    {{ component('PerscomSubmissionTable', { form: form is not null ? form.id : null }) }}
 {% endblock %}

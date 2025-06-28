@@ -27,7 +27,7 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
         $submissionMenu = new Menu('Submissions', ['icon' => 'ph ph-table', 'permission' => 'perscom-io.admin.submissions.view']);
         $submissionMenu->addItem(new MenuItem('View All', $u('perscom_admin_submission_list')));
         foreach ($this->formRepository->findAll() as $form) {
-            $submissionMenu->addItem(new MenuItem($form->getName(), $u('perscom_admin_submission_list', ['form' => $form->getName()])));
+            $submissionMenu->addItem(new MenuItem($form->getName(), $u('perscom_admin_submission_list', ['form' => $form->getId()])));
         }
 
         $perscomMenu = new Menu('PERSCOM', ['icon' => 'ph ph-shield-chevron', 'permission' => 'perscom-io.admin.view'], [
