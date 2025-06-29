@@ -144,10 +144,10 @@ class SyncUserService
     {
         $signature = $perscomUser->getSignature();
         if ($signature) {
-            $user->setSignature(sprintf(
-                '<p class="ql-align-center"><img src="%s" style="max-width: 1000px; width: 100%; max-height: 200px; height: auto"/></p>',
-                $this->packages->getUrl($signature, 'perscom.asset')
-            ));
+            $imgUrl = $this->packages->getUrl($signature, 'perscom.asset');
+            $user->setSignature(
+                '<p class="ql-align-center"><img src="' . $imgUrl . '" style="max-width: 1000px; width: 100%; max-height: 200px; height: auto"/></p>',
+            );
         }
     }
 

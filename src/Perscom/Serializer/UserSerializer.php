@@ -32,15 +32,12 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
 
         $data['name'] = $object->getName();
         $data['created_at'] = $object->getCreatedAt()->format(Perscom::DATE_FORMAT);
-        $data['email'] = $object->getUser()->getEmail();
         $data['email_verified_at'] = $object->getCreatedAt()->format(Perscom::DATE_FORMAT);
         $data['position'] = $object->getPosition()?->getPerscomId();
         $data['rank'] = $object->getRank()?->getPerscomId();
         $data['specialty'] = $object->getSpecialty()?->getPerscomId();
         $data['status'] = $object->getStatus()?->getPerscomId();
         $data['unit'] = $object->getUnit()?->getPerscomId();
-
-        // TODO: uniform/signature
 
         return $data;
     }
