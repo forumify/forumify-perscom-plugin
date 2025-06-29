@@ -69,6 +69,10 @@ perscom:
             crud:
                 single: 'award'
                 plural: 'awards'
+        document:
+            crud:
+                single: 'document'
+                plural: 'documents'
         position:
             crud:
                 single: 'position'

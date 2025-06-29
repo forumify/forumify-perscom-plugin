@@ -7,6 +7,7 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 use DateTimeInterface;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
+use Forumify\PerscomPlugin\Perscom\Entity\Document;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\RecordInterface;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -60,11 +61,13 @@ abstract class AbstractRecordTable extends AbstractDoctrineTable
         $propAccess = PropertyAccess::createPropertyAccessor();
 
         $this->addColumn('document', [
+            'field' => 'document',
             'sortable' => false,
             'searchable' => false,
             'label' => '',
-            'renderer' => fn ($_, RecordInterface $record) => $this->twig->render('@ForumifyPerscomPlugin/frontend/components/record_table/documents.html.twig', [
+            'renderer' => fn (?Document $document, RecordInterface $record) => $this->twig->render('@ForumifyPerscomPlugin/frontend/components/record_table/documents.html.twig', [
                 'record' => $record,
+                'document' => $document,
                 'showRecordText' => $recordTextModal,
                 'item' => $itemKey !== null
                     ? $propAccess->getValue($record, $itemKey)

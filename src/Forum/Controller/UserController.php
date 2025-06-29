@@ -10,10 +10,12 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Repository\AssignmentRecordRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\AwardRecordRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\RankRecordRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\ReportInRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
 
 class UserController extends AbstractController
@@ -23,12 +25,18 @@ class UserController extends AbstractController
         private readonly AwardRecordRepository $awardRecordRepository,
         private readonly AssignmentRecordRepository $assignmentRecordRepository,
         private readonly ReportInRepository $reportInRepository,
+        private readonly PerscomUserRepository $perscomUserRepository,
     ) {
     }
 
     #[Route('user/{id<\d+>}', 'user')]
-    public function __invoke(PerscomUser $user): Response
+    public function __invoke(int $id): Response
     {
+        $user = $this->perscomUserRepository->findOneByPerscomId($id);
+        if ($user === null) {
+            throw new NotFoundHttpException();
+        }
+
         $lastReportInDate = $this
             ->reportInRepository
             ->findOneBy(['perscomUserId' => $user->getPerscomId()])

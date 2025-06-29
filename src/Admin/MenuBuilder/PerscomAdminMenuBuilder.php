@@ -49,13 +49,14 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
         }
 
         $perscomMenu->addItem(new Menu('Organization', ['icon' => 'ph ph-buildings', 'permission' => 'perscom-io.admin.organization.view'], [
-            new MenuItem('Units', $u('perscom_admin_unit_list')),
-            new MenuItem('Positions', $u('perscom_admin_position_list')),
-            new MenuItem('Specialties', $u('perscom_admin_specialty_list')),
-            new MenuItem('Statuses', $u('perscom_admin_status_list')),
             new MenuItem('Awards', $u('perscom_admin_award_list')),
+            new MenuItem('Documents', $u('perscom_admin_document_list')),
+            new MenuItem('Positions', $u('perscom_admin_position_list')),
             new MenuItem('Qualifications', $u('perscom_admin_qualification_list')),
             new MenuItem('Ranks', $u('perscom_admin_rank_list')),
+            new MenuItem('Specialties', $u('perscom_admin_specialty_list')),
+            new MenuItem('Statuses', $u('perscom_admin_status_list')),
+            new MenuItem('Units', $u('perscom_admin_unit_list')),
         ]));
 
         $perscomMenu->addItem(new MenuItem('Sync', $u('perscom_admin_sync'), [

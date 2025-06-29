@@ -46,7 +46,7 @@ class DocumentSerializer implements DenormalizerInterface, NormalizerInterface
         $document->setPerscomId($data['id']);
         $document->setName($data['name'] ?? '');
         $document->setDescription($data['description'] ?? '');
-        $document->setContent($data['dontent'] ?? '');
+        $document->setContent($data['content'] ?? '');
 
         return $document;
     }

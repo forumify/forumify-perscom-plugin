@@ -32,7 +32,7 @@
                                 <ul class="card-body">
                                     {% for user in users %}
                                         <li class="text-small">
-                                            <a href="{{ path('perscom_user', { id: user.id }) }}" class="btn-link w-100">
+                                            <a href="{{ path('perscom_user', { id: user.perscomId }) }}" class="btn-link w-100">
                                                 {% include '@ForumifyPerscomPlugin/frontend/roster/components/soldier_row.html.twig' with {
                                                     soldier: user
                                                 } only %}

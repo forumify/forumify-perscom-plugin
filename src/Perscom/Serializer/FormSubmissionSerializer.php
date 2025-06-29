@@ -26,8 +26,8 @@ class FormSubmissionSerializer implements NormalizerInterface, DenormalizerInter
     {
         $data = [...($object->getData() ?? [])];
 
-        $data['form_id'] = $object->getForm()->getId();
-        $data['user_id'] = $object->getUser()->getId();
+        $data['form_id'] = $object->getForm()->getPerscomId();
+        $data['user_id'] = $object->getUser()->getPerscomId();
 
         // NOTE: statuses are not synced with PERSCOM.io until we can update them from the parent submission
 

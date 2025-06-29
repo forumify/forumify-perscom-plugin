@@ -47,6 +47,7 @@ class RecordService
             $record->setUser($user);
             $record->setText($data['text'] ?? '');
             $record->setCreatedAt($data['created_at']);
+            $record->setDocument($data['document'] ?? null);
 
             if ($record instanceof AwardRecord) {
                 $record->setAward($data['award']);

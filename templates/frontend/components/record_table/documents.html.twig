@@ -1,5 +1,5 @@
 {# TODO: document parsing??? #}
-{% if record.document_parsed is defined and record.document_parsed %}
+{% if document is not null %}
     {% embed '@Forumify/components/modal.html.twig' %}
         {% block modalOpenButton %}
             <button class="btn-link btn-icon btn-small"><i class="ph ph-certificate"></i></button>
@@ -7,7 +7,7 @@
         {% block modalContent %}
             <div class="card">
                 <div class="card-title">
-                    {% if record.document is not null %}
+                    {% if document.name %}
                         {{ record.document.name }}
                     {% else %}
                         {{ 'perscom.user.document'|trans }}
@@ -19,7 +19,7 @@
                             <img width="25%" height="auto" src="{{ asset(item.image.image, 'perscom.asset') }}" alt="">
                         </div>
                     {% endif %}
-                    {{ record.document_parsed|rich }}
+                    {{ document|parse_document(record)|rich }}
                 </div>
             </div>
         {% endblock %}
