@@ -98,9 +98,7 @@ class PerscomSpecialtyTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.specialties.manage')]
-    public function reorder(#[LiveArg]
-    int $id, #[LiveArg]
-    string $direction): void
+    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
     {
         $specialty = $this->specialtyRepository->find($id);
         if ($specialty === null) {

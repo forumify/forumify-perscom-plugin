@@ -12,8 +12,8 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
 use function Symfony\Component\String\u;
 
-#[IsGranted('perscom-io.admin.organization.documents.view')]
 #[AsLiveComponent('PerscomDocumentTable', '@Forumify/components/table/table.html.twig')]
+#[IsGranted('perscom-io.admin.organization.documents.view')]
 class PerscomDocumentTable extends AbstractDoctrineTable
 {
     public function __construct(

@@ -17,17 +17,22 @@
     <rule ref="SlevomatCodingStandard.Arrays">
         <exclude name="SlevomatCodingStandard.Arrays.DisallowPartiallyKeyed.DisallowedPartiallyKeyed"/>
     </rule>
-    <rule ref="SlevomatCodingStandard.Attributes"/>
-    <rule ref="SlevomatCodingStandard.Attributes.DisallowAttributesJoining">
-        <severity>0</severity>
+    <rule ref="SlevomatCodingStandard.Attributes">
+        <exclude name="SlevomatCodingStandard.Attributes.DisallowAttributesJoining"/>
+        <exclude name="SlevomatCodingStandard.Attributes.AttributeAndTargetSpacing.IncorrectLinesCountBetweenAttributeAndTarget"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Attributes.AttributesOrder">
         <properties>
             <property name="order" type="array">
+                <element value="PluginVersion"/>
                 <element value="ORM\"/>
                 <element value="Assert\"/>
                 <element value="Groups"/>
                 <element value="UniqueEntity"/>
+                <element value="Route"/>
+                <element value="AsLiveComponent"/>
+                <element value="LiveAction"/>
+                <element value="IsGranted"/>
             </property>
         </properties>
     </rule>

@@ -24,8 +24,8 @@ use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent('Perscom\\CourseClassView', '@ForumifyPerscomPlugin/frontend/components/course_class/class.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\CourseClassView', '@ForumifyPerscomPlugin/frontend/components/course_class/class.html.twig')]
 class CourseClassView extends AbstractController
 {
     use DefaultActionTrait;
@@ -116,8 +116,7 @@ class CourseClassView extends AbstractController
     }
 
     #[LiveAction]
-    public function registerInstructor(#[LiveArg]
-    ?int $instructorId = null): void
+    public function registerInstructor(#[LiveArg] ?int $instructorId = null): void
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $this->class->getCourse(),
@@ -149,8 +148,7 @@ class CourseClassView extends AbstractController
     }
 
     #[LiveAction]
-    public function removeStudent(#[LiveArg]
-    int $perscomUserId): void
+    public function removeStudent(#[LiveArg] int $perscomUserId): void
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $this->class->getCourse(),
@@ -168,8 +166,7 @@ class CourseClassView extends AbstractController
     }
 
     #[LiveAction]
-    public function removeInstructor(#[LiveArg]
-    int $perscomUserId): void
+    public function removeInstructor(#[LiveArg] int $perscomUserId): void
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $this->class->getCourse(),

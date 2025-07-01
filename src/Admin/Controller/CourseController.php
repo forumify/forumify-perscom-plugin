@@ -16,8 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/courses', 'courses')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[Route('/courses', 'courses')]
 class CourseController extends AbstractCrudController
 {
     protected ?string $permissionView = 'perscom-io.admin.courses.view';

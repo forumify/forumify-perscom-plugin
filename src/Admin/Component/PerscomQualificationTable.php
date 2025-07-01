@@ -94,9 +94,7 @@ class PerscomQualificationTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.qualifications.manage')]
-    public function reorder(#[LiveArg]
-    int $id, #[LiveArg]
-    string $direction): void
+    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
     {
         $qualification = $this->qualificationRepository->find($id);
         if ($qualification === null) {

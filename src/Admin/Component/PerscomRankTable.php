@@ -94,9 +94,7 @@ class PerscomRankTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.ranks.manage')]
-    public function reorder(#[LiveArg]
-    int $id, #[LiveArg]
-    string $direction): void
+    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
     {
         $rank = $this->rankRepository->find($id);
         if ($rank === null) {

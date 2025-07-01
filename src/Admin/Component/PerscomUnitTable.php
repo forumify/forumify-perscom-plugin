@@ -94,9 +94,7 @@ class PerscomUnitTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.units.manage')]
-    public function reorder(#[LiveArg]
-    int $id, #[LiveArg]
-    string $direction): void
+    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
     {
         $unit = $this->unitRepository->find($id);
         if ($unit === null) {

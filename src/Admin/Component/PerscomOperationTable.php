@@ -12,8 +12,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
-#[AsLiveComponent('PerscomOperationTable', '@Forumify/components/table/table.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('PerscomOperationTable', '@Forumify/components/table/table.html.twig')]
 #[IsGranted('perscom-io.admin.operations.view')]
 class PerscomOperationTable extends AbstractDoctrineTable
 {

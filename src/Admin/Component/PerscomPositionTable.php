@@ -94,9 +94,7 @@ class PerscomPositionTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.positions.manage')]
-    public function reorder(#[LiveArg]
-    int $id, #[LiveArg]
-    string $direction): void
+    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
     {
         $position = $this->positionRepository->find($id);
         if ($position === null) {

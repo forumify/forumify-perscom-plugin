@@ -14,8 +14,8 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 
-#[AsLiveComponent('PerscomCourseTable', '@Forumify/components/table/table.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('PerscomCourseTable', '@Forumify/components/table/table.html.twig')]
 #[IsGranted('perscom-io.admin.courses.view')]
 class PerscomCourseTable extends AbstractDoctrineTable
 {
@@ -54,9 +54,7 @@ class PerscomCourseTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.courses.manage')]
-    public function reorder(#[LiveArg]
-    int $id, #[LiveArg]
-    string $direction): void
+    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
     {
         $course = $this->courseRepository->find($id);
         if ($course === null) {

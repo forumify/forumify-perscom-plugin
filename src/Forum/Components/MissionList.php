@@ -12,8 +12,8 @@ use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('Perscom\\MissionList', '@ForumifyPerscomPlugin/frontend/components/mission_list.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\MissionList', '@ForumifyPerscomPlugin/frontend/components/mission_list.html.twig')]
 class MissionList extends AbstractDoctrineList
 {
     #[LiveProp]

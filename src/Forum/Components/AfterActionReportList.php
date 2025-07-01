@@ -12,8 +12,8 @@ use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('Perscom\\AfterActionReportList', '@ForumifyPerscomPlugin/frontend/components/aar_list.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\AfterActionReportList', '@ForumifyPerscomPlugin/frontend/components/aar_list.html.twig')]
 class AfterActionReportList extends AbstractDoctrineList
 {
     #[LiveProp]

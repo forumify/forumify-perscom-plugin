@@ -15,8 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/missions', 'missions_')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[Route('/missions', 'missions_')]
 class MissionController extends AbstractController
 {
     public function __construct(

@@ -20,8 +20,8 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent('Perscom\\AttendanceSheet', '@ForumifyPerscomPlugin/frontend/components/attendance_sheet.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\AttendanceSheet', '@ForumifyPerscomPlugin/frontend/components/attendance_sheet.html.twig')]
 #[IsGranted('perscom-io.frontend.attendance_sheet.view')]
 class AttendanceSheet extends AbstractController
 {

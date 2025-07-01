@@ -16,8 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/courses/class', 'course_class_')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[Route('/courses/class', 'course_class_')]
 class CourseClassReportController extends AbstractController
 {
     public function __construct(

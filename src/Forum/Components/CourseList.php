@@ -14,8 +14,8 @@ use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('Perscom\\CourseList', '@ForumifyPerscomPlugin/frontend/components/course_list.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\CourseList', '@ForumifyPerscomPlugin/frontend/components/course_list.html.twig')]
 class CourseList extends AbstractDoctrineList
 {
     #[LiveProp]
