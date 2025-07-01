@@ -70,7 +70,7 @@ class RecordService
     }
 
     /**
-     * @param RecordInterface[] $records
+     * @param array<RecordInterface> $records
      */
     public function createRecords(array $records, bool $sendNotification): void
     {

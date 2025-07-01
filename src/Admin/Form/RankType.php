@@ -35,20 +35,17 @@ class RankType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('description', RichTextEditorType::class, [
-                'required' => false
+                'required' => false,
             ])
             ->add('abbreviation', TextType::class, [
+                'help' => 'Add an abbreviation to the rank; e.g., PFC',
                 'required' => false,
-                'help' => 'Add an abbreviation to the rank; e.g., PFC'
             ])
             ->add('paygrade', TextType::class, [
+                'help' => 'Add a paygrade to the rank; e.g., PV1 = OR-1 (NATO) or E-1 (US Army)',
                 'required' => false,
-                'help' => 'Add a paygrade to the rank; e.g., PV1 = OR-1 (NATO) or E-1 (US Army)'
             ])
             ->add('newImage', FileType::class, [
-                'mapped' => false,
-                'label' => 'Image',
-                'help' => 'Recommended size is 250x250.',
                 'attr' => [
                     'preview' => $imagePreview
                         ? $this->packages->getUrl($imagePreview, 'perscom.asset')
@@ -62,6 +59,9 @@ class RankType extends AbstractType
                         maxSize: '1M',
                     ),
                 ],
+                'help' => 'Recommended size is 250x250.',
+                'label' => 'Image',
+                'mapped' => false,
             ])
         ;
     }

@@ -49,7 +49,7 @@ class SubmissionStatusUpdatedNotificationType extends AbstractEmailNotificationT
     {
         $context = $notification->getDeserializedContext();
         return $this->urlGenerator->generate('perscom_operations_center', [
-            'submission' => $context['submissionId']
+            'submission' => $context['submissionId'],
         ]);
     }
 

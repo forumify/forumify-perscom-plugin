@@ -44,26 +44,26 @@ class AttendanceSheet extends AbstractController
     {
         return $this->createFormBuilder()
             ->add('from', DateType::class, [
-                'widget' => 'single_text',
                 'data' => (new DateTime())->sub(new \DateInterval('P1M')),
+                'widget' => 'single_text',
             ])
             ->add('to', DateType::class, [
-                'widget' => 'single_text',
                 'data' => new DateTime(),
+                'widget' => 'single_text',
             ])
             ->add('unit', UnitType::class, [
                 'autocomplete' => true,
+                'help' => 'Leave empty to calculate attendance for all units that have at least 1 after action report in the selected time period.',
                 'multiple' => true,
                 'required' => false,
-                'help' => 'Leave empty to calculate attendance for all units that have at least 1 after action report in the selected time period.',
             ])
             ->add('operation', EntityType::class, [
-                'class' => Operation::class,
-                'choice_label' => 'title',
                 'autocomplete' => true,
+                'choice_label' => 'title',
+                'class' => Operation::class,
+                'help' => 'Leave empty to calculate attendance for all operations.',
                 'multiple' => true,
                 'required' => false,
-                'help' => 'Leave empty to calculate attendance for all operations.',
             ])
             ->getForm()
         ;
@@ -124,9 +124,9 @@ class AttendanceSheet extends AbstractController
         }
 
         $sheetData = [];
-        foreach ($missions as $missionId => $mission) {
+        foreach (array_keys($missions) as $missionId) {
             $sheetData[$missionId] = [];
-            foreach ($units as $unitId => $unit) {
+            foreach (array_keys($units) as $unitId) {
                 $sheetData[$missionId][$unitId] = [];
                 foreach (($users[$unitId] ?? []) as $user) {
                     $sheetData[$missionId][$unitId][$user->getPerscomId()] = '';
@@ -194,15 +194,17 @@ class AttendanceSheet extends AbstractController
                         continue;
                     }
 
-                    if ($userId === $uid) {
-                        $total++;
-                        if ($count === null) {
-                            $count = 0;
-                        }
+                    if ($userId !== $uid) {
+                        continue;
+                    }
 
-                        if (in_array($state, $states, true)) {
-                            $count++;
-                        }
+                    $total++;
+                    if ($count === null) {
+                        $count = 0;
+                    }
+
+                    if (in_array($state, $states, true)) {
+                        $count++;
                     }
                 }
             }

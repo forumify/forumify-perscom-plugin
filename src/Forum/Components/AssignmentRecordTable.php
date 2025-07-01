@@ -23,16 +23,16 @@ class AssignmentRecordTable extends AbstractRecordTable
         $this
             ->addDateColumn()
             ->addColumn('unit', [
-                'field' => 'unit.name',
-                'sortable' => false,
-                'searchable' => false,
                 'class' => 'text-left text-small',
+                'field' => 'unit.name',
+                'searchable' => false,
+                'sortable' => false,
             ])
             ->addColumn('position', [
-                'field' => 'position.name',
-                'sortable' => false,
-                'searchable' => false,
                 'class' => 'text-left text-small',
+                'field' => 'position.name',
+                'searchable' => false,
+                'sortable' => false,
             ]);
     }
 

@@ -143,12 +143,14 @@ class SyncUserService
     private function syncSignature(User $user, PerscomUser $perscomUser): void
     {
         $signature = $perscomUser->getSignature();
-        if ($signature) {
-            $imgUrl = $this->packages->getUrl($signature, 'perscom.asset');
-            $user->setSignature(
-                '<p class="ql-align-center"><img src="' . $imgUrl . '" style="max-width: 1000px; width: 100%; max-height: 200px; height: auto"/></p>',
-            );
+        if (!$signature) {
+            return;
         }
+
+        $imgUrl = $this->packages->getUrl($signature, 'perscom.asset');
+        $user->setSignature(
+            '<p class="ql-align-center"><img src="' . $imgUrl . '" style="max-width: 1000px; width: 100%; max-height: 200px; height: auto"/></p>',
+        );
     }
 
     private function syncAvatar(User $user, PerscomUser $perscomUser): void

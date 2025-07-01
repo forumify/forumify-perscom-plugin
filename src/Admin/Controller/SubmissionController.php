@@ -53,8 +53,8 @@ class SubmissionController extends AbstractController
         }
 
         return $this->render('@ForumifyPerscomPlugin/admin/submissions/view/view.html.twig', [
-            'submission' => $submission,
             'form' => $form->createView(),
+            'submission' => $submission,
         ]);
     }
 }

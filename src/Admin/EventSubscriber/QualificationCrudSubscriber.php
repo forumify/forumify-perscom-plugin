@@ -32,10 +32,12 @@ class QualificationCrudSubscriber implements EventSubscriberInterface
         $qualification = $event->getEntity();
         $form = $event->getForm();
         $newImage = $form->get('newImage')->getData();
-        if ($newImage instanceof UploadedFile) {
-            $image = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newImage);
-            $qualification->setImage($image);
-            $qualification->setImageDirty();
+        if (!($newImage instanceof UploadedFile)) {
+            return;
         }
+
+        $image = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newImage);
+        $qualification->setImage($image);
+        $qualification->setImageDirty();
     }
 }

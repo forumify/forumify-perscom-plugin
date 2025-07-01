@@ -6,7 +6,6 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
-use Forumify\PerscomPlugin\Perscom\Entity\Operation;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;

@@ -27,11 +27,11 @@ class AwardRecordTable extends AbstractRecordTable
         $this
             ->addDateColumn()
             ->addColumn('award', [
+                'class' => 'text-small',
                 'field' => 'award.name',
+                'renderer' => $this->renderAward(...),
                 'searchable' => false,
                 'sortable' => false,
-                'class' => 'text-small',
-                'renderer' => $this->renderAward(...),
             ])
             ->addDocumentColumn(true, 'award');
     }

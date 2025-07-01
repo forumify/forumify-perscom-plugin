@@ -10,7 +10,7 @@ use Symfony\Contracts\EventDispatcher\Event;
 class RecordsCreatedEvent extends Event
 {
     /**
-     * @param RecordInterface[] $records
+     * @param array<RecordInterface> $records
      */
     public function __construct(
         public readonly array $records,

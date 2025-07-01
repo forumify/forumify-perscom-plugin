@@ -72,7 +72,7 @@ class CourseClassService
     }
 
     /**
-     * @param RecordInterface[] $records
+     * @param array<RecordInterface> $records
      */
     private function addServiceRecords(array &$records, CourseClass $class): void
     {
@@ -111,7 +111,7 @@ class CourseClassService
     }
 
     /**
-     * @param RecordInterface[] $records
+     * @param array<RecordInterface> $records
      * @param Collection<int, CourseClassStudent> $students
      */
     private function addQualificationRecords(array &$records, Collection $students): void

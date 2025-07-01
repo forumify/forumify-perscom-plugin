@@ -33,26 +33,26 @@ class PerscomSpecialtyTable extends AbstractDoctrineTable
     {
         $this
             ->addColumn('position', [
-                'label' => '#',
+                'class' => 'w-10',
                 'field' => 'id',
+                'label' => '#',
                 'renderer' => $this->renderSortColumn(...),
                 'searchable' => false,
-                'class' => 'w-10'
             ])
             ->addColumn('name', [
                 'field' => 'name',
-                'sortable' => true
+                'sortable' => true,
             ])
             ->addColumn('abbreviation', [
                 'field' => 'abbreviation',
-                'sortable' => true
+                'sortable' => true,
             ])
             ->addColumn('actions', [
-                'label' => '',
                 'field' => 'id',
+                'label' => '',
                 'renderer' => $this->renderActions(...),
-                'sortable' => false,
                 'searchable' => false,
+                'sortable' => false,
             ]);
     }
 
@@ -98,7 +98,9 @@ class PerscomSpecialtyTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.specialties.manage')]
-    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
+    public function reorder(#[LiveArg]
+    int $id, #[LiveArg]
+    string $direction): void
     {
         $specialty = $this->specialtyRepository->find($id);
         if ($specialty === null) {

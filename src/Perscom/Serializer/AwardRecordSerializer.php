@@ -27,12 +27,11 @@ class AwardRecordSerializer extends AbstractRecordSerializer
         return parent::supportsNormalization($data, $format) && $data instanceof AwardRecord;
     }
 
-
     public function getSupportedTypes(): array
     {
         return [
-            AwardRecord::class => true,
             'perscom_array' => true,
+            AwardRecord::class => true,
         ];
     }
 

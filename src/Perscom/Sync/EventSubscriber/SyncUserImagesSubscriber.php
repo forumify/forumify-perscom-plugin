@@ -25,7 +25,7 @@ class SyncUserImagesSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            PostSyncToPerscomEvent::class => 'handlePostSync'
+            PostSyncToPerscomEvent::class => 'handlePostSync',
         ];
     }
 
@@ -74,10 +74,10 @@ class SyncUserImagesSubscriber implements EventSubscriberInterface
         $fullPath = Path::join($this->rootDir, 'public', 'storage', 'perscom', $user->getSignature());
         try {
             $result = $perscom->users()->profile_photo($userId)->create($fullPath)->array('data');
+            $user->setPerscomSignature($result['profile_photo']);
         } catch (Exception) {
         }
 
-        $user->setPerscomSignature($result['profile_photo']);
         $user->setSignatureDirty(false);
     }
 
@@ -104,10 +104,10 @@ class SyncUserImagesSubscriber implements EventSubscriberInterface
         $fullPath = Path::join($this->rootDir, 'public', 'storage', 'perscom', $user->getUniform());
         try {
             $result = $perscom->users()->cover_photo($userId)->create($fullPath)->array('data');
+            $user->setPerscomSignature($result['cover_photo']);
         } catch (Exception) {
         }
 
-        $user->setPerscomSignature($result['cover_photo']);
         $user->setUniformDirty(false);
     }
 }

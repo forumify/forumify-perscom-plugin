@@ -40,7 +40,7 @@ class AwardController extends AbstractCrudController
     protected function getForm(?object $data): FormInterface
     {
         return $this->createForm(AwardType::class, $data, [
-            'image_required' => $data === null
+            'image_required' => $data === null,
         ]);
     }
 }

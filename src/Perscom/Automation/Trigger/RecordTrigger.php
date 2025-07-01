@@ -37,11 +37,11 @@ class RecordTrigger implements TriggerInterface
         foreach ($automations as $automation) {
             $recordType = $automation->getTriggerArguments()['recordType'] ?? null;
             foreach ($event->records as $record) {
-                $type  = RecordService::classToType($record);
+                $type = RecordService::classToType($record);
                 if ($recordType === null || $type === $recordType) {
                     $this->automationScheduler->schedule($automation, [
-                        'type' => $type,
                         'record' => $record,
+                        'type' => $type,
                     ]);
                 }
             }

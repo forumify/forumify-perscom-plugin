@@ -120,7 +120,7 @@ class MissionService
     }
 
     /**
-     * @return PerscomUser[]
+     * @return array<PerscomUser>
      */
     private function getActiveDutyPerscomUsersByForumifyUser(array $users): array
     {

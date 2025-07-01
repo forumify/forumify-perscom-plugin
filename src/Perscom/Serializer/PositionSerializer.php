@@ -33,8 +33,8 @@ class PositionSerializer implements DenormalizerInterface, NormalizerInterface
     public function getSupportedTypes(): array
     {
         return [
-            Position::class => true,
             'perscom_array' => true,
+            Position::class => true,
         ];
     }
 

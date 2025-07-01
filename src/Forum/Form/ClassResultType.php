@@ -34,22 +34,22 @@ class ClassResultType extends AbstractType
     {
         $builder
             ->add('students', CollectionType::class, [
-                'entry_type' => ClassStudentResultType::class,
-                'entry_options' => [
-                    'course_class' => $options['data'],
-                ],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
+                'entry_options' => [
+                    'course_class' => $options['data'],
+                ],
+                'entry_type' => ClassStudentResultType::class,
             ])
             ->add('instructors', CollectionType::class, [
-                'entry_type' => ClassInstructorResultType::class,
-                'entry_options' => [
-                    'course_class' => $options['data'],
-                ],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
+                'entry_options' => [
+                    'course_class' => $options['data'],
+                ],
+                'entry_type' => ClassInstructorResultType::class,
             ])
         ;
     }

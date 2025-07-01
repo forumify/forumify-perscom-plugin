@@ -33,8 +33,8 @@ class UnitSerializer implements DenormalizerInterface, NormalizerInterface
     public function getSupportedTypes(): array
     {
         return [
-            Unit::class => true,
             'perscom_array' => true,
+            Unit::class => true,
         ];
     }
 

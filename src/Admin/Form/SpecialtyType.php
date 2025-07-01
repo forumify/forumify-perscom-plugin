@@ -28,8 +28,8 @@ class SpecialtyType extends AbstractType
                 'required' => false,
             ])
             ->add('abbreviation', TextType::class, [
-                'required' => false,
                 'help' => 'Give this specialty an abbreviation. For example the specialty of a US Infantryman would get the abbreviation of 11B.',
+                'required' => false,
             ])
         ;
     }

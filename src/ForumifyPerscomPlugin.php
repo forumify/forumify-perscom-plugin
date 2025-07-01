@@ -23,11 +23,6 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
     public function getPermissions(): array
     {
         return [
-            'frontend' => [
-                'attendance_sheet' => [
-                    'view',
-                ]
-            ],
             'admin' => [
                 'view',
                 'run_sync',
@@ -93,7 +88,7 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                         'manage',
                         'delete',
                         'create',
-                    ]
+                    ],
                 ],
                 'operations' => [
                     'view',
@@ -104,6 +99,11 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                     'view',
                     'manage',
                     'delete',
+                ],
+            ],
+            'frontend' => [
+                'attendance_sheet' => [
+                    'view',
                 ],
             ],
         ];

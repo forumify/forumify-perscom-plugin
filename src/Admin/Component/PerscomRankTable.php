@@ -33,19 +33,19 @@ class PerscomRankTable extends AbstractDoctrineTable
     {
         $this
             ->addColumn('position', [
-                'label' => '#',
+                'class' => 'w-10',
                 'field' => 'id',
+                'label' => '#',
                 'renderer' => $this->renderSortColumn(...),
                 'searchable' => false,
-                'class' => 'w-10',
             ])
             ->addColumn('name', [
                 'field' => 'name',
                 'sortable' => true,
             ])
             ->addColumn('actions', [
-                'label' => '',
                 'field' => 'id',
+                'label' => '',
                 'renderer' => $this->renderActions(...),
                 'searchable' => false,
                 'sortable' => false,
@@ -94,7 +94,9 @@ class PerscomRankTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.ranks.manage')]
-    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
+    public function reorder(#[LiveArg]
+    int $id, #[LiveArg]
+    string $direction): void
     {
         $rank = $this->rankRepository->find($id);
         if ($rank === null) {

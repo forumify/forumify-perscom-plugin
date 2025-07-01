@@ -34,27 +34,29 @@ class PerscomCourseTable extends AbstractDoctrineTable
     {
         $this
             ->addColumn('position', [
-                'label' => '#',
+                'class' => 'w-10',
                 'field' => 'id',
+                'label' => '#',
                 'renderer' => $this->renderSortColumn(...),
                 'searchable' => false,
-                'class' => 'w-10',
             ])
             ->addColumn('title', [
                 'field' => 'title',
             ])
             ->addColumn('actions', [
-                'label' => '',
                 'field' => 'id',
+                'label' => '',
+                'renderer' => $this->renderActions(...),
                 'searchable' => false,
                 'sortable' => false,
-                'renderer' => $this->renderActions(...),
             ]);
     }
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.courses.manage')]
-    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
+    public function reorder(#[LiveArg]
+    int $id, #[LiveArg]
+    string $direction): void
     {
         $course = $this->courseRepository->find($id);
         if ($course === null) {

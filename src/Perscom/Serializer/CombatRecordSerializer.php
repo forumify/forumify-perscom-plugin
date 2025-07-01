@@ -11,8 +11,8 @@ class CombatRecordSerializer extends AbstractRecordSerializer
     public function getSupportedTypes(): array
     {
         return [
-            CombatRecord::class => true,
             'perscom_array' => true,
+            CombatRecord::class => true,
         ];
     }
 

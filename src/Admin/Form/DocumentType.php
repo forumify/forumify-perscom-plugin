@@ -33,8 +33,8 @@ class DocumentType extends AbstractType
                 'required' => false,
             ])
             ->add('content', RichTextEditorType::class, [
+                'help' => $this->twig->render('@ForumifyPerscomPlugin/admin/documents/content_help.html.twig'),
                 'help_html' => true,
-                'help' => $this->twig->render('@ForumifyPerscomPlugin/admin/documents/content_help.html.twig')
             ])
         ;
     }

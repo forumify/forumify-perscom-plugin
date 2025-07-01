@@ -70,14 +70,14 @@ class PerscomDocumentExtension extends AbstractExtension
     private function userToFields(PerscomUser $user): array
     {
         return [
-            'user_name' => fn () => $user->getName(),
-            'user_email' => fn () => $user->getUser()?->getEmail() ?? '',
-            'user_status' => fn () => $user->getStatus()?->getName() ?? '',
             'user_assignment_position' => fn () => $user->getPosition()?->getName() ?? '',
             'user_assignment_specialty' => fn () => $user->getSpecialty()?->getName() ?? '',
             'user_assignment_unit' => fn () => $user->getUnit()?->getName() ?? '',
+            'user_email' => fn () => $user->getUser()?->getEmail() ?? '',
+            'user_name' => fn () => $user->getName(),
             'user_rank' => fn () => $user->getRank()?->getName() ?? '',
             'user_rank_abbreviation' => fn () => $user->getRank()?->getAbbreviation() ?? '',
+            'user_status' => fn () => $user->getStatus()?->getName() ?? '',
         ];
     }
 
@@ -88,13 +88,13 @@ class PerscomDocumentExtension extends AbstractExtension
     {
         if ($record instanceof AssignmentRecord) {
             return [
-                'assignment_record_status' => fn () => $record->getStatus()?->getName() ?? '',
-                'assignment_record_unit' => fn () => $record->getUnit()?->getName() ?? '',
+                'assignment_record_date' => fn () => $this->date($record->getCreatedAt()),
                 'assignment_record_position' => fn () => $record->getPosition()?->getName() ?? '',
                 'assignment_record_specialty' => fn () => $record->getSpecialty()?->getName() ?? '',
-                'assignment_record_type' => fn () => $record->getType(),
+                'assignment_record_status' => fn () => $record->getStatus()?->getName() ?? '',
                 'assignment_record_text' => fn () => $record->getText(),
-                'assignment_record_date' => fn () => $this->date($record->getCreatedAt()),
+                'assignment_record_type' => fn () => $record->getType(),
+                'assignment_record_unit' => fn () => $record->getUnit()?->getName() ?? '',
             ];
         }
 
@@ -102,42 +102,42 @@ class PerscomDocumentExtension extends AbstractExtension
             return [
                 'award_record_award' => fn () => $record->getAward()->getName(),
                 'award_record_award_image' => fn () => $this->img($record->getAward()->getImage()),
-                'award_record_text' => fn () => $record->getText(),
                 'award_record_date' => fn () => $this->date($record->getCreatedAt()),
+                'award_record_text' => fn () => $record->getText(),
             ];
         }
 
         if ($record instanceof CombatRecord) {
             return [
-                'combat_record_text' => fn () => $record->getText(),
                 'combat_record_date' => fn () => $this->date($record->getCreatedAt()),
+                'combat_record_text' => fn () => $record->getText(),
             ];
         }
 
         if ($record instanceof QualificationRecord) {
             return [
+                'qualification_record_date' => fn () => $this->date($record->getCreatedAt()),
                 'qualification_record_qualification' => fn () => $record->getQualification()->getName(),
                 'qualification_record_qualification_image' => fn () => $this->img($record->getQualification()->getImage()),
                 'qualification_record_text' => fn () => $record->getText(),
-                'qualification_record_date' => fn () => $this->date($record->getCreatedAt()),
             ];
         }
 
         if ($record instanceof RankRecord) {
             return [
+                'rank_record_date' => fn () => $this->date($record->getCreatedAt()),
                 'rank_record_rank' => fn () => $record->getRank()->getName(),
                 'rank_record_rank_abbreviation' => fn () => $record->getRank()->getAbbreviation(),
                 'rank_record_rank_image' => fn () => $this->img($record->getRank()->getImage()),
-                'rank_record_type' => fn () => $record->getType(),
                 'rank_record_text' => fn () => $record->getText(),
-                'rank_record_date' => fn () => $this->date($record->getCreatedAt()),
+                'rank_record_type' => fn () => $record->getType(),
             ];
         }
 
         if ($record instanceof ServiceRecord) {
             return [
-                'service_record_text' => fn () => $record->getText(),
                 'service_record_date' => fn () => $this->date($record->getCreatedAt()),
+                'service_record_text' => fn () => $record->getText(),
             ];
         }
 

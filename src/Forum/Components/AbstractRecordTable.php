@@ -36,9 +36,9 @@ abstract class AbstractRecordTable extends AbstractDoctrineTable
         $this
             ->addDateColumn()
             ->addColumn('text', [
+                'class' => 'text-left text-small',
                 'field' => 'text',
                 'searchable' => false,
-                'class' => 'text-left text-small',
             ])
             ->addDocumentColumn();
     }
@@ -46,11 +46,11 @@ abstract class AbstractRecordTable extends AbstractDoctrineTable
     protected function addDateColumn(): static
     {
         $this->addColumn('createdAt', [
+            'class' => 'w-25 text-small',
             'field' => 'createdAt',
             'label' => 'Date',
-            'searchable' => false,
-            'class' => 'w-25 text-small',
             'renderer' => fn (DateTimeInterface $date) => $this->translator->trans('date', ['date' => $date]),
+            'searchable' => false,
         ]);
 
         return $this;
@@ -62,17 +62,17 @@ abstract class AbstractRecordTable extends AbstractDoctrineTable
 
         $this->addColumn('document', [
             'field' => 'document',
-            'sortable' => false,
-            'searchable' => false,
             'label' => '',
             'renderer' => fn (?Document $document, RecordInterface $record) => $this->twig->render('@ForumifyPerscomPlugin/frontend/components/record_table/documents.html.twig', [
-                'record' => $record,
                 'document' => $document,
-                'showRecordText' => $recordTextModal,
                 'item' => $itemKey !== null
                     ? $propAccess->getValue($record, $itemKey)
                     : null,
+                'record' => $record,
+                'showRecordText' => $recordTextModal,
             ]),
+            'searchable' => false,
+            'sortable' => false,
         ]);
 
         return $this;

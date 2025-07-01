@@ -20,8 +20,8 @@ class ClassInstructorResultType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => CourseClassInstructor::class,
             'course_class' => null,
+            'data_class' => CourseClassInstructor::class,
         ]);
     }
 
@@ -29,24 +29,24 @@ class ClassInstructorResultType extends AbstractType
     {
         $builder
             ->add('perscomUserId', UserType::class, [
+                'attr' => ['class' => 'd-none'],
                 'autocomplete' => true,
                 'label' => false,
                 'placeholder' => 'Please select a user',
-                'attr' => ['class' => 'd-none']
             ])
             ->add('present', CheckboxType::class, [
                 'required' => false,
             ])
             ->add('instructor', EntityType::class, [
+                'autocomplete' => true,
+                'choice_label' => 'title',
                 'class' => CourseInstructor::class,
                 'label' => 'Role',
-                'required' => false,
-                'choice_label' => 'title',
-                'autocomplete' => true,
                 'query_builder' => fn (EntityRepository $er): QueryBuilder => $er
                     ->createQueryBuilder('ci')
                     ->andWhere('ci.course = :course')
-                    ->setParameter('course', $options['course_class']->getCourse())
+                    ->setParameter('course', $options['course_class']->getCourse()),
+                'required' => false,
             ])
         ;
     }

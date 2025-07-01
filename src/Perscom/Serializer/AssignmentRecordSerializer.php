@@ -33,8 +33,8 @@ class AssignmentRecordSerializer extends AbstractRecordSerializer
     public function getSupportedTypes(): array
     {
         return [
-            AssignmentRecord::class => true,
             'perscom_array' => true,
+            AssignmentRecord::class => true,
         ];
     }
 

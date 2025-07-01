@@ -23,6 +23,7 @@ class PerscomQualificationTable extends AbstractDoctrineTable
     ) {
         $this->sort = ['position' => self::SORT_ASC];
     }
+
     protected function getEntityClass(): string
     {
         return Qualification::class;
@@ -32,19 +33,19 @@ class PerscomQualificationTable extends AbstractDoctrineTable
     {
         $this
             ->addColumn('position', [
-                'label' => '#',
+                'class' => 'w-10',
                 'field' => 'id',
+                'label' => '#',
                 'renderer' => $this->renderSortColumn(...),
                 'searchable' => false,
-                'class' => 'w-10',
             ])
             ->addColumn('name', [
                 'field' => 'name',
                 'sortable' => true,
             ])
             ->addColumn('actions', [
-                'label' => '',
                 'field' => 'id',
+                'label' => '',
                 'renderer' => $this->renderActions(...),
                 'searchable' => false,
                 'sortable' => false,
@@ -93,7 +94,9 @@ class PerscomQualificationTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.qualifications.manage')]
-    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
+    public function reorder(#[LiveArg]
+    int $id, #[LiveArg]
+    string $direction): void
     {
         $qualification = $this->qualificationRepository->find($id);
         if ($qualification === null) {

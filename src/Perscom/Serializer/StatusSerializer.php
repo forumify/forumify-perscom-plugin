@@ -33,8 +33,8 @@ class StatusSerializer implements DenormalizerInterface, NormalizerInterface
     public function getSupportedTypes(): array
     {
         return [
-            Status::class => true,
             'perscom_array' => true,
+            Status::class => true,
         ];
     }
 

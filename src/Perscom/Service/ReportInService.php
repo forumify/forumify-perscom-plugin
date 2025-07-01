@@ -71,11 +71,13 @@ class ReportInService
                 continue;
             }
 
-            if ($warningsEnabled && $diff > $warningPeriod) {
-                $user = $perscomUser->getUser();
-                if ($user !== null) {
-                    $this->sendWarning($user, $period - $diff + 1);
-                }
+            if (!$warningsEnabled || $diff <= $warningPeriod) {
+                continue;
+            }
+
+            $user = $perscomUser->getUser();
+            if ($user !== null) {
+                $this->sendWarning($user, $period - $diff + 1);
             }
         }
         $this->reportInRepository->flush();
@@ -86,10 +88,10 @@ class ReportInService
 
         $failureStatus = $this->getFailureStatus();
         $this->recordService->createRecord('assignment', [
-            'users' => array_map(fn (PerscomUser $user) => $user->getPerscomId(), $failures),
-            'type' => 'primary',
             'status_id' => $failureStatus->getPerscomId(),
             'text' => "Status updated to {$failureStatus->getName()} due to a failure to report in.",
+            'type' => 'primary',
+            'users' => array_map(fn (PerscomUser $user) => $user->getPerscomId(), $failures),
         ]);
 
         foreach ($failures as $perscomUser) {
@@ -143,10 +145,10 @@ class ReportInService
         $updated = false;
         if ($previousStatus = $lastReportIn->getPreviousStatusId()) {
             $this->recordService->createRecord('assignment', [
-                'users' => [$perscomUserId],
-                'type' => 'primary',
                 'status_id' => $previousStatus,
                 'text' => "Status reverted back to original due to reporting in.",
+                'type' => 'primary',
+                'users' => [$perscomUserId],
             ]);
             $lastReportIn->setPreviousStatusId(null);
             $updated = true;
@@ -172,7 +174,7 @@ class ReportInService
     }
 
     /**
-     * @return PerscomUser[]
+     * @return array<PerscomUser>
      */
     private function getUsersToCheck(): array
     {
@@ -191,16 +193,16 @@ class ReportInService
             GenericEmailNotificationType::TYPE,
             $user,
             [
-                'title' => 'perscom.notification.report_in_warning.title',
-                'titleParams' => ['status' => $status],
                 'description' => 'perscom.notification.report_in_warning.description',
                 'descriptionParams' => [
-                    'status' => $status,
                     'days' => $daysLeft,
+                    'status' => $status,
                 ],
+                'emailActionLabel' => 'perscom.notification.report_in_warning.action',
                 'image' => $this->packages->getUrl('bundles/forumifyperscomplugin/images/perscom.png'),
+                'title' => 'perscom.notification.report_in_warning.title',
+                'titleParams' => ['status' => $status],
                 'url' => $this->urlGenerator->generate('perscom_operations_center'),
-                'emailActionLabel' => 'perscom.notification.report_in_warning.action'
             ],
         ));
     }
@@ -212,16 +214,16 @@ class ReportInService
             GenericEmailNotificationType::TYPE,
             $user,
             [
-                'title' => 'perscom.notification.report_in_failure.title',
-                'titleParams' => ['status' => $status],
                 'description' => 'perscom.notification.report_in_failure.description',
                 'descriptionParams' => [
-                    'status' => $status,
                     'days' => $period,
+                    'status' => $status,
                 ],
+                'emailActionLabel' => 'perscom.notification.report_in_failure.action',
                 'image' => $this->packages->getUrl('bundles/forumifyperscomplugin/images/perscom.png'),
+                'title' => 'perscom.notification.report_in_failure.title',
+                'titleParams' => ['status' => $status],
                 'url' => $this->urlGenerator->generate('perscom_operations_center'),
-                'emailActionLabel' => 'perscom.notification.report_in_failure.action'
             ],
         ));
     }

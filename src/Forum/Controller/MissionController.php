@@ -107,13 +107,13 @@ class MissionController extends AbstractController
         }
 
         return $this->render('@Forumify/form/simple_form_page.html.twig', [
-            'form' => $form->createView(),
-            'title' => $isNew ? 'perscom.mission.create' : 'perscom.mission.edit',
             'cancelPath' => $isNew
                 ? $this->generateUrl('perscom_operations_view', [
                     'slug' => $mission->getOperation()->getSlug(),
                 ])
                 : $this->generateUrl('perscom_missions_view', ['id' => $mission->getId()]),
+            'form' => $form->createView(),
+            'title' => $isNew ? 'perscom.mission.create' : 'perscom.mission.edit',
         ]);
     }
 }

@@ -69,11 +69,11 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
             $type = self::FIELD_MAP[$field['type']];
 
             $fieldOptions = [
-                'label' => $field['name'],
+                'disabled' => $options['disabled'] || $field['readonly'],
                 'help' => $field['help'],
                 'help_html' => true,
+                'label' => $field['name'],
                 'required' => $field['required'],
-                'disabled' => $options['disabled'] || $field['readonly'],
             ];
 
             if ($type === ChoiceType::class) {

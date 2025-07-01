@@ -30,8 +30,8 @@ class QualificationRecordSerializer extends AbstractRecordSerializer
     public function getSupportedTypes(): array
     {
         return [
-            QualificationRecord::class => true,
             'perscom_array' => true,
+            QualificationRecord::class => true,
         ];
     }
 

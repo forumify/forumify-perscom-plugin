@@ -36,8 +36,8 @@ class RosterSerializer implements DenormalizerInterface, NormalizerInterface
     public function getSupportedTypes(): array
     {
         return [
-            Roster::class => true,
             'perscom_array' => true,
+            Roster::class => true,
         ];
     }
 
@@ -61,7 +61,7 @@ class RosterSerializer implements DenormalizerInterface, NormalizerInterface
             return $roster;
         }
 
-        /** @var Unit[] $allUnits */
+        /** @var array<Unit> $allUnits */
         $allUnits = $context['units'] ?? [];
         $rosterUnits = array_column($data['units'] ?? [], 'id');
 

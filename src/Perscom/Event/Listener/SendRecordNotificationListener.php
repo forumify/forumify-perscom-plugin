@@ -63,8 +63,8 @@ class SendRecordNotificationListener
             NewRecordNotificationType::TYPE,
             $user,
             [
-                'type' => $type,
                 'data' => $data,
+                'type' => $type,
             ]
         ));
     }

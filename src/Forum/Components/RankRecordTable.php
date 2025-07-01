@@ -27,17 +27,17 @@ class RankRecordTable extends AbstractRecordTable
         $this
             ->addDateColumn()
             ->addColumn('rank', [
+                'class' => 'flex items-center text-small',
                 'field' => 'rank.name',
+                'renderer' => $this->renderRank(...),
                 'searchable' => false,
                 'sortable' => false,
-                'renderer' => $this->renderRank(...),
-                'class' => 'flex items-center text-small'
             ])
             ->addColumn('type', [
+                'class' => 'text-left text-small',
                 'field' => 'type',
-                'searchable' => false,
                 'renderer' => fn (string $type) => $this->translator->trans("perscom.rank.type.$type"),
-                'class' => 'text-left text-small'
+                'searchable' => false,
             ])
             ->addDocumentColumn(true, 'rank');
     }

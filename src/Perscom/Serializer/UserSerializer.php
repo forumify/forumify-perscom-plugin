@@ -50,8 +50,8 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
     public function getSupportedTypes(): array
     {
         return [
-            PerscomUser::class => true,
             'perscom_array' => true,
+            PerscomUser::class => true,
         ];
     }
 

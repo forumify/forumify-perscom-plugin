@@ -57,8 +57,8 @@ class UserController extends AbstractCrudController
         /** @var PerscomUser $user */
         $user = $params['data'];
         $params['secondaryAssignmentRecords'] = $this->assignmentRecordRepository->findBy([
-            'user' => $user,
             'type' => 'secondary',
+            'user' => $user,
         ]);
 
         return $params;

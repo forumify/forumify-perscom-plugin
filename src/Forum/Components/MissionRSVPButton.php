@@ -44,7 +44,8 @@ class MissionRSVPButton extends AbstractController
     }
 
     #[LiveAction]
-    public function toggle(#[LiveArg] bool $going): ?Response
+    public function toggle(#[LiveArg]
+    bool $going): ?Response
     {
         $rsvp = $this->getRSVP() ?? $this->createMissionRSVP();
         if ($rsvp === null) {

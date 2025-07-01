@@ -35,12 +35,9 @@ class QualificationType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('description', RichTextEditorType::class, [
-                'required' => false
+                'required' => false,
             ])
             ->add('newImage', FileType::class, [
-                'mapped' => false,
-                'label' => 'Image',
-                'help' => 'Recommended size is 250x250.',
                 'attr' => [
                     'preview' => $imagePreview
                         ? $this->packages->getUrl($imagePreview, 'perscom.asset')
@@ -54,6 +51,9 @@ class QualificationType extends AbstractType
                         maxSize: '1M',
                     ),
                 ],
+                'help' => 'Recommended size is 250x250.',
+                'label' => 'Image',
+                'mapped' => false,
             ])
         ;
     }

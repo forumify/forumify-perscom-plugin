@@ -35,14 +35,14 @@ class RecordType extends AbstractType
     {
         $builder
             ->add('users', EntityType::class, [
-                'multiple' => true,
                 'autocomplete' => true,
-                'class' => PerscomUser::class,
                 'choice_label' => 'name',
+                'class' => PerscomUser::class,
+                'multiple' => true,
             ])
             ->add('created_at', DateTimeType::class, [
-                'widget' => 'single_text',
                 'required' => false,
+                'widget' => 'single_text',
             ]);
 
         switch ($options['type']) {
@@ -64,27 +64,27 @@ class RecordType extends AbstractType
 
         $builder
             ->add('text', TextareaType::class, [
-                'required' => false,
                 'empty_data' => '',
+                'required' => false,
             ])
             ->add('document', EntityType::class, [
-                'required' => false,
                 'autocomplete' => true,
-                'class' => Document::class,
                 'choice_label' => 'name',
+                'class' => Document::class,
+                'required' => false,
             ])
             ->add('sendNotification', CheckboxType::class, [
-                'required' => false,
                 'data' => true,
+                'required' => false,
             ]);
     }
 
     private function addAwardFields(FormBuilderInterface $builder): void
     {
         $builder->add('award', EntityType::class, [
-            'class' => Award::class,
             'autocomplete' => true,
             'choice_label' => 'name',
+            'class' => Award::class,
         ]);
     }
 
@@ -93,14 +93,14 @@ class RecordType extends AbstractType
         $builder
             ->add('type', ChoiceType::class, [
                 'choices' => [
-                    'Promote' => 'promote',
                     'Demote' => 'demote',
+                    'Promote' => 'promote',
                 ],
             ])
             ->add('rank', EntityType::class, [
-                'class'=> Rank::class,
                 'autocomplete' => true,
                 'choice_label' => 'name',
+                'class'=> Rank::class,
             ]);
     }
 
@@ -115,37 +115,37 @@ class RecordType extends AbstractType
                 'placeholder' => 'Select a type',
             ])
             ->add('status', EntityType::class, [
-                'required' => false,
-                'placeholder' => 'Keep current status.',
-                'class' => Status::class,
                 'autocomplete' => true,
                 'choice_label' => 'name',
+                'class' => Status::class,
+                'placeholder' => 'Keep current status.',
+                'required' => false,
             ])
             ->add('specialty', EntityType::class, [
-                'required' => false,
-                'placeholder' => 'Keep current specialty.',
-                'class' => Specialty::class,
                 'autocomplete' => true,
                 'choice_label' => 'name',
+                'class' => Specialty::class,
+                'placeholder' => 'Keep current specialty.',
+                'required' => false,
             ])
             ->add('unit', EntityType::class, [
-                'class' => Unit::class,
                 'autocomplete' => true,
                 'choice_label' => 'name',
+                'class' => Unit::class,
             ])
             ->add('position', EntityType::class, [
-                'class' => Position::class,
                 'autocomplete' => true,
                 'choice_label' => 'name',
+                'class' => Position::class,
             ]);
     }
 
     private function addQualificationFields(FormBuilderInterface $builder): void
     {
         $builder->add('qualification', EntityType::class, [
-            'class' => Qualification::class,
             'autocomplete' => true,
             'choice_label' => 'name',
+            'class' => Qualification::class,
         ]);
     }
 }

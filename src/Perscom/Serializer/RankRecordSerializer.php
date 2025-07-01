@@ -31,8 +31,8 @@ class RankRecordSerializer extends AbstractRecordSerializer
     public function getSupportedTypes(): array
     {
         return [
-            RankRecord::class => true,
             'perscom_array' => true,
+            RankRecord::class => true,
         ];
     }
 

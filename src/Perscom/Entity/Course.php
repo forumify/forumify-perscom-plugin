@@ -148,7 +148,7 @@ class Course implements AccessControlledEntityInterface, SortableEntityInterface
             'view',
             'view_classes',
             'manage_classes',
-            'signup_as_instructor'
+            'signup_as_instructor',
         ];
     }
 

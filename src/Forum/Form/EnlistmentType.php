@@ -14,8 +14,8 @@ class EnlistmentType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'perscom_form' => null,
             'data_class' => Enlistment::class,
+            'perscom_form' => null,
         ]);
     }
 
@@ -27,7 +27,7 @@ class EnlistmentType extends AbstractType
             ->add('lastName', TextType::class)
             ->add('additionalFormData', PerscomFormType::class, [
                 'label' => false,
-                'perscom_form' => $options['perscom_form']
+                'perscom_form' => $options['perscom_form'],
             ]);
     }
 }

@@ -25,7 +25,7 @@ abstract class AbstractPerscomRepository extends AbstractRepository
 
     /**
      * @param array<int> $perscomIds
-     * @return T[]
+     * @return array<T>
      */
     public function findByPerscomIds(array $perscomIds): array
     {

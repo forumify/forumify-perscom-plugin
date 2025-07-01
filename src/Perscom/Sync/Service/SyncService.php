@@ -7,7 +7,7 @@ namespace Forumify\PerscomPlugin\Perscom\Sync\Service;
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use Forumify\Core\Repository\SettingRepository;
-use Forumify\PerscomPlugin\Perscom\Entity as Entity;
+use Forumify\PerscomPlugin\Perscom\Entity;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomSyncResult;
 use Forumify\PerscomPlugin\Perscom\Perscom;
@@ -125,12 +125,12 @@ class SyncService
             $p->assignmentRecords(),
             Entity\Record\AssignmentRecord::class,
             context: [
-                'users' => $users,
                 'documents' => $documents,
-                'statuses' => $statuses,
-                'units' => $units,
                 'positions' => $positions,
                 'specialties' => $specialties,
+                'statuses' => $statuses,
+                'units' => $units,
+                'users' => $users,
             ],
             batchSize: 1000,
         );
@@ -138,9 +138,9 @@ class SyncService
             $p->awardRecords(),
             Entity\Record\AwardRecord::class,
             context: [
-                'users' => $users,
-                'documents' => $documents,
                 'awards' => $awards,
+                'documents' => $documents,
+                'users' => $users,
             ],
             batchSize: 1000,
         );
@@ -148,8 +148,8 @@ class SyncService
             $p->combatRecords(),
             Entity\Record\CombatRecord::class,
             context: [
-                'users' => $users,
                 'documents' => $documents,
+                'users' => $users,
             ],
             batchSize: 1000,
         );
@@ -157,9 +157,9 @@ class SyncService
             $p->qualificationRecords(),
             Entity\Record\QualificationRecord::class,
             context: [
-                'users' => $users,
                 'documents' => $documents,
                 'qualifications' => $qualifications,
+                'users' => $users,
             ],
             batchSize: 1000,
         );
@@ -167,9 +167,9 @@ class SyncService
             $p->rankRecords(),
             Entity\Record\RankRecord::class,
             context: [
-                'users' => $users,
                 'documents' => $documents,
                 'ranks' => $ranks,
+                'users' => $users,
             ],
             batchSize: 1000,
         );
@@ -177,17 +177,17 @@ class SyncService
             $p->serviceRecords(),
             Entity\Record\ServiceRecord::class,
             context: [
-                'users' => $users,
                 'documents' => $documents,
+                'users' => $users,
             ],
             batchSize: 1000,
         );
 
         $forms = $this->syncAllOfResource($p->forms(), Entity\Form::class, ['fields'], ['statuses' => $statuses]);
         $this->syncAllOfResource($p->submissions(), Entity\FormSubmission::class, ['statuses', 'statuses.record'], [
-            'users' => $users,
-            'statuses' => $statuses,
             'forms' => $forms,
+            'statuses' => $statuses,
+            'users' => $users,
         ]);
 
         $isInitialSyncDone = $this->settingRepository->get(SyncService::SETTING_IS_INITIAL_SYNC_COMPLETED) ?? false;
@@ -198,9 +198,9 @@ class SyncService
 
     /**
      * @param array{
-     *      create: PerscomEntityInterface[],
-     *      update: PerscomEntityInterface[],
-     *      delete: array<class-string<PerscomEntityInterface>, int[]>,
+     *      create: array<PerscomEntityInterface>,
+     *      update: array<PerscomEntityInterface>,
+     *      delete: array<class-string<PerscomEntityInterface>, array<int>>,
      *  } $changeSet
      */
     public function syncToPerscom(array $changeSet): void
@@ -331,7 +331,8 @@ class SyncService
         ?array $context = [],
         ?int $batchSize = 100,
     ): array {
-        usleep(100000); // 100ms cooldown to avoid rate limits :)
+        // 100ms cooldown to avoid rate limits :)
+        usleep(100000);
         $itemType = u($entityClass)->afterLast('\\')->toString();
         $this->result->logMessage("$itemType: Starting sync");
 
@@ -396,7 +397,7 @@ class SyncService
     }
 
     /**
-     * @param PerscomEntityInterface[] $items
+     * @param array<PerscomEntityInterface> $items
      * @return array<int, PerscomEntityInterface>
      */
     private function indexByPerscomId(array $items): array
@@ -413,7 +414,7 @@ class SyncService
     /**
      * @template T of PerscomEntityInterface
      * @param array<T> $entities
-     * @return array<class-string<T>, T[]>
+     * @return array<class-string<T>, array<T>>
      */
     private function indexByClass(array $entities): array
     {

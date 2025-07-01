@@ -42,11 +42,11 @@ class PerscomOperationTable extends AbstractDoctrineTable
                 'renderer' => fn (?DateTime $start) => $start?->format('Y-m-d'),
             ])
             ->addColumn('actions', [
-                'label' => '',
                 'field' => 'id',
+                'label' => '',
+                'renderer' => $this->renderActions(...),
                 'searchable' => false,
                 'sortable' => false,
-                'renderer' => $this->renderActions(...),
             ]);
     }
 

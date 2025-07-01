@@ -11,9 +11,9 @@ class PostSyncToPerscomEvent extends Event
 {
     /**
      * @param array{
-     *      create: PerscomEntityInterface[],
-     *      update: PerscomEntityInterface[],
-     *      delete: array<class-string<PerscomEntityInterface>, int[]>,
+     *      create: array<PerscomEntityInterface>,
+     *      update: array<PerscomEntityInterface>,
+     *      delete: array<class-string<PerscomEntityInterface>, array<int>>,
      *  } $changeSet
      */
     public function __construct(

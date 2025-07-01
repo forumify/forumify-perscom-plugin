@@ -45,11 +45,11 @@ class UserController extends AbstractController
 
         return $this->render('@ForumifyPerscomPlugin/frontend/user/user.html.twig', [
             'awards' => $this->getAwardCounts($user),
-            'user' => $user,
-            'tis' => $this->getTimeInService($user),
-            'tig' => $this->getTimeInGrade($user),
             'reportInDate' => $lastReportInDate,
             'secondaryAssignments' => $this->getSecondaryUnits($user),
+            'tig' => $this->getTimeInGrade($user),
+            'tis' => $this->getTimeInService($user),
+            'user' => $user,
         ]);
     }
 
@@ -95,7 +95,7 @@ class UserController extends AbstractController
 
     private function getAwardCounts(PerscomUser $user): array
     {
-        $awardCounts = $this->awardRecordRepository
+        return $this->awardRecordRepository
             ->createQueryBuilder('ar')
             ->join('ar.award', 'a')
             ->select('a.id, COUNT(a.id) AS count, a.name, a.image')
@@ -106,15 +106,14 @@ class UserController extends AbstractController
             ->getQuery()
             ->getArrayResult()
         ;
-        return$awardCounts;
     }
 
     private function getSecondaryUnits(PerscomUser $user): array
     {
-        /** @var AssignmentRecord[] */
+        /** @var array<AssignmentRecord> */
         $records = $this->assignmentRecordRepository->findBy([
-            'user' => $user,
             'type' => 'secondary',
+            'user' => $user,
         ]);
 
         $grouped = [];

@@ -114,8 +114,8 @@ class AfterActionReportService
 
         $this->recordService->createRecord('combat', [
             'sendNotification' => true,
-            'users' => $perscomUserIds,
             'text' => $aar->getMission()->getCombatRecordText() ?: $this->getDefaultCombatRecordText($aar->getMission()),
+            'users' => $perscomUserIds,
         ]);
     }
 
@@ -125,7 +125,7 @@ class AfterActionReportService
     }
 
     /**
-     * @return PerscomUser[]
+     * @return array<PerscomUser>
      */
     public function findUsersByUnit(int $unitId): array
     {
@@ -177,9 +177,9 @@ class AfterActionReportService
                 GenericNotificationType::TYPE,
                 $user->getUser(),
                 [
-                    'title' => 'Mission absence',
                     'description' => $notificationMessage,
                     'image' => $this->packages->getUrl('bundles/forumifyperscomplugin/images/perscom.png'),
+                    'title' => 'Mission absence',
                     'url' => $this->urlGenerator->generate('perscom_aar_view', ['id' => $aar->getId()]),
                 ],
             ));
@@ -202,7 +202,7 @@ class AfterActionReportService
             return;
         }
 
-        /** @var AfterActionReport[] $pastAars */
+        /** @var array<AfterActionReport> $pastAars */
         $pastAars = $this->afterActionReportRepository
             ->createQueryBuilder('aar')
             ->join('aar.mission', 'm')
@@ -232,13 +232,13 @@ class AfterActionReportService
                 GenericEmailNotificationType::TYPE,
                 $user->getUser(),
                 [
-                    'title' => "You have been marked absent $consecutiveCount times consecutively!",
                     'description' => $description,
-                    'image' => $this->packages->getUrl('bundles/forumifyperscomplugin/images/perscom.png'),
-                    'url' => $this->urlGenerator->generate('perscom_aar_view', ['id' => $aar->getId()]),
-                    'emailTemplate' => '@ForumifyPerscomPlugin/emails/notifications/consecutive_absence.html.twig',
                     'emailActionLabel' => 'View After Action Report',
                     'emailContent' => $consecutiveMessage,
+                    'emailTemplate' => '@ForumifyPerscomPlugin/emails/notifications/consecutive_absence.html.twig',
+                    'image' => $this->packages->getUrl('bundles/forumifyperscomplugin/images/perscom.png'),
+                    'title' => "You have been marked absent $consecutiveCount times consecutively!",
+                    'url' => $this->urlGenerator->generate('perscom_aar_view', ['id' => $aar->getId()]),
                 ]
             ));
         }
@@ -256,11 +256,11 @@ class AfterActionReportService
 
         $absentUserIds = array_map(fn (PerscomUser $user) => $user->getId(), $absentUsers);
         $this->recordService->createRecord('assignment', [
-            'users' => $absentUserIds,
-            'type' => 'primary',
+            'sendNotification' => true,
             'status' => $consecutiveStatus,
             'text' => "Status updated to {$consecutiveStatus->getName()} due to consecutive absences.",
-            'sendNotification' => true,
+            'type' => 'primary',
+            'users' => $absentUserIds,
         ]);
     }
 

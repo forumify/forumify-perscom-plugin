@@ -76,12 +76,12 @@ class CourseController extends AbstractCrudController
         if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->render('@Forumify/form/simple_form_page.html.twig', [
                 'admin' => true,
-                'title' => 'perscom.admin.course.instructor.' . ($isNew ? 'create' : 'edit'),
-                'titleArgs' => $isNew ? [] : ['instructor' => $instructor->getTitle()],
-                'form' => $form->createView(),
                 'cancelPath' => $this->generateUrl('perscom_admin_courses_edit', [
                     'identifier' => $course->getId(),
                 ]),
+                'form' => $form->createView(),
+                'title' => 'perscom.admin.course.instructor.' . ($isNew ? 'create' : 'edit'),
+                'titleArgs' => $isNew ? [] : ['instructor' => $instructor->getTitle()],
             ]);
         }
 

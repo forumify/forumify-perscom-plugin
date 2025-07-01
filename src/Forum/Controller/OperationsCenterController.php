@@ -41,9 +41,9 @@ class OperationsCenterController extends AbstractController
         }
 
         return $this->render('@ForumifyPerscomPlugin/frontend/operations_center/operations_center.html.twig', [
-            'user' => $perscomUser,
             'announcement' => $announcement,
             'forms' => $forms,
+            'user' => $perscomUser,
         ]);
     }
 }

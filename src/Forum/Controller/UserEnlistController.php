@@ -40,8 +40,8 @@ class UserEnlistController extends AbstractController
             $submission = $perscomEnlistService->getCurrentEnlistment($enlistmentTopic->getSubmissionId());
             if ($submission !== null) {
                 return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
-                    'successMessage' => $enlistmentForm['success_message'] ?? '',
                     'enlistmentTopic' => $enlistmentTopic,
+                    'successMessage' => $enlistmentForm['success_message'] ?? '',
                 ]);
             }
             // The submission was deleted from PERSCOM.io, continue with the enlistment
@@ -56,8 +56,8 @@ class UserEnlistController extends AbstractController
             $enlistmentTopic = $perscomEnlistService->enlist($form->getData());
 
             return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
+                'enlistmentTopic' => $enlistmentTopic,
                 'successMessage' => $enlistmentForm['success_message'] ?? '',
-                'enlistmentTopic' => $enlistmentTopic
             ]);
         }
 

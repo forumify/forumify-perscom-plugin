@@ -34,8 +34,8 @@ class SpecialtySerializer implements DenormalizerInterface, NormalizerInterface
     public function getSupportedTypes(): array
     {
         return [
-            Specialty::class => true,
             'perscom_array' => true,
+            Specialty::class => true,
         ];
     }
 

@@ -43,8 +43,8 @@ class SubmissionStatusUpdateService
             [
                 'form' => $submission->getForm()->getName(),
                 'status' => $status->getName(),
-                'text' => $submission->getStatusReason(),
                 'submissionId' => $submission->getId(),
+                'text' => $submission->getStatusReason(),
             ]
         ));
     }

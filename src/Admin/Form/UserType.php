@@ -43,70 +43,70 @@ class UserType extends AbstractType
             // general
             ->add('name', TextType::class)
             ->add('rank', EntityType::class, [
-                'class' => Rank::class,
                 'choice_label' => 'name',
-                'required' => false,
+                'class' => Rank::class,
                 'help' => 'perscom.admin.users.edit.rank_help',
+                'required' => false,
             ])
             ->add('createdAt', DateType::class, [
-                'widget' => 'single_text',
                 'help' => 'perscom.admin.users.edit.created_at_help',
+                'widget' => 'single_text',
             ])
             // assignment
             ->add('specialty', EntityType::class, [
-                'class' => Specialty::class,
                 'choice_label' => 'name',
-                'required' => false,
+                'class' => Specialty::class,
                 'disabled' => true,
+                'required' => false,
             ])
             ->add('status', EntityType::class, [
-                'class' => Status::class,
                 'choice_label' => 'name',
-                'required' => false,
+                'class' => Status::class,
                 'disabled' => true,
+                'required' => false,
             ])
             ->add('position', EntityType::class, [
-                'class' => Position::class,
                 'choice_label' => 'name',
-                'required' => false,
+                'class' => Position::class,
                 'disabled' => true,
+                'required' => false,
             ])
             ->add('unit', EntityType::class, [
-                'class' => Unit::class,
                 'choice_label' => 'name',
-                'required' => false,
+                'class' => Unit::class,
                 'disabled' => true,
+                'required' => false,
             ])
             // uniform
             ->add('newUniform', FileType::class, [
-                'mapped' => false,
-                'label' => 'Uniform',
-                'required' => false,
                 'attr' => [
                     'preview' => $user?->getUniform()
                         ? $this->packages->getUrl($user->getUniform(), 'perscom.asset')
-                        : null
+                        : null,
                 ],
                 'constraints' => [
                     new Assert\Image(
                         maxSize: '1M',
                     ),
                 ],
+                'label' => 'Uniform',
+                'mapped' => false,
+                'required' => false,
             ])
             ->add('newSignature', FileType::class, [
-                'mapped' => false,
-                'label' => 'Signature',
-                'required' => false,
                 'attr' => [
                     'preview' => $user?->getSignature()
                         ? $this->packages->getUrl($user->getSignature(), 'perscom.asset')
-                        : null
+                        : null,
                 ],
                 'constraints' => [
                     new Assert\Image(
                         maxSize: '1M',
                     ),
                 ],
+                'label' => 'Signature',
+                'mapped' => false,
+                'required' => false,
             ])
         ;
     }

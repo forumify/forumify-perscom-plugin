@@ -40,10 +40,12 @@ class UserCrudSubscriber implements EventSubscriberInterface
         }
 
         $newSignature = $form->get('newSignature')->getData();
-        if ($newSignature instanceof UploadedFile) {
-            $signature = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newSignature);
-            $user->setSignature($signature);
-            $user->setSignatureDirty(true);
+        if (!($newSignature instanceof UploadedFile)) {
+            return;
         }
+
+        $signature = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newSignature);
+        $user->setSignature($signature);
+        $user->setSignatureDirty(true);
     }
 }

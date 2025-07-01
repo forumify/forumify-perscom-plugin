@@ -27,11 +27,11 @@ class QualificationRecordTable extends AbstractRecordTable
         $this
             ->addDateColumn()
             ->addColumn('qualification', [
-                'field' => 'qualification.name',
-                'sortable' => false,
-                'searchable' => false,
                 'class' => 'text-small',
+                'field' => 'qualification.name',
                 'renderer' => $this->renderQualification(...),
+                'searchable' => false,
+                'sortable' => false,
             ])
             ->addDocumentColumn(true, 'qualification');
     }

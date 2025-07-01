@@ -11,8 +11,8 @@ class ServiceRecordSerializer extends AbstractRecordSerializer
     public function getSupportedTypes(): array
     {
         return [
-            ServiceRecord::class => true,
             'perscom_array' => true,
+            ServiceRecord::class => true,
         ];
     }
 

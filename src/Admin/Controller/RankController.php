@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Forumify\PerscomPlugin\Admin\Controller;
 
 use Forumify\Admin\Crud\AbstractCrudController;
@@ -38,7 +40,7 @@ class RankController extends AbstractCrudController
     protected function getForm(?object $data): FormInterface
     {
         return $this->createForm(RankType::class, $data, [
-            'image_required' => $data === null
+            'image_required' => $data === null,
         ]);
     }
 }

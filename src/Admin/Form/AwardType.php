@@ -38,9 +38,6 @@ class AwardType extends AbstractType
                 'required' => false,
             ])
             ->add('newAwardImage', FileType::class, [
-                'mapped' => false,
-                'label' => 'Image',
-                'help' => 'Recommended size is 250x250.',
                 'attr' => [
                     'preview' => $imagePreview
                         ? $this->packages->getUrl($imagePreview, 'perscom.asset')
@@ -54,6 +51,9 @@ class AwardType extends AbstractType
                         maxSize: '1M',
                     ),
                 ],
+                'help' => 'Recommended size is 250x250.',
+                'label' => 'Image',
+                'mapped' => false,
             ])
         ;
     }

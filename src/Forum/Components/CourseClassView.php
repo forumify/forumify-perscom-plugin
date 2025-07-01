@@ -116,11 +116,12 @@ class CourseClassView extends AbstractController
     }
 
     #[LiveAction]
-    public function registerInstructor(#[LiveArg] ?int $instructorId = null): void
+    public function registerInstructor(#[LiveArg]
+    ?int $instructorId = null): void
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
-            'permission' => 'signup_as_instructor',
             'entity' => $this->class->getCourse(),
+            'permission' => 'signup_as_instructor',
         ]);
 
         $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()?->getPerscomId();
@@ -129,8 +130,8 @@ class CourseClassView extends AbstractController
         }
 
         $instructor = $this->classInstructorRepository->find([
-            'perscomUserId' => $perscomUserId,
             'class' => $this->class,
+            'perscomUserId' => $perscomUserId,
         ]);
 
         if ($instructor !== null) {
@@ -148,16 +149,17 @@ class CourseClassView extends AbstractController
     }
 
     #[LiveAction]
-    public function removeStudent(#[LiveArg] int $perscomUserId): void
+    public function removeStudent(#[LiveArg]
+    int $perscomUserId): void
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $this->class->getCourse(),
-            'permission' => 'manage_classes'
+            'permission' => 'manage_classes',
         ]);
 
         $student = $this->classStudentRepository->find([
-            'perscomUserId' => $perscomUserId,
             'class' => $this->class,
+            'perscomUserId' => $perscomUserId,
         ]);
 
         if ($student !== null) {
@@ -166,16 +168,17 @@ class CourseClassView extends AbstractController
     }
 
     #[LiveAction]
-    public function removeInstructor(#[LiveArg] int $perscomUserId): void
+    public function removeInstructor(#[LiveArg]
+    int $perscomUserId): void
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $this->class->getCourse(),
-            'permission' => 'manage_classes'
+            'permission' => 'manage_classes',
         ]);
 
         $instructor = $this->classInstructorRepository->find([
-            'perscomUserId' => $perscomUserId,
             'class' => $this->class,
+            'perscomUserId' => $perscomUserId,
         ]);
 
         if ($instructor !== null) {
@@ -191,8 +194,8 @@ class CourseClassView extends AbstractController
         }
 
         return $this->classInstructorRepository->find([
-            'perscomUserId' => $perscomUserId,
             'class' => $this->class,
+            'perscomUserId' => $perscomUserId,
         ]) !== null;
     }
 

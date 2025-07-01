@@ -33,16 +33,16 @@ class PerscomSyncResultTable extends AbstractDoctrineTable
             ->addColumn('start', [
                 'field' => 'start',
                 'label' => 'Started at',
-                'searchable' => false,
                 'renderer' => fn (DateTimeInterface $date) => $this->translator->trans('date_time_short', ['date' => $date]),
+                'searchable' => false,
             ])
             ->addColumn('end', [
                 'field' => 'end',
                 'label' => 'Completed at',
-                'searchable' => false,
                 'renderer' => fn (?DateTimeInterface $date) => $date !== null
                     ? $this->translator->trans('date_time_short', ['date' => $date])
                     : '',
+                'searchable' => false,
             ])
             ->addColumn('success', [
                 'field' => 'success',

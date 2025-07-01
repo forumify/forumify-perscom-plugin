@@ -74,8 +74,8 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
         $return = [];
         foreach ($users as $user) {
             $return[$user->getPerscomId()] = [
-                'user' => $user,
                 'courseUser' => $courseUsers[$user->getPerscomId()],
+                'user' => $user,
             ];
         }
         return $return;

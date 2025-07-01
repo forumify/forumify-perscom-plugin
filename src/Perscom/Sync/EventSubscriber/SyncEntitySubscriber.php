@@ -25,7 +25,7 @@ class SyncEntitySubscriber
     private array $created = [];
     /** @var array<PerscomEntityInterface> */
     private array $updated = [];
-    /** @var array<class-string<PerscomEntityInterface>, int[]> */
+    /** @var array<class-string<PerscomEntityInterface>, array<int>> */
     private array $deleted = [];
 
     public function __construct(
@@ -73,10 +73,12 @@ class SyncEntitySubscriber
         }
 
         foreach ($uow->getScheduledEntityDeletions() as $entity) {
-            if ($entity instanceof PerscomEntityInterface && $entity->getPerscomId() !== null) {
-                $class = ClassUtils::getRealClass(get_class($entity));
-                $this->deleted[$class][] = $entity->getPerscomId();
+            if (!($entity instanceof PerscomEntityInterface) || $entity->getPerscomId() === null) {
+                continue;
             }
+
+            $class = ClassUtils::getRealClass(get_class($entity));
+            $this->deleted[$class][] = $entity->getPerscomId();
         }
     }
 
@@ -88,8 +90,8 @@ class SyncEntitySubscriber
 
         $data = $this->contextSerializer->serialize([
             'create' => $this->created,
-            'update' => $this->updated,
             'delete' => $this->deleted,
+            'update' => $this->updated,
         ]);
 
         $this->messageBus->dispatch(new SyncToPerscomMessage($data));

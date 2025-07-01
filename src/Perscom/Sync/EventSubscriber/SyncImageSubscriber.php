@@ -82,7 +82,6 @@ class SyncImageSubscriber implements EventSubscriberInterface
         if ($imageId !== null) {
             $deleteUrl = $endpoint . '/' . $imageId;
             $client->delete($deleteUrl);
-            $imageId = null;
         }
 
         $response = $client
@@ -91,14 +90,14 @@ class SyncImageSubscriber implements EventSubscriberInterface
                 [
                     'multipart' => [
                         [
-                            'name' => 'name',
                             'contents' => $imageName,
+                            'name' => 'name',
                         ],
                         [
-                            'name' => 'image',
                             'contents' => $image,
                             'filename' => $imageName,
-                        ]
+                            'name' => 'image',
+                        ],
                     ],
                 ]
             )

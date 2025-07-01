@@ -20,7 +20,7 @@ class SyncUserSubscriber implements EventSubscriberInterface
     public static function getSubscribedEvents(): array
     {
         return [
-            RecordsCreatedEvent::class => 'onRecordsCreated'
+            RecordsCreatedEvent::class => 'onRecordsCreated',
         ];
     }
 

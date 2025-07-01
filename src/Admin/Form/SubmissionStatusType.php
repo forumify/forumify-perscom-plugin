@@ -22,16 +22,16 @@ class SubmissionStatusType extends AbstractType
     {
         $builder
             ->add('status', EntityType::class, [
-                'class' => Status::class,
                 'choice_label' => 'name',
+                'class' => Status::class,
             ])
             ->add('reason', TextareaType::class, [
-                'required' => false,
                 'empty_data' => '',
+                'required' => false,
             ])
             ->add('sendNotification', CheckboxType::class, [
-                'required' => false,
                 'data' => true,
+                'required' => false,
             ]);
     }
 }

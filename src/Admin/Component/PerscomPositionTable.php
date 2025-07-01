@@ -33,22 +33,22 @@ class PerscomPositionTable extends AbstractDoctrineTable
     {
         $this
             ->addColumn('position', [
-                'label' => '#',
+                'class' => 'w-10',
                 'field' => 'id',
+                'label' => '#',
                 'renderer' => $this->renderSortColumn(...),
                 'searchable' => false,
-                'class' => 'w-10'
             ])
             ->addColumn('name', [
                 'field' => 'name',
-                'sortable' => true
+                'sortable' => true,
             ])
             ->addColumn('actions', [
-                'label' => '',
                 'field' => 'id',
+                'label' => '',
                 'renderer' => $this->renderActions(...),
-                'sortable' => false,
                 'searchable' => false,
+                'sortable' => false,
             ]);
     }
 
@@ -94,7 +94,9 @@ class PerscomPositionTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.positions.manage')]
-    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
+    public function reorder(#[LiveArg]
+    int $id, #[LiveArg]
+    string $direction): void
     {
         $position = $this->positionRepository->find($id);
         if ($position === null) {

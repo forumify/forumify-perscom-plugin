@@ -33,8 +33,8 @@ class DocumentSerializer implements DenormalizerInterface, NormalizerInterface
     public function getSupportedTypes(): array
     {
         return [
-            Document::class => true,
             'perscom_array' => true,
+            Document::class => true,
         ];
     }
 

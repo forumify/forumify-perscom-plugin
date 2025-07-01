@@ -24,8 +24,8 @@ class Rank implements PerscomEntityInterface, PerscomEntityWithImageInterface, S
     use SortableEntityTrait;
     use TimestampableEntityTrait;
 
-    #[Assert\NotBlank(allowNull: false)]
     #[ORM\Column]
+    #[Assert\NotBlank(allowNull: false)]
     private string $name;
 
     #[ORM\Column(type: 'text')]

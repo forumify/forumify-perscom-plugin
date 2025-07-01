@@ -65,14 +65,14 @@ class UserData
     {
         $new = [
             ...$this->getCustomFields(),
-            'name' => $this->getName(),
+            'created_at' => $this->getCreatedAt()->format(Perscom::DATE_FORMAT),
             'email' => $this->getEmail(),
-            'status_id' => $this->getStatus(),
+            'name' => $this->getName(),
+            'position_id' => $this->getPosition(),
             'rank_id' => $this->getRank(),
             'specialty_id' => $this->getSpecialty(),
-            'position_id' => $this->getPosition(),
+            'status_id' => $this->getStatus(),
             'unit_id' => $this->getUnit(),
-            'created_at' => $this->getCreatedAt()->format(Perscom::DATE_FORMAT),
         ];
 
         $updated = [];

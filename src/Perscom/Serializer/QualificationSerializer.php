@@ -40,8 +40,8 @@ class QualificationSerializer implements DenormalizerInterface, NormalizerInterf
     public function getSupportedTypes(): array
     {
         return [
-            Qualification::class => true,
             'perscom_array' => true,
+            Qualification::class => true,
         ];
     }
 

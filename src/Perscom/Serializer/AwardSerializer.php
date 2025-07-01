@@ -40,8 +40,8 @@ class AwardSerializer implements DenormalizerInterface, NormalizerInterface
     public function getSupportedTypes(): array
     {
         return [
-            Award::class => true,
             'perscom_array' => true,
+            Award::class => true,
         ];
     }
 

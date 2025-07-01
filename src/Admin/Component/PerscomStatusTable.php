@@ -30,28 +30,29 @@ class PerscomStatusTable extends AbstractDoctrineTable
     {
         return Status::class;
     }
+
     protected function buildTable(): void
     {
         $this
             ->addColumn('position', [
-                'label' => '#',
+                'class' => 'w-10',
                 'field' => 'id',
+                'label' => '#',
                 'renderer' => $this->renderSortColumn(...),
                 'searchable' => false,
-                'class' => 'w-10',
             ])
             ->addColumn('name', [
                 'field' => 'name',
                 'sortable' => true,
             ])
             ->addColumn('appearance', [
-                'sortable' => false,
+                'renderer' => fn ($_, $status) => $this->twig->render('@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig', ['status' => $status]),
                 'searchable' => false,
-                'renderer' => fn ($_, $status) => $this->twig->render('@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig', ['status' => $status])
+                'sortable' => false,
             ])
             ->addColumn('actions', [
-                'label' => '',
                 'field' => 'id',
+                'label' => '',
                 'renderer' => $this->renderActions(...),
                 'searchable' => false,
                 'sortable' => false,
@@ -100,7 +101,9 @@ class PerscomStatusTable extends AbstractDoctrineTable
 
     #[LiveAction]
     #[IsGranted('perscom-io.admin.organization.statuses.manage')]
-    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
+    public function reorder(#[LiveArg]
+    int $id, #[LiveArg]
+    string $direction): void
     {
         $status = $this->statusRepository->find($id);
         if ($status === null) {

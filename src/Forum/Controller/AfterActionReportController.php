@@ -54,7 +54,7 @@ class AfterActionReportController extends AbstractController
             }
         }
 
-        /** @var PerscomUser[] $users */
+        /** @var array<PerscomUser> $users */
         $users = $this->userRepository->findByPerscomIds($allUserIds);
         $allUserIds = array_map(fn (PerscomUser $user) => $user->getPerscomId(), $users);
         $users = array_combine($allUserIds, $users);
@@ -160,12 +160,12 @@ class AfterActionReportController extends AbstractController
 
         return $this->render('@ForumifyPerscomPlugin/frontend/aar/form.html.twig', [
             'aar' => $aar,
-            'form' => $form->createView(),
-            'title' => $isNew ? 'perscom.aar.create' : 'perscom.aar.edit',
+            'attendanceStatus' => $this->afterActionReportService->getAttendanceStates(),
             'cancelPath' => $isNew
                 ? $this->generateUrl('perscom_missions_view', ['id' => $aar->getMission()->getId()])
                 : $this->generateUrl('perscom_aar_view', ['id' => $aar->getId()]),
-            'attendanceStatus' => $this->afterActionReportService->getAttendanceStates(),
+            'form' => $form->createView(),
+            'title' => $isNew ? 'perscom.aar.create' : 'perscom.aar.edit',
         ]);
     }
 
@@ -193,8 +193,8 @@ class AfterActionReportController extends AbstractController
             $row = [
                 'id' => $user->getPerscomId(),
                 'name' => $user->getName(),
-                'rsvp' => $usersToRsvp[$user->getPerscomId()] ?? null,
                 'rankImage' => null,
+                'rsvp' => $usersToRsvp[$user->getPerscomId()] ?? null,
             ];
 
             $rankImg = $user->getRank()?->getImage();

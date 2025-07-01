@@ -9,7 +9,6 @@ use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Forumify\Core\Component\Table\AbstractTable;
 use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
-use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -48,20 +47,20 @@ class PerscomSubmissionTable extends AbstractDoctrineTable
             ])
             ->addColumn('status', [
                 'field' => 'status',
-                'searchable' => false,
-                'sortable' => false,
                 'renderer' => fn ($status) => $status !== null
                     ? $this->twig->render('@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig', [
                         'class' => 'text-small',
-                        'status' => $status
+                        'status' => $status,
                     ])
                     : '',
+                'searchable' => false,
+                'sortable' => false,
             ])
             ->addColumn('created_at', [
                 'field' => 'createdAt',
                 'label' => 'Created At',
-                'searchable' => false,
                 'renderer' => fn (?DateTime $date) => $this->translator->trans('date_time_short', ['date' => $date]),
+                'searchable' => false,
             ])
             ->addColumn('actions', [
                 'field' => 'id',

@@ -18,8 +18,8 @@ class ClassStudentResultType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => CourseClassStudent::class,
             'course_class' => null,
+            'data_class' => CourseClassStudent::class,
         ]);
     }
 
@@ -29,24 +29,24 @@ class ClassStudentResultType extends AbstractType
 
         $builder
             ->add('perscomUserId', UserType::class, [
+                'attr' => ['class' => 'd-none'],
                 'autocomplete' => true,
                 'label' => false,
                 'placeholder' => 'Please select a user',
-                'attr' => ['class' => 'd-none']
             ])
             ->add('result', ChoiceType::class, [
                 'choices' => [
-                    'Passed' => 'passed',
-                    'Failed' => 'failed',
                     'Excused' => 'excused',
+                    'Failed' => 'failed',
                     'No Show' => 'no-show',
-                ]
+                    'Passed' => 'passed',
+                ],
             ])
             ->add('qualifications', QualificationType::class, [
-                'multiple' => true,
                 'autocomplete' => true,
+                'choice_filter' => fn ($id) => in_array($id, $class->getCourse()->getQualifications(), true),
+                'multiple' => true,
                 'required' => false,
-                'choice_filter' => fn ($id) => in_array($id, $class->getCourse()->getQualifications(), true)
             ])
             ->add('serviceRecordTextOverride', TextType::class, [
                 'required' => false,

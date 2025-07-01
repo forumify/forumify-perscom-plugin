@@ -42,8 +42,8 @@ class RankSerializer implements DenormalizerInterface, NormalizerInterface
     public function getSupportedTypes(): array
     {
         return [
-            Rank::class => true,
             'perscom_array' => true,
+            Rank::class => true,
         ];
     }
 
