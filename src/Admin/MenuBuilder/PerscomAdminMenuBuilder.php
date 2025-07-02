@@ -48,6 +48,15 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
                 ]));
         }
 
+        $perscomMenu->addItem(new Menu('Records', ['icon' => 'ph ph-files', 'permission' => 'perscom-io.admin.records.view'], [
+            new MenuItem('Service Records', $u('perscom_admin_service_records_list')),
+            new MenuItem('Award Records', $u('perscom_admin_award_records_list')),
+            new MenuItem('Combat Records', $u('perscom_admin_combat_records_list')),
+            new MenuItem('Rank Records', $u('perscom_admin_rank_records_list')),
+            new MenuItem('Assignment Records', $u('perscom_admin_assignment_records_list')),
+            new MenuItem('Qualification Records', $u('perscom_admin_qualification_records_list')),
+        ]));
+
         $perscomMenu->addItem(new Menu('Organization', ['icon' => 'ph ph-buildings', 'permission' => 'perscom-io.admin.organization.view'], [
             new MenuItem('Awards', $u('perscom_admin_award_list')),
             new MenuItem('Documents', $u('perscom_admin_document_list')),

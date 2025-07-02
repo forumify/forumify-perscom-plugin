@@ -90,6 +90,38 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                         'create',
                     ],
                 ],
+                'records' => [
+                    'assignment_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'award_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'combat_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'qualification_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'rank_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'service_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                ],
                 'operations' => [
                     'view',
                     'manage',

@@ -99,6 +99,30 @@ perscom:
                 plural: 'specialties'
         configuration:
             title: 'Configuration'
+        service_record:
+            crud:
+                single: 'service record'
+                plural: 'service records'
+        combat_record:
+            crud:
+                single: 'combat record'
+                plural: 'combat records'
+        award_record:
+            crud:
+                single: 'award record'
+                plural: 'award records'
+        assignment_record:
+            crud:
+                single: 'assignment record'
+                plural: 'assignment records'
+        rank_record:
+            crud:
+                single: 'rank record'
+                plural: 'rank records'
+        qualification_record:
+            crud:
+                single: 'qualification record'
+                plural: 'qualification records'
         course:
             crud:
                 single: 'Course'
