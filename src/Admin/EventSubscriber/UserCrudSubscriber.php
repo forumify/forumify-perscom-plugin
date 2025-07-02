@@ -4,9 +4,12 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\EventSubscriber;
 
+use Forumify\Admin\Crud\Event\PostSaveCrudEvent;
 use Forumify\Admin\Crud\Event\PreSaveCrudEvent;
 use Forumify\Core\Service\MediaService;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
+use Forumify\PerscomPlugin\Perscom\Repository\AssignmentRecordRepository;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -16,12 +19,16 @@ class UserCrudSubscriber implements EventSubscriberInterface
     public function __construct(
         private readonly MediaService $mediaService,
         private readonly FilesystemOperator $perscomAssetStorage,
+        private readonly AssignmentRecordRepository $assignmentRecordRepository,
     ) {
     }
 
     public static function getSubscribedEvents(): array
     {
-        return [PreSaveCrudEvent::getName(PerscomUser::class) => 'preSaveUser'];
+        return [
+            PostSaveCrudEvent::getName(PerscomUser::class) => 'postSaveUser',
+            PreSaveCrudEvent::getName(PerscomUser::class) => 'preSaveUser',
+        ];
     }
 
     /**
@@ -47,5 +54,32 @@ class UserCrudSubscriber implements EventSubscriberInterface
         $signature = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $newSignature);
         $user->setSignature($signature);
         $user->setSignatureDirty(true);
+    }
+
+    /**
+     * @param PostSaveCrudEvent<PerscomUser> $event
+     */
+    public function postSaveUser(PostSaveCrudEvent $event): void
+    {
+        $form = $event->getForm();
+        $user = $event->getEntity();
+
+        $qb = $this
+            ->assignmentRecordRepository
+            ->createQueryBuilder('ar')
+            ->delete(AssignmentRecord::class, 'ar')
+            ->where('ar.user = :user')
+            ->setParameter('user', $user)
+        ;
+
+        $assignmentRecords = $form->get('secondaryAssignmentRecords')->getData();
+        if ($assignmentRecords !== null) {
+            $assignmentRecordIds = explode(',', $assignmentRecords);
+            $qb->andWhere('ar.id NOT IN (:ids)')
+                ->setParameter('ids', $assignmentRecordIds)
+            ;
+        }
+
+        $qb->getQuery()->execute();
     }
 }

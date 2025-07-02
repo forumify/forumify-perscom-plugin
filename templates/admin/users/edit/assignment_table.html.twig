@@ -1,4 +1,9 @@
 <h2 class="mb-2">Secondary Assignments</h2>
+{{ form_row(form.secondaryAssignmentRecords, {
+    attr: {
+        value: (secondaryAssignmentRecords ?? [])|map(r => r.id)|join(',')
+    }
+}) }}
 <table class="mb-4">
 <thead>
 <tr>

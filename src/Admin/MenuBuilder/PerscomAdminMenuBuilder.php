@@ -24,16 +24,9 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
     {
         $u = $this->urlGenerator->generate(...);
 
-        $submissionMenu = new Menu('Submissions', ['icon' => 'ph ph-table', 'permission' => 'perscom-io.admin.submissions.view']);
-        $submissionMenu->addItem(new MenuItem('View All', $u('perscom_admin_submission_list')));
-        foreach ($this->formRepository->findAll() as $form) {
-            $submissionMenu->addItem(new MenuItem($form->getName(), $u('perscom_admin_submission_list', ['form' => $form->getId()])));
-        }
-
         $perscomMenu = new Menu('PERSCOM', ['icon' => 'ph ph-shield-chevron', 'permission' => 'perscom-io.admin.view'], [
             new MenuItem('Configuration', $u('perscom_admin_configuration'), ['icon' => 'ph ph-wrench', 'permission' => 'perscom-io.admin.configuration.manage']),
             new MenuItem('Users', $u('perscom_admin_user_list'), ['icon' => 'ph ph-users', 'permission' => 'perscom-io.admin.users.view']),
-            $submissionMenu,
         ]);
 
         if ($this->pluginVersionChecker->isVersionInstalled('forumify/forumify-perscom-plugin', 'premium')) {
@@ -47,6 +40,13 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
                     'permission' => 'perscom-io.admin.courses.view',
                 ]));
         }
+
+        $submissionMenu = new Menu('Submissions', ['icon' => 'ph ph-table', 'permission' => 'perscom-io.admin.submissions.view']);
+        $submissionMenu->addItem(new MenuItem('View All', $u('perscom_admin_submission_list')));
+        foreach ($this->formRepository->findAll() as $form) {
+            $submissionMenu->addItem(new MenuItem($form->getName(), $u('perscom_admin_submission_list', ['form' => $form->getId()])));
+        }
+        $perscomMenu->addItem($submissionMenu);
 
         $perscomMenu->addItem(new Menu('Records', ['icon' => 'ph ph-files', 'permission' => 'perscom-io.admin.records.view'], [
             new MenuItem('Service Records', $u('perscom_admin_service_records_list')),

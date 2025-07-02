@@ -15,6 +15,7 @@ use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -76,6 +77,9 @@ class UserType extends AbstractType
                 'class' => Unit::class,
                 'disabled' => true,
                 'required' => false,
+            ])
+            ->add('secondaryAssignmentRecords', HiddenType::class, [
+                'mapped' => false,
             ])
             // uniform
             ->add('newUniform', FileType::class, [
