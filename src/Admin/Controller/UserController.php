@@ -14,18 +14,18 @@ use Symfony\Component\Routing\Attribute\Route;
 #[Route('/users', 'user')]
 class UserController extends AbstractCrudController
 {
+    protected string $listTemplate = '@ForumifyPerscomPlugin/admin/users/list/list.html.twig';
+    protected string $formTemplate = '@ForumifyPerscomPlugin/admin/users/edit/form.html.twig';
+
+    protected ?string $permissionView = 'perscom-io.admin.users.view';
+    protected ?string $permissionCreate = 'perscom-io.admin.users.create';
+    protected ?string $permissionEdit = 'perscom-io.admin.users.manage';
+    protected ?string $permissionDelete = 'perscom-io.admin.users.delete';
+
     public function __construct(
         private readonly AssignmentRecordRepository $assignmentRecordRepository,
     ) {
     }
-
-    protected string $listTemplate = '@ForumifyPerscomPlugin/admin/users/list/list.html.twig';
-    protected string $formTemplate = '@ForumifyPerscomPlugin/admin/users/edit/edit.html.twig';
-
-    protected ?string $permissionView = 'perscom-io.admin.users.view';
-    protected ?string $permissionCreate = 'perscom-io.admin.users.manage';
-    protected ?string $permissionEdit = 'perscom-io.admin.users.manage';
-    protected ?string $permissionDelete = 'perscom-io.admin.users.delete';
 
     protected function getTranslationPrefix(): string
     {

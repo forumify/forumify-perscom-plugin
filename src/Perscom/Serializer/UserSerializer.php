@@ -64,7 +64,7 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
         $user->setName($data['name'] ?? '');
         $user->setCreatedAt(new DateTime($data['created_at'] ?? 'now'));
 
-        if (!empty($data['email'])) {
+        if (!empty($data['email']) && $user->getUser()?->getEmail() !== $data['email']) {
             $fUser = $this->userRepository->findOneBy(['email' => $data['email']]);
             $user->setUser($fUser);
         }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
+use Forumify\Core\Entity\User;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Position;
 use Forumify\PerscomPlugin\Perscom\Entity\Rank;
@@ -40,9 +41,29 @@ class UserType extends AbstractType
         /** @var PerscomUser|null $user */
         $user = $options['data'] ?? null;
 
+        $builder->add('name', TextType::class, [
+            'constraints' => [
+                new Assert\Regex('/^\w+ .+$/'),
+            ],
+            'help' => 'Must be in the format of "firstname lastname", otherwise some modules won\'t work well.',
+        ]);
+
+        if ($user?->getUser() === null) {
+            $builder->add('user', EntityType::class, [
+                'autocomplete' => true,
+                'choice_label' => 'username',
+                'class' => User::class,
+                'required' => false,
+            ]);
+        } else {
+            $builder->add('forumUser', TextType::class, [
+                'data' => $user->getUser()->getDisplayName(),
+                'disabled' => true,
+                'mapped' => false,
+            ]);
+        }
+
         $builder
-            // general
-            ->add('name', TextType::class)
             ->add('rank', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Rank::class,
