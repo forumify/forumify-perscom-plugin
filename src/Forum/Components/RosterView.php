@@ -47,8 +47,7 @@ class RosterView extends AbstractController
     }
 
     #[LiveAction]
-    public function selectRoster(#[LiveArg]
-    int $rosterId): void
+    public function selectRoster(#[LiveArg] int $rosterId): void
     {
         $this->selectedRosterId = $rosterId;
     }
@@ -60,7 +59,7 @@ class RosterView extends AbstractController
                 return $r;
             }
         }
-        throw $this->createNotFoundException();
+        return null;
     }
 
     public function getUsersInUnit(Unit $unit): array

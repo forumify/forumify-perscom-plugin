@@ -71,7 +71,7 @@ class PerscomUser implements PerscomEntityInterface
     private ?string $perscomSignature = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $signatureDirty = true;
+    private bool $signatureDirty = false;
 
     #[ORM\Column(nullable: true)]
     private ?string $uniform = null;
@@ -80,7 +80,7 @@ class PerscomUser implements PerscomEntityInterface
     private ?string $perscomUniform = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => true])]
-    private bool $uniformDirty = true;
+    private bool $uniformDirty = false;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: ServiceRecord::class, fetch: 'EXTRA_LAZY')]
     private Collection $serviceRecords;

@@ -39,6 +39,7 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                 'submissions' => [
                     'view',
                     'assign_statuses',
+                    'delete',
                 ],
                 'organization' => [
                     'view',

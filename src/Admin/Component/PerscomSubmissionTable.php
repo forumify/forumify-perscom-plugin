@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Forumify\Core\Component\Table\AbstractTable;
 use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
@@ -23,6 +24,7 @@ class PerscomSubmissionTable extends AbstractDoctrineTable
     public ?int $form = null;
 
     public function __construct(
+        private readonly Security $security,
         private readonly TranslatorInterface $translator,
         private readonly Environment $twig,
     ) {
@@ -73,7 +75,12 @@ class PerscomSubmissionTable extends AbstractDoctrineTable
 
     private function renderActions(int $id): string
     {
-        return $this->renderAction('perscom_admin_submission_view', ['id' => $id], 'eye');
+        $actions = $this->renderAction('perscom_admin_submission_view', ['id' => $id], 'eye');
+        if ($this->security->isGranted('perscom-io.admin.submissions.delete')) {
+            $actions .= $this->renderAction('perscom_admin_submission_delete', ['id' => $id], 'x');
+        }
+
+        return $actions;
     }
 
     protected function getQuery(array $search): QueryBuilder

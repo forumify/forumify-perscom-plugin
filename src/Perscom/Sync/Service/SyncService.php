@@ -43,7 +43,7 @@ class SyncService
         private readonly EventDispatcherInterface $eventDispatcher,
         PerscomFactory $perscomFactory,
     ) {
-        $this->perscom = $perscomFactory->getPerscom(true);
+        $this->perscom = $perscomFactory->getPerscom();
     }
 
     public function syncAll(?int $resultId = null): void

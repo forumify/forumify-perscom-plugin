@@ -16,7 +16,7 @@
                 <div class="card-body text-left">
                     {% if item is not null and item.image is defined and item.image is not null %}
                         <div class="text-center mb-6">
-                            <img width="25%" height="auto" src="{{ asset(item.image.image, 'perscom.asset') }}" alt="">
+                            <img width="25%" height="auto" src="{{ asset(item.image, 'perscom.asset') }}" alt="">
                         </div>
                     {% endif %}
                     {{ document|parse_document(record)|rich }}
