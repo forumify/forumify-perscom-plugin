@@ -74,23 +74,7 @@ class UserController extends AbstractController
 
     private function getTimeInService(PerscomUser $user): ?DateInterval
     {
-        $firstAssignmentRecord = $this->assignmentRecordRepository
-            ->createQueryBuilder('ar')
-            ->select('MIN(ar.createdAt)')
-            ->where('ar.user = :user')
-            ->andWhere('ar.type = :type')
-            ->setParameter('user', $user)
-            ->setParameter('type', 'primary')
-            ->getQuery()
-            ->getResult()
-        ;
-
-        $firstAssignmentDate = reset($firstAssignmentRecord);
-        if ($firstAssignmentDate === false) {
-            return null;
-        }
-
-        return (new DateTime(reset($firstAssignmentDate)))->diff(new DateTime());
+        return $user->getCreatedAt()->diff(new DateTime());
     }
 
     private function getAwardCounts(PerscomUser $user): array
