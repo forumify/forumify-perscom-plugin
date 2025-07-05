@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Service;
 
+use DateTime;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\EntityManagerInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
@@ -46,17 +47,17 @@ class RecordService
             $record = new $class();
             $record->setUser($user);
             $record->setText($data['text'] ?? '');
-            $record->setCreatedAt($data['created_at']);
+            $record->setCreatedAt($data['created_at'] ?? new DateTime());
             $record->setDocument($data['document'] ?? null);
 
             if ($record instanceof AwardRecord) {
                 $record->setAward($data['award']);
             } elseif ($record instanceof AssignmentRecord) {
-                $record->setType($data['type']);
-                $record->setStatus($data['status']);
-                $record->setSpecialty($data['specialty']);
-                $record->setUnit($data['unit']);
-                $record->setPosition($data['position']);
+                $record->setType($data['type'] ?? 'primary');
+                $record->setStatus($data['status'] ?? null);
+                $record->setSpecialty($data['specialty'] ?? null);
+                $record->setUnit($data['unit'] ?? null);
+                $record->setPosition($data['position'] ?? null);
             } elseif ($record instanceof RankRecord) {
                 $record->setType($data['type']);
                 $record->setRank($data['rank']);

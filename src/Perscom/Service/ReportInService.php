@@ -66,7 +66,7 @@ class ReportInService
             if ($diff > $period) {
                 $failures[] = $perscomUser;
 
-                $lastReportIn->setPreviousStatusId($perscomUser->getStatus()?->getId());
+                $lastReportIn->setPreviousStatusId($perscomUser->getStatus()?->getPerscomId());
                 $this->reportInRepository->save($lastReportIn, false);
                 continue;
             }
@@ -88,10 +88,10 @@ class ReportInService
 
         $failureStatus = $this->getFailureStatus();
         $this->recordService->createRecord('assignment', [
-            'status_id' => $failureStatus->getPerscomId(),
+            'status' => $failureStatus,
             'text' => "Status updated to {$failureStatus->getName()} due to a failure to report in.",
             'type' => 'primary',
-            'users' => array_map(fn (PerscomUser $user) => $user->getPerscomId(), $failures),
+            'users' => $failures,
         ]);
 
         foreach ($failures as $perscomUser) {
@@ -143,13 +143,16 @@ class ReportInService
         $lastReportIn->setLastReportInDate(new DateTime());
 
         $updated = false;
-        if ($previousStatus = $lastReportIn->getPreviousStatusId()) {
-            $this->recordService->createRecord('assignment', [
-                'status_id' => $previousStatus,
-                'text' => "Status reverted back to original due to reporting in.",
-                'type' => 'primary',
-                'users' => [$perscomUserId],
-            ]);
+        if ($previousStatusId = $lastReportIn->getPreviousStatusId()) {
+            $previousStatus = $this->statusRepository->findOneByPerscomId($previousStatusId);
+            if ($previousStatus !== null) {
+                $this->recordService->createRecord('assignment', [
+                    'status' => $previousStatus,
+                    'text' => "Status reverted back to original due to reporting in.",
+                    'type' => 'primary',
+                    'users' => [$perscomUser],
+                ]);
+            }
             $lastReportIn->setPreviousStatusId(null);
             $updated = true;
         }
