@@ -81,7 +81,7 @@ class SyncUserService
         }
 
         if ($forumifyUser === null || $perscomData === null) {
-            throw new \RuntimeException('Unable to get forumify or perscom user.');
+            return;
         }
 
         if ($displayNameEnabled) {

@@ -92,9 +92,10 @@ class RecordType extends AbstractType
     {
         $builder
             ->add('type', ChoiceType::class, [
+                // phpcs:ignore
                 'choices' => [
-                    'Demote' => 'demote',
-                    'Promote' => 'promote',
+                    'Promote' => 'promotion',
+                    'Demote' => 'demotion',
                 ],
             ])
             ->add('rank', EntityType::class, [

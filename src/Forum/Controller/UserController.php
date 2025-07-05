@@ -72,7 +72,7 @@ class UserController extends AbstractController
         return (new DateTime(reset($lastRankRecord)))->diff(new DateTime());
     }
 
-    private function getTimeInService(PerscomUser $user): ?DateInterval
+    private function getTimeInService(PerscomUser $user): DateInterval
     {
         return $user->getCreatedAt()->diff(new DateTime());
     }
