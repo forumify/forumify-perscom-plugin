@@ -8,7 +8,6 @@ use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityWithImageInterface;
 use Forumify\PerscomPlugin\Perscom\Perscom;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Sync\EventSubscriber\Event\PostSyncToPerscomEvent;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
