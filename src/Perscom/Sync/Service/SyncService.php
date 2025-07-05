@@ -236,10 +236,17 @@ class SyncService
         foreach ($changeSet['delete'] as $class => $ids) {
             $resource = $class::getPerscomResource($this->perscom);
             if ($resource instanceof Batchable) {
-                $resource->batchDelete(array_map(fn (int $id) => new ResourceObject($id), $ids));
-            } else {
-                foreach ($ids as $id) {
+                try {
+                    $resource->batchDelete(array_map(fn(int $id) => new ResourceObject($id), $ids));
+                } catch (Exception) {
+                }
+                continue;
+            }
+
+            foreach ($ids as $id) {
+                try {
                     $resource->delete($id);
+                } catch (Exception) {
                 }
             }
         }
@@ -255,17 +262,19 @@ class SyncService
      */
     public function batchCreate(Batchable $resource, array $entities): void
     {
-        $resources = array_map(
-            fn (PerscomEntityInterface $entity) => new ResourceObject(
-                null,
-                $this->normalizer->normalize($entity, 'perscom_array'),
-            ),
-            $entities,
-        );
-        $result = $resource->batchCreate($resources)->array('data');
+        $dirty = $this->getDirty($entities);
+        if (empty($dirty)) {
+            return;
+        }
 
+        $resources = array_map(fn(PerscomEntityInterface $entity) => new ResourceObject(
+            null,
+            $this->normalizer->normalize($entity, 'perscom_array'),
+        ), $dirty);
+
+        $result = $resource->batchCreate($resources)->array('data');
         foreach ($result as $key => $res) {
-            $entity = $entities[$key];
+            $entity = $dirty[$key];
             $entity->setPerscomId($res['id']);
             $entity->setDirty(false);
         }
@@ -277,10 +286,13 @@ class SyncService
     public function batchCreateSeq(ResourceContract $resource, array $entities): void
     {
         foreach ($entities as $entity) {
+            if (!$entity->isDirty()) {
+                continue;
+            }
+
             $result = $resource
                 ->create($this->normalizer->normalize($entity, 'perscom_array'))
-                ->array('data')
-            ;
+                ->array('data');
             $entity->setPerscomId($result['id']);
             $entity->setDirty(false);
         }
@@ -291,16 +303,18 @@ class SyncService
      */
     public function batchUpdate(Batchable $resource, array $entities): void
     {
-        $resources = array_map(
-            fn (PerscomEntityInterface $entity) => new ResourceObject(
-                $entity->getPerscomId(),
-                $this->normalizer->normalize($entity, 'perscom_array'),
-            ),
-            $entities,
-        );
-        $resource->batchUpdate($resources);
+        $dirty = $this->getDirty($entities);
+        if (empty($dirty)) {
+            return;
+        }
 
-        foreach ($entities as $entity) {
+        $resources = array_map(fn(PerscomEntityInterface $entity) => new ResourceObject(
+            $entity->getPerscomId(),
+            $this->normalizer->normalize($entity, 'perscom_array'),
+        ), $dirty);
+
+        $resource->batchUpdate($resources);
+        foreach ($dirty as $entity) {
             $entity->setDirty(false);
         }
     }
@@ -317,6 +331,15 @@ class SyncService
             );
             $entity->setDirty(false);
         }
+    }
+
+    /**
+     * @param array<PerscomEntityInterface> $entities
+     * @return array<PerscomEntityInterface>
+     */
+    private function getDirty(array $entities): array
+    {
+        return array_values(array_filter($entities, fn(PerscomEntityInterface $entity) => $entity->isDirty()));
     }
 
     /**
