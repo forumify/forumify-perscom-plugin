@@ -45,7 +45,7 @@ class PerscomEnlistService
         }
 
         $allowedEnlistmentStatuses = $this->settingRepository->get('perscom.enlistment.status') ?? [];
-        $statusId = $perscomUser->getStatus()?->getId();
+        $statusId = $perscomUser->getStatus()?->getPerscomId();
         return $statusId === null || in_array($statusId, $allowedEnlistmentStatuses, true);
     }
 

@@ -42,14 +42,18 @@ class PerscomSubmissionTable extends AbstractDoctrineTable
             ->addColumn('user__name', [
                 'field' => 'user?.name',
                 'label' => 'Name',
+                'searchable' => false,
+                'sortable' => false,
             ])
             ->addColumn('form__name', [
                 'field' => 'form?.name',
                 'label' => 'Form',
+                'searchable' => false,
+                'sortable' => false,
             ])
             ->addColumn('status', [
                 'field' => 'status',
-                'renderer' => fn ($status) => $status !== null
+                'renderer' => fn($status) => $status !== null
                     ? $this->twig->render('@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig', [
                         'class' => 'text-small',
                         'status' => $status,
@@ -61,7 +65,7 @@ class PerscomSubmissionTable extends AbstractDoctrineTable
             ->addColumn('created_at', [
                 'field' => 'createdAt',
                 'label' => 'Created At',
-                'renderer' => fn (?DateTime $date) => $this->translator->trans('date_time_short', ['date' => $date]),
+                'renderer' => fn(?DateTime $date) => $this->translator->trans('date_time_short', ['date' => $date]),
                 'searchable' => false,
             ])
             ->addColumn('actions', [

@@ -116,7 +116,7 @@ class ReportInService
             return false;
         }
 
-        $statusId = $this->perscomUserService->getLoggedInPerscomUser()?->getStatus()?->getId();
+        $statusId = $this->perscomUserService->getLoggedInPerscomUser()?->getStatus()?->getPerscomId();
         if ($statusId === null) {
             return false;
         }
@@ -186,7 +186,8 @@ class ReportInService
             return [];
         }
 
-        return $this->perscomUserRepository->findBy(['status' => $enabledStatuses]);
+        $statuses = $this->statusRepository->findByPerscomIds($enabledStatuses);
+        return $this->perscomUserRepository->findBy(['status' => $statuses]);
     }
 
     private function sendWarning(User $user, int $daysLeft): void
