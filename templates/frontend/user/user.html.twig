@@ -25,7 +25,10 @@
                         {% if user.rank.image %}
                             <img width="125px" height="auto" src="{{ asset(user.rank.image, 'perscom.asset') }}" alt="">
                         {% endif %}
-                        <div class="text-small">{{ user.rank.name }}</div>
+                        <div class="text-small text-center">
+                            <p>{{ user.rank.name }}</p>
+                            <span class="text-bold">{{ user.rank.paygrade }}</span> | {{ user.rank.abbreviation }}
+                        </div>
                     </div>
                 </div>
             {% endif %}
