@@ -169,7 +169,7 @@ class ReportInService
         }
 
         $failureStatusId = (int)$this->settingRepository->get('perscom.report_in.failure_status');
-        $this->failureStatus = $this->statusRepository->find($failureStatusId);
+        $this->failureStatus = $this->statusRepository->findOneByPerscomId($failureStatusId);
         if ($this->failureStatus === null) {
             throw new \RuntimeException('No failure status found.');
         }
