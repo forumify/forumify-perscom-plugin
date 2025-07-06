@@ -21,7 +21,6 @@ class CombatRecordTable extends AbstractAdminRecordTable
     {
         $this->addColumn('text', [
             'field' => 'text',
-            'searchable' => false,
         ]);
 
         return $this;

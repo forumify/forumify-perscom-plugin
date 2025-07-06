@@ -21,8 +21,6 @@ class AwardRecordTable extends AbstractAdminRecordTable
     {
         $this->addColumn('award', [
             'field' => 'award.name',
-            'searchable' => false,
-            'sortable' => false,
         ]);
 
         return $this;

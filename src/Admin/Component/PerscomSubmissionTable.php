@@ -4,14 +4,12 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Component;
 
-use DateTime;
+use DateTimeInterface;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
-use Forumify\Core\Component\Table\AbstractTable;
 use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
-use Symfony\Contracts\Translation\TranslatorInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Twig\Environment;
@@ -25,10 +23,9 @@ class PerscomSubmissionTable extends AbstractDoctrineTable
 
     public function __construct(
         private readonly Security $security,
-        private readonly TranslatorInterface $translator,
         private readonly Environment $twig,
     ) {
-        $this->sort = ['createdAt' => AbstractTable::SORT_DESC];
+        $this->sort = ['createdAt' => self::SORT_DESC];
     }
 
     protected function getEntityClass(): string
@@ -39,34 +36,28 @@ class PerscomSubmissionTable extends AbstractDoctrineTable
     protected function buildTable(): void
     {
         $this
-            ->addColumn('user__name', [
-                'field' => 'user?.name',
-                'label' => 'Name',
-                'searchable' => false,
-                'sortable' => false,
-            ])
-            ->addColumn('form__name', [
-                'field' => 'form?.name',
-                'label' => 'Form',
-                'searchable' => false,
-                'sortable' => false,
-            ])
-            ->addColumn('status', [
-                'field' => 'status',
-                'renderer' => fn($status) => $status !== null
-                    ? $this->twig->render('@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig', [
-                        'class' => 'text-small',
-                        'status' => $status,
-                    ])
-                    : '',
-                'searchable' => false,
-                'sortable' => false,
-            ])
-            ->addColumn('created_at', [
+            ->addColumn('createdAt', [
                 'field' => 'createdAt',
                 'label' => 'Created At',
-                'renderer' => fn(?DateTime $date) => $this->translator->trans('date_time_short', ['date' => $date]),
+                'renderer' => fn(?DateTimeInterface $date) => $date->format('Y-m-d H:i:s'),
                 'searchable' => false,
+            ])
+            ->addColumn('user', [
+                'field' => 'user?.name',
+                'label' => 'Name',
+            ])
+            ->addColumn('form', [
+                'field' => 'form?.name',
+                'label' => 'Form',
+            ])
+            ->addColumn('status', [
+                'field' => 'status?.name',
+                'renderer' => fn($_, FormSubmission $submission) => $submission->getStatus() !== null
+                    ? $this->twig->render('@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig', [
+                        'class' => 'text-small',
+                        'status' => $submission->getStatus(),
+                    ])
+                    : '',
             ])
             ->addColumn('actions', [
                 'field' => 'id',

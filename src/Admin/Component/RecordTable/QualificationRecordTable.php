@@ -21,8 +21,6 @@ class QualificationRecordTable extends AbstractAdminRecordTable
     {
         $this->addColumn('qualification', [
             'field' => 'qualification.name',
-            'searchable' => false,
-            'sortable' => false,
         ]);
 
         return $this;

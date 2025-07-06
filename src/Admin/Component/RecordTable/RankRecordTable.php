@@ -22,13 +22,9 @@ class RankRecordTable extends AbstractAdminRecordTable
         $this
             ->addColumn('type', [
                 'field' => 'type',
-                'searchable' => false,
-                'sortable' => false,
             ])
             ->addColumn('rank', [
                 'field' => 'rank.name',
-                'searchable' => false,
-                'sortable' => false,
             ])
         ;
 

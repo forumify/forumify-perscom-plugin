@@ -8,12 +8,10 @@ use DateTimeInterface;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 abstract class AbstractAdminRecordTable extends AbstractDoctrineTable
 {
     public function __construct(
-        protected readonly TranslatorInterface $translator,
         protected readonly UrlGeneratorInterface $urlGenerator,
         private readonly Security $security,
     ) {
@@ -30,9 +28,6 @@ abstract class AbstractAdminRecordTable extends AbstractDoctrineTable
             ->addDateColumn()
             ->addColumn('user', [
                 'field' => 'user.name',
-                // TODO: https://github.com/forumify/forumify-platform/issues/115
-                'searchable' => false,
-                'sortable' => false,
             ])
             ->addRecordColumns()
             ->addColumn('actions', [
@@ -50,7 +45,7 @@ abstract class AbstractAdminRecordTable extends AbstractDoctrineTable
         $this->addColumn('createdAt', [
             'field' => 'createdAt',
             'label' => 'Date',
-            'renderer' => fn(DateTimeInterface $date) => $this->translator->trans('date_time_short', ['date' => $date]),
+            'renderer' => fn(DateTimeInterface $date) => $date->format('Y-m-d H:i:s'),
             'searchable' => false,
         ]);
 

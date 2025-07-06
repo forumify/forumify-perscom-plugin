@@ -22,28 +22,18 @@ class AssignmentRecordTable extends AbstractAdminRecordTable
         $this
             ->addColumn('type', [
                 'field' => 'type',
-                'searchable' => false,
-                'sortable' => false,
             ])
             ->addColumn('status', [
                 'field' => 'status?.name',
-                'searchable' => false,
-                'sortable' => false,
             ])
             ->addColumn('unit', [
                 'field' => 'unit?.name',
-                'searchable' => false,
-                'sortable' => false,
             ])
             ->addColumn('position', [
                 'field' => 'position?.name',
-                'searchable' => false,
-                'sortable' => false,
             ])
             ->addColumn('specialty', [
                 'field' => 'specialty?.name',
-                'searchable' => false,
-                'sortable' => false,
             ])
         ;
 

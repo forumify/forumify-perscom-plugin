@@ -31,19 +31,19 @@ class PerscomUserTable extends AbstractDoctrineTable
             ->addColumn('name', [
                 'field' => 'name',
             ])
-            ->addColumn('rank__name', [
+            ->addColumn('rank', [
                 'field' => 'rank?.name',
                 'label' => 'Rank',
             ])
-            ->addColumn('position__name', [
+            ->addColumn('position', [
                 'field' => 'position?.name',
                 'label' => 'Position',
             ])
-            ->addColumn('unit__name', [
+            ->addColumn('unit', [
                 'field' => 'unit?.name',
                 'label' => 'Unit',
             ])
-            ->addColumn('status__name', [
+            ->addColumn('status', [
                 'field' => 'status',
                 'label' => 'Status',
                 'renderer' => fn ($status) => $status !== null
