@@ -44,10 +44,10 @@ class PerscomUserTable extends AbstractDoctrineTable
                 'label' => 'Unit',
             ])
             ->addColumn('status', [
-                'field' => 'status',
+                'field' => 'status?.name',
                 'label' => 'Status',
-                'renderer' => fn ($status) => $status !== null
-                    ? $this->twig->render('@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig', ['status' => $status])
+                'renderer' => fn ($_, PerscomUser $user) => $user->getStatus() !== null
+                    ? $this->twig->render('@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig', ['status' => $user->getStatus()])
                     : '',
             ])
             ->addColumn('actions', [
