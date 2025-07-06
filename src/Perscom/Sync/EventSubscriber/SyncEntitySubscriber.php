@@ -95,5 +95,9 @@ class SyncEntitySubscriber
         ]);
 
         $this->messageBus->dispatch(new SyncToPerscomMessage($data));
+
+        $this->created = [];
+        $this->updated = [];
+        $this->deleted = [];
     }
 }
