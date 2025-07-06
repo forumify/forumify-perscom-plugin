@@ -55,7 +55,7 @@ class UserController extends AbstractController
 
     private function getTimeInGrade(PerscomUser $user): ?DateInterval
     {
-        $lastRankRecordDate = $this->rankRecordRepository
+        $rankRecords = $this->rankRecordRepository
             ->createQueryBuilder('rr')
             ->select('MAX(rr.createdAt)')
             ->where('rr.user = :user')
@@ -64,12 +64,17 @@ class UserController extends AbstractController
             ->getResult()
         ;
 
-        $lastRankRecord = reset($lastRankRecordDate);
-        if ($lastRankRecord === false) {
+        $lastRankRecord = reset($rankRecords);
+        if (!$lastRankRecord) {
             return null;
         }
 
-        return (new DateTime(reset($lastRankRecord)))->diff(new DateTime());
+        $lastDate = reset($lastRankRecord);
+        if (!$lastDate) {
+            return null;
+        }
+
+        return (new DateTime(reset($lastDate)))->diff(new DateTime());
     }
 
     private function getTimeInService(PerscomUser $user): DateInterval
