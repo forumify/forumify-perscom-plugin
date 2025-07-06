@@ -74,7 +74,7 @@ class UserController extends AbstractController
             return null;
         }
 
-        return (new DateTime(reset($lastDate)))->diff(new DateTime());
+        return (new DateTime($lastDate))->diff(new DateTime());
     }
 
     private function getTimeInService(PerscomUser $user): DateInterval
