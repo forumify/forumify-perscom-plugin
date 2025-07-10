@@ -34,6 +34,8 @@ class SyncPerscomTaskHandler
     public function syncSingleEntity(SyncToPerscomMessage $message): void
     {
         $changeSet = $this->contextSerializer->deserialize($message->changeSet);
+        $changeSet['create'] = array_values(array_filter($changeSet['create']));
+        $changeSet['update'] = array_values(array_filter($changeSet['update']));
 
         try {
             $this->syncService->syncToPerscom($changeSet);
