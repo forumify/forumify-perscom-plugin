@@ -13,9 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[IsGranted('perscom-io.admin.users.assign_records')]
 class RecordFormController extends AbstractController
 {
     public function __construct(
@@ -29,6 +27,8 @@ class RecordFormController extends AbstractController
         Request $request,
         string $type
     ): Response {
+        $this->denyAccessUnlessGranted("perscom-io.admin.records.{$type}_records.create");
+
         $data = ['created_at' => new DateTime()];
 
         $userIds = $request->get('users', '');

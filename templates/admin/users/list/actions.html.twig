@@ -4,7 +4,15 @@
             <i class="ph ph-pencil-simple-line"></i>
         </a>
     {% endif %}
-    {% if is_granted('perscom-io.admin.users.manage') or is_granted('perscom-io.admin.users.assign_records') %}
+    {% if [
+        'users.delete',
+        'records.service_records.create',
+        'records.award_records.create',
+        'records.assignment_records.create',
+        'records.combat_records.create',
+        'records.rank_records.create',
+        'records.qualification_records.create',
+    ] has some perm => is_granted('perscom-io.admin.' ~ perm) %}
         {% embed '@Forumify/components/menu.html.twig' with {
             placement: 'bottom-end',
             hideAdornment: true,

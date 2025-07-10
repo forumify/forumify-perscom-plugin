@@ -12,9 +12,9 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('perscom-io.admin.records.assignment_records.view')]
 class AssignmentRecordController extends AbstractRecordCrudController
 {
-    protected ?string $permissionView = 'perscom-io.admin.records.combat_records.view';
-    protected ?string $permissionCreate = 'perscom-io.admin.records.combat_records.create';
-    protected ?string $permissionDelete = 'perscom-io.admin.records.combat_records.delete';
+    protected ?string $permissionView = 'perscom-io.admin.records.assignment_records.view';
+    protected ?string $permissionCreate = 'perscom-io.admin.records.assignment_records.create';
+    protected ?string $permissionDelete = 'perscom-io.admin.records.assignment_records.delete';
 
     protected function getRecordType(): string
     {

@@ -13,7 +13,14 @@
                 </a>
             {% endif %}
         </span>
-        {% if is_granted('perscom-io.admin.users.assign_records') %}
+        {% if [
+            'records.service_records.create',
+            'records.award_records.create',
+            'records.assignment_records.create',
+            'records.combat_records.create',
+            'records.rank_records.create',
+            'records.qualification_records.create',
+        ] has some perm => is_granted('perscom-io.admin.' ~ perm) %}
             <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'bottom-end' }) }}>
                 <a class="btn-primary" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
                     <i class="ph ph-plus"></i>{{ 'perscom.admin.users.quick_actions'|trans }}
