@@ -1,20 +1,30 @@
-{% if is_granted('perscom-io.admin.users.assign_records') %}
-    {% set recordParams = user is defined ? { users: user.id } : {} %}
+{% set recordParams = user is defined ? { users: user.id } : {} %}
+{% if is_granted('perscom-io.admin.records.service_records.create') %}
     <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'service' })) }}">
         <i class="ph ph-list-dashes"></i>{{ 'perscom.admin.users.list.actions.service'|trans }}
     </a>
+{% endif %}
+{% if is_granted('perscom-io.admin.records.award_records.create') %}
     <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'award' })) }}">
         <i class="ph ph-medal-military"></i>{{ 'perscom.admin.users.list.actions.award'|trans }}
     </a>
+{% endif %}
+{% if is_granted('perscom-io.admin.records.combat_records.create') %}
     <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'combat' })) }}">
         <i class="ph ph-crosshair"></i>{{ 'perscom.admin.users.list.actions.combat'|trans }}
     </a>
+{% endif %}
+{% if is_granted('perscom-io.admin.records.rank_records.create') %}
     <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'rank' })) }}">
         <i class="ph ph-caret-double-up"></i>{{ 'perscom.admin.users.list.actions.rank'|trans }}
     </a>
+{% endif %}
+{% if is_granted('perscom-io.admin.records.assignment_records.create') %}
     <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'assignment' })) }}">
         <i class="ph ph-identification-card"></i>{{ 'perscom.admin.users.list.actions.assignment'|trans }}
     </a>
+{% endif %}
+{% if is_granted('perscom-io.admin.records.qualification_records.create') %}
     <a class="btn-link" href="{{ path('perscom_admin_record_form', recordParams|merge({ type: 'qualification' })) }}">
         <i class="ph ph-certificate"></i>{{ 'perscom.admin.users.list.actions.qualification'|trans }}
     </a>

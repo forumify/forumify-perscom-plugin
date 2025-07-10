@@ -34,7 +34,6 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                     'create',
                     'manage',
                     'delete',
-                    'assign_records',
                 ],
                 'submissions' => [
                     'view',
@@ -93,6 +92,7 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                     ],
                 ],
                 'records' => [
+                    'view',
                     'assignment_records' => [
                         'view',
                         'create',
