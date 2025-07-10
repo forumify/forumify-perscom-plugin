@@ -31,6 +31,7 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
         $data = [];
 
         $data['name'] = $object->getName();
+        $data['email'] = $object->getUser()?->getEmail();
         $data['created_at'] = $object->getCreatedAt()->format(Perscom::DATE_FORMAT);
         $data['email_verified_at'] = $object->getCreatedAt()->format(Perscom::DATE_FORMAT);
         $data['position'] = $object->getPosition()?->getPerscomId();

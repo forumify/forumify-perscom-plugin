@@ -50,20 +50,20 @@ class UserEnlistController extends AbstractController
         $enlistment = new Enlistment();
         $enlistment->email = $user->getEmail();
 
-        $form = $this->createForm(EnlistmentType::class, $enlistment, ['perscom_form' => $enlistmentForm]);
+        $form = $this->createForm(EnlistmentType::class, $enlistment, ['form' => $enlistmentForm]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $enlistmentTopic = $perscomEnlistService->enlist($form->getData());
 
             return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
                 'enlistmentTopic' => $enlistmentTopic,
-                'successMessage' => $enlistmentForm['success_message'] ?? '',
+                'successMessage' => $enlistmentForm->getSuccessMessage(),
             ]);
         }
 
         return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist.html.twig', [
             'form' => $form->createView(),
-            'instructions' => $enlistmentForm['instructions'] ?? '',
+            'instructions' => $enlistmentForm->getInstructions(),
         ]);
     }
 }

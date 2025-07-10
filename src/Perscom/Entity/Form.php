@@ -27,7 +27,7 @@ class Form implements PerscomEntityInterface
     private string $name;
 
     #[ORM\Column(type: Types::TEXT)]
-    private string $successMessage;
+    private string $successMessage = '';
 
     #[ORM\ManyToOne(targetEntity: Status::class)]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
