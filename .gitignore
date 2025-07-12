@@ -7,3 +7,6 @@ assets/package-lock.json
 public/styles
 
 .phpcs-cache
+coverage/
+.phpunit.*
+var

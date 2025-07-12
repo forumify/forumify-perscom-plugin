@@ -8,7 +8,6 @@ use Forumify\Admin\Crud\Event\PostSaveCrudEvent;
 use Forumify\Admin\Crud\Event\PreSaveCrudEvent;
 use Forumify\Core\Service\MediaService;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
-use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Repository\AssignmentRecordRepository;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
