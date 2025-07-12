@@ -32,7 +32,7 @@ class PerscomUser implements PerscomEntityInterface
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?User $user = null;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     private string $name;
 
     #[ORM\ManyToOne(targetEntity: Rank::class, fetch: 'EAGER')]

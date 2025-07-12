@@ -22,7 +22,7 @@ class Form implements PerscomEntityInterface
     use PerscomEntityTrait;
     use TimestampableEntityTrait;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(allowNull: false)]
     private string $name;
 

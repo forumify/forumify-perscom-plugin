@@ -25,7 +25,7 @@ class Roster implements PerscomEntityInterface, SortableEntityInterface
     use SortableEntityTrait;
     use TimestampableEntityTrait;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(allowNull: false)]
     private string $name;
 

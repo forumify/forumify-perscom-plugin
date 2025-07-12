@@ -27,7 +27,7 @@ class Document implements PerscomEntityInterface
     #[Gedmo\Blameable(on: 'create')]
     private ?User $createdBy = null;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(allowNull: false)]
     private string $name;
 

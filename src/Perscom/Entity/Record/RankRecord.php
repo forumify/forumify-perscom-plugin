@@ -25,7 +25,7 @@ class RankRecord implements RecordInterface
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Rank $rank;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 16)]
     private string $type = 'promotion';
 
     public static function getPerscomResource(Perscom $perscom): ResourceContract

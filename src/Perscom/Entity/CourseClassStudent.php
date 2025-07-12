@@ -20,13 +20,13 @@ class CourseClassStudent
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private CourseClass $class;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $result = null;
 
     #[ORM\Column(type: 'simple_array', nullable: true)]
     private ?array $qualifications = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $serviceRecordTextOverride = null;
 
     public function getPerscomUserId(): int

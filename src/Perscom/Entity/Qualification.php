@@ -24,7 +24,7 @@ class Qualification implements PerscomEntityInterface, PerscomEntityWithImageInt
     use SortableEntityTrait;
     use TimestampableEntityTrait;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(allowNull: false)]
     private string $name;
 

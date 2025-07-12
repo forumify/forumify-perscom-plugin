@@ -47,7 +47,7 @@ class UserCrudSubscriber implements EventSubscriberInterface
         }
 
         $newSignature = $form->get('newSignature')->getData();
-        if (!($newSignature instanceof UploadedFile)) {
+        if (!$newSignature instanceof UploadedFile) {
             return;
         }
 
@@ -67,9 +67,10 @@ class UserCrudSubscriber implements EventSubscriberInterface
         $qb = $this
             ->assignmentRecordRepository
             ->createQueryBuilder('ar')
-            ->delete(AssignmentRecord::class, 'ar')
             ->where('ar.user = :user')
             ->setParameter('user', $user)
+            ->andWhere('ar.type = :typeSecondary')
+            ->setParameter('typeSecondary', 'secondary')
         ;
 
         $assignmentRecords = $form->get('secondaryAssignmentRecords')->getData();
@@ -80,6 +81,9 @@ class UserCrudSubscriber implements EventSubscriberInterface
             ;
         }
 
-        $qb->getQuery()->execute();
+        $records = $qb->getQuery()->getResult();
+        if (!empty($records)) {
+            $this->assignmentRecordRepository->removeAll($records);
+        }
     }
 }

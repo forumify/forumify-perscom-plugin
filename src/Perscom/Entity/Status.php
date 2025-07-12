@@ -23,11 +23,11 @@ class Status implements PerscomEntityInterface, SortableEntityInterface
     use SortableEntityTrait;
     use TimestampableEntityTrait;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(allowNull: false)]
     private string $name;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 7, options: ['fixed' => true])]
     private string $color = '';
 
     public static function getPerscomResource(Perscom $perscom): ResourceContract

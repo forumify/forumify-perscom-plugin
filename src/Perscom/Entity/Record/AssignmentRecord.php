@@ -22,7 +22,7 @@ class AssignmentRecord implements RecordInterface
 {
     use RecordFields;
 
-    #[Column]
+    #[Column(length: 16)]
     private string $type = 'primary';
 
     #[ORM\ManyToOne(targetEntity: Status::class)]

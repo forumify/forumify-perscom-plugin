@@ -22,13 +22,13 @@ class Course implements AccessControlledEntityInterface, SortableEntityInterface
     use SluggableEntityTrait;
     use SortableEntityTrait;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     private string $title;
 
     #[ORM\Column(type: 'text')]
     private string $description;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column(type: 'integer', nullable: true)]

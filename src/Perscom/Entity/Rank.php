@@ -24,17 +24,19 @@ class Rank implements PerscomEntityInterface, PerscomEntityWithImageInterface, S
     use SortableEntityTrait;
     use TimestampableEntityTrait;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     #[Assert\NotBlank(allowNull: false)]
     private string $name;
 
     #[ORM\Column(type: 'text')]
     private string $description = '';
 
-    #[ORM\Column]
+    #[ORM\Column(length: 8)]
+    #[Assert\Length(max: 8)]
     private string $abbreviation = '';
 
-    #[ORM\Column]
+    #[ORM\Column(length: 16)]
+    #[Assert\Length(max: 16)]
     private string $paygrade = '';
 
     public function getImageEndpoint(): string

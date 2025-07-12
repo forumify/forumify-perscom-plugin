@@ -11,7 +11,7 @@ trait PerscomImageTrait
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $imageId = null;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $image = null;
 
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
