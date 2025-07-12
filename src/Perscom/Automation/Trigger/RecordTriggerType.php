@@ -14,15 +14,15 @@ class RecordTriggerType extends AbstractType
     {
         $builder
             ->add('recordType', ChoiceType::class, [
-                'required' => false,
-                'placeholder' => 'All Records',
                 'choices' => [
-                    'Service' => 'service',
-                    'Award' => 'award',
-                    'Rank' => 'rank',
-                    'Qualification' => 'qualification',
                     'Assignment' => 'assignment',
+                    'Award' => 'award',
+                    'Qualification' => 'qualification',
+                    'Rank' => 'rank',
+                    'Service' => 'service',
                 ],
+                'placeholder' => 'All Records',
+                'required' => false,
             ])
         ;
     }

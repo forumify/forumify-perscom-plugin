@@ -11,8 +11,8 @@ use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/operations', 'operations')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[Route('/operations', 'operations')]
 class OperationController extends AbstractCrudController
 {
     protected ?string $permissionView = 'perscom-io.admin.operations.view';

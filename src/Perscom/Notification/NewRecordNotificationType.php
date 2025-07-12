@@ -52,15 +52,15 @@ class NewRecordNotificationType extends AbstractEmailNotificationType
                 'award' => $data['award']['name'],
             ],
             'rank' => [
-                'type' => $data['type'],
                 'rank' => $data['rank']['name'],
+                'type' => $data['type'],
             ],
             'assignment' => [
                 'position' => $data['position']['name'],
                 'unit' => $data['unit']['name'],
             ],
             'qualification' => [
-                'qualification' => $data['qualification']['name']
+                'qualification' => $data['qualification']['name'],
             ],
             default => ['text' => $data['text']],
         };

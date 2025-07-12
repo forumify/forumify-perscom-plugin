@@ -1,14 +1,15 @@
 perscom:
     settings:
         tab_settings: 'Settings'
-        tab_enlistment: 'Enlistment'
+        tab_general: 'General'
         tab_profile: 'Profile'
         tab_report_in: 'Report In'
         tab_operations: 'Operations'
         tab_courses: 'Courses'
         title: 'PERSCOM.io Plugin Configuration'
+        enlistment: 'Enlistment'
+        enlistment_automations: 'Automations'
         license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
-        automations: 'Automations'
         profile:
             display_name_format_help: >
                 Format to use. This code is in twig, and is given the user's PERSCOM object in context.<br/>
@@ -21,6 +22,10 @@ perscom:
                 </ul>
     admin:
         requires_perscom_account: 'This action requires a PERSCOM account that matches your email.'
+        perscom_user:
+            crud:
+                plural: 'Users'
+                single: 'User'
         users:
             not_found: 'User can not be found.'
             list:
@@ -58,28 +63,66 @@ perscom:
             view:
                 title: 'Submission'
                 user: 'User'
-                status_history: 'Status History'
+                status_reason: 'Status Reason'
                 status_created: 'Submission status updated.'
-        awards:
-            list:
-                title: 'Awards'
-        positions:
-            list:
-                title: 'Positions'
-        qualifications:
-            list:
-                title: 'Qualifications'
-        units:
-            list:
-                title: 'Units'
-        statuses:
-            list:
-                title: 'Statuses'
-        specialties:
-            list:
-                title: 'Specialties'
+        award:
+            crud:
+                single: 'award'
+                plural: 'awards'
+        document:
+            crud:
+                single: 'document'
+                plural: 'documents'
+        position:
+            crud:
+                single: 'position'
+                plural: 'positions'
+        qualification:
+            crud:
+                single: 'qualification'
+                plural: 'qualifications'
+        rank:
+            crud:
+                single: 'rank'
+                plural: 'ranks'
+        unit:
+            crud:
+                single: 'unit'
+                plural: 'units'
+        status:
+            crud:
+                single: 'status'
+                plural: 'statuses'
+        specialty:
+            crud:
+                single: 'specialty'
+                plural: 'specialties'
         configuration:
             title: 'Configuration'
+        service_record:
+            crud:
+                single: 'service record'
+                plural: 'service records'
+        combat_record:
+            crud:
+                single: 'combat record'
+                plural: 'combat records'
+        award_record:
+            crud:
+                single: 'award record'
+                plural: 'award records'
+        assignment_record:
+            crud:
+                single: 'assignment record'
+                plural: 'assignment records'
+        rank_record:
+            crud:
+                single: 'rank record'
+                plural: 'rank records'
+        qualification_record:
+            crud:
+                single: 'qualification record'
+                plural: 'qualification records'
         course:
             crud:
                 single: 'Course'
@@ -103,6 +146,7 @@ perscom:
     enlistment:
         enlist: 'Enlist'
         not_eligible: 'You are currently not eligible for enlistment.'
+        not_enabled: 'Enlistments are currently disabled.'
         pending: 'Your enlistment is being processed. View the enlistment topic for further instructions and updates.'
         topic: 'View enlistment topic'
         start_new: 'Start another enlistment'
@@ -116,6 +160,7 @@ perscom:
         assignment: 'Assignment'
         profile: 'Profile'
         awards: 'Awards'
+        no_awards: 'This user has no awards.'
         service_record: 'Service Record'
         award_record: 'Award Record'
         combat_record: 'Combat Record'
@@ -127,7 +172,7 @@ perscom:
         unit: 'Unit'
         status: 'Status'
         secondary_positions: 'Secondary Positions'
-        no_secondary_positions: 'User does not have any secondary positions.'
+        no_secondary_positions: 'This user does not have any secondary positions.'
         document: 'Record Document'
         text: 'Record Text'
         last_report_in: 'Last report in'

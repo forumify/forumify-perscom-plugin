@@ -52,8 +52,8 @@
                             {% if attendance[state][i] is defined %}
                                 <span class="flex items-center">
                                     {% set user = attendance[state][i] %}
-                                    {% if user.rankImage is not null %}
-                                        <img class="mr-2" width="24" height="24" src="{{ user.rankImage }}" alt="">
+                                    {% if user.rank is not null and user.rank.image is not null %}
+                                        <img class="mr-2" width="24" height="24" src="{{ asset(user.rank.image, 'perscom.asset') }}" alt="">
                                     {% endif %}
                                     {{ user.name }}
                                 </span>

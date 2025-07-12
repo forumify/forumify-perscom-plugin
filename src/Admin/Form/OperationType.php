@@ -37,12 +37,9 @@ class OperationType extends AbstractType
         $builder
             ->add('title')
             ->add('description', TextareaType::class, [
-                'help' => 'perscom.admin.operation.description_help'
+                'help' => 'perscom.admin.operation.description_help',
             ])
             ->add('newImage', FileType::class, [
-                'mapped' => false,
-                'label' => 'Image',
-                'required' => false,
                 'attr' => [
                     'preview' => $imagePreview
                         ? $this->packages->getUrl($imagePreview, 'forumify.asset')
@@ -51,30 +48,33 @@ class OperationType extends AbstractType
                 'constraints' => [
                     new Assert\Image(maxSize: '1M'),
                 ],
+                'label' => 'Image',
+                'mapped' => false,
+                'required' => false,
             ])
             ->add('content', RichTextEditorType::class, [
-                'required' => false,
                 'empty_data' => '',
+                'required' => false,
             ])
             ->add('start', DateType::class, [
-                'widget' => 'single_text',
                 'required' => false,
+                'widget' => 'single_text',
             ])
             ->add('end', DateType::class, [
-                'widget' => 'single_text',
                 'required' => false,
+                'widget' => 'single_text',
             ])
             ->add('requestRsvp', CheckboxType::class, [
-                'required' => false,
                 'help' => 'perscom.admin.operation.rsvp_help',
+                'required' => false,
             ])
             ->add('missionBriefingTemplate', RichTextEditorType::class, [
-                'required' => false,
                 'empty_data' => '',
+                'required' => false,
             ])
             ->add('afterActionReportTemplate', RichTextEditorType::class, [
-                'required' => false,
                 'empty_data' => '',
+                'required' => false,
             ]);
     }
 }

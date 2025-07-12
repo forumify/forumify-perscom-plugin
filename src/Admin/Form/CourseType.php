@@ -36,9 +36,6 @@ class CourseType extends AbstractType
             ->add('title')
             ->add('description', RichTextEditorType::class)
             ->add('newImage', FileType::class, [
-                'mapped' => false,
-                'label' => 'Image',
-                'required' => false,
                 'attr' => [
                     'preview' => $imagePreview
                         ? $this->packages->getUrl($imagePreview, 'forumify.asset')
@@ -49,21 +46,24 @@ class CourseType extends AbstractType
                         maxSize: '10M',
                     ),
                 ],
+                'label' => 'Image',
+                'mapped' => false,
+                'required' => false,
             ])
             ->add('rankRequirement', RankType::class, [
-                'help' => 'What is the minimum rank required to take part in this course? (All ranks equal or above will be eligible)',
                 'autocomplete' => true,
+                'help' => 'What is the minimum rank required to take part in this course? (All ranks equal or above will be eligible)',
                 'required' => false,
             ])
             ->add('prerequisites', QualificationType::class, [
-                'help' => 'Which qualifications are required to take part in this course?',
                 'autocomplete' => true,
+                'help' => 'Which qualifications are required to take part in this course?',
                 'multiple' => true,
                 'required' => false,
             ])
             ->add('qualifications', QualificationType::class, [
-                'help' => 'Which qualifications can be achieved by completing this course?',
                 'autocomplete' => true,
+                'help' => 'Which qualifications can be achieved by completing this course?',
                 'multiple' => true,
                 'required' => false,
             ]);

@@ -4,40 +4,25 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Components;
 
-use Forumify\Core\Component\List\AbstractList;
-use Forumify\Core\Component\List\ListResult;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Doctrine\ORM\QueryBuilder;
+use Forumify\Core\Component\List\AbstractDoctrineList;
+use Forumify\PerscomPlugin\Perscom\Repository\QualificationRepository;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
 #[AsLiveComponent('Perscom\\QualificationList', '@ForumifyPerscomPlugin/frontend/components/qualification_list.html.twig')]
-class QualificationList extends AbstractList
+class QualificationList extends AbstractDoctrineList
 {
-    private ?ListResult $result = null;
-
-    public function __construct(private readonly PerscomFactory $perscomFactory)
+    public function __construct(private readonly QualificationRepository $qualificationRepository)
     {
     }
 
-    public function getResult(): ListResult
+    protected function getQueryBuilder(): QueryBuilder
     {
-        if ($this->result !== null) {
-            return $this->result;
-        }
+        return $this->qualificationRepository->createQueryBuilder('e');
+    }
 
-        $qualifications = $this->perscomFactory
-            ->getPerscom()
-            ->qualifications()
-            ->all(['image'], $this->page, $this->size)
-            ->json()
-        ;
-
-        $this->result = new ListResult(
-            $qualifications['data'],
-            $this->page,
-            $this->size,
-            $qualifications['meta']['total']
-        );
-
-        return $this->result;
+    protected function getCount(): int
+    {
+        return $this->qualificationRepository->count([]);
     }
 }

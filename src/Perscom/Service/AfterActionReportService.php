@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Service;
 
-use Exception;
 use Forumify\Core\Entity\Notification;
 use Forumify\Core\Notification\GenericEmailNotificationType;
 use Forumify\Core\Notification\GenericNotificationType;
@@ -14,10 +13,13 @@ use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Entity\Status;
+use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\StatusRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\UnitRepository;
 use JsonException;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -25,7 +27,6 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class AfterActionReportService
 {
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
         private readonly SettingRepository $settingRepository,
         private readonly AfterActionReportRepository $afterActionReportRepository,
         private readonly RecordService $recordService,
@@ -34,6 +35,8 @@ class AfterActionReportService
         private readonly NotificationService $notificationService,
         private readonly Packages $packages,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly UnitRepository $unitRepository,
+        private readonly StatusRepository $statusRepository,
     ) {
     }
 
@@ -54,17 +57,14 @@ class AfterActionReportService
                 $attendance[$state] = [];
             }
         }
-
-        try {
-            $unitId = $aar->getUnitId();
-            $unit = $this->perscomFactory->getPerscom()->units()->get($unitId)->json('data');
-        } catch (Exception) {
-            $unit = null;
-        }
-
         $aar->setAttendance($attendance);
-        $aar->setUnitName($unit['name'] ?? 'unknown');
-        $aar->setUnitPosition($unit['order'] ?? 100);
+
+        if ($isNew) {
+            /** @var Unit|null */
+            $unit = $this->unitRepository->findOneBy(['perscomId' => $aar->getUnitId()]);
+            $aar->setUnitName($unit?->getName() ?? 'unknown');
+            $aar->setUnitPosition($unit?->getPosition() ?? 999);
+        }
         $this->afterActionReportRepository->save($aar);
 
         if (!$isNew) {
@@ -114,8 +114,8 @@ class AfterActionReportService
 
         $this->recordService->createRecord('combat', [
             'sendNotification' => true,
-            'users' => $perscomUserIds,
             'text' => $aar->getMission()->getCombatRecordText() ?: $this->getDefaultCombatRecordText($aar->getMission()),
+            'users' => $perscomUserIds,
         ]);
     }
 
@@ -124,25 +124,19 @@ class AfterActionReportService
         return "Operation {$mission->getOperation()->getTitle()}: Mission {$mission->getTitle()}";
     }
 
+    /**
+     * @return array<PerscomUser>
+     */
     public function findUsersByUnit(int $unitId): array
     {
-        try {
-            $users = $this->perscomFactory
-                ->getPerscom()
-                ->units()
-                ->get($unitId, [
-                    'users',
-                    'users.rank',
-                    'users.rank.image',
-                    'users.position',
-                    'users.specialty',
-                ])
-                ->json('data')['users'] ?? [];
-        } catch (Exception) {
+        /** @var Unit|null $unit */
+        $unit = $this->unitRepository->findOneBy(['perscomId' => $unitId]);
+        if ($unit === null) {
             return [];
         }
 
-        $this->userService->sortUsers($users);
+        $users = $unit->getUsers()->toArray();
+        $this->userService->sortPerscomUsers($users);
         return $users;
     }
 
@@ -183,9 +177,9 @@ class AfterActionReportService
                 GenericNotificationType::TYPE,
                 $user->getUser(),
                 [
-                    'title' => 'Mission absence',
                     'description' => $notificationMessage,
                     'image' => $this->packages->getUrl('bundles/forumifyperscomplugin/images/perscom.png'),
+                    'title' => 'Mission absence',
                     'url' => $this->urlGenerator->generate('perscom_aar_view', ['id' => $aar->getId()]),
                 ],
             ));
@@ -208,7 +202,7 @@ class AfterActionReportService
             return;
         }
 
-        /** @var AfterActionReport[] $pastAars */
+        /** @var array<AfterActionReport> $pastAars */
         $pastAars = $this->afterActionReportRepository
             ->createQueryBuilder('aar')
             ->join('aar.mission', 'm')
@@ -238,13 +232,13 @@ class AfterActionReportService
                 GenericEmailNotificationType::TYPE,
                 $user->getUser(),
                 [
-                    'title' => "You have been marked absent $consecutiveCount times consecutively!",
                     'description' => $description,
-                    'image' => $this->packages->getUrl('bundles/forumifyperscomplugin/images/perscom.png'),
-                    'url' => $this->urlGenerator->generate('perscom_aar_view', ['id' => $aar->getId()]),
-                    'emailTemplate' => '@ForumifyPerscomPlugin/emails/notifications/consecutive_absence.html.twig',
                     'emailActionLabel' => 'View After Action Report',
                     'emailContent' => $consecutiveMessage,
+                    'emailTemplate' => '@ForumifyPerscomPlugin/emails/notifications/consecutive_absence.html.twig',
+                    'image' => $this->packages->getUrl('bundles/forumifyperscomplugin/images/perscom.png'),
+                    'title' => "You have been marked absent $consecutiveCount times consecutively!",
+                    'url' => $this->urlGenerator->generate('perscom_aar_view', ['id' => $aar->getId()]),
                 ]
             ));
         }
@@ -254,23 +248,19 @@ class AfterActionReportService
             return;
         }
 
-        try {
-            $consecutiveStatus = $this->perscomFactory
-                ->getPerscom()
-                ->statuses()
-                ->get($consecutiveStatusId)
-                ->json('data');
-        } catch (Exception) {
+        /** @var Status|null $consecutiveStatus */
+        $consecutiveStatus = $this->statusRepository->find($consecutiveStatusId);
+        if ($consecutiveStatus === null) {
             return;
         }
 
         $absentUserIds = array_map(fn (PerscomUser $user) => $user->getId(), $absentUsers);
         $this->recordService->createRecord('assignment', [
-            'users' => $absentUserIds,
-            'type' => 'primary',
-            'status_id' => $consecutiveStatusId,
-            'text' => "Status updated to {$consecutiveStatus['name']} due to consecutive absences.",
             'sendNotification' => true,
+            'status' => $consecutiveStatus,
+            'text' => "Status updated to {$consecutiveStatus->getName()} due to consecutive absences.",
+            'type' => 'primary',
+            'users' => $absentUserIds,
         ]);
     }
 

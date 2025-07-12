@@ -38,33 +38,33 @@ class MissionType extends AbstractType
         $builder
             ->add('title')
             ->add('start', DateTimeType::class, [
-                'widget' => 'single_text',
                 'view_timezone' => $user?->getTimezone() ?? 'UTC',
+                'widget' => 'single_text',
             ])
             ->add('end', DateTimeType::class, [
-                'widget' => 'single_text',
                 'required' => false,
                 'view_timezone' => $user?->getTimezone() ?? 'UTC',
+                'widget' => 'single_text',
             ])
             ->add('calendar', EntityType::class, [
-                'required' => false,
-                'class' => Calendar::class,
-                'choice_label' => 'title',
                 'autocomplete' => true,
-                'placeholder' => 'Do not create a calendar event',
+                'choice_label' => 'title',
+                'class' => Calendar::class,
                 'help' => 'Automatically create a calendar event after posting this mission.',
+                'placeholder' => 'Do not create a calendar event',
+                'required' => false,
             ])
             ->add('sendNotification', CheckboxType::class, [
-                'required' => false,
                 'help' => 'Send a "new mission posted" notification to everyone who has access to this operation.',
+                'required' => false,
             ])
             ->add('createCombatRecords', CheckboxType::class, [
-                'required' => false,
                 'help' => 'Automatically create combat records ',
+                'required' => false,
             ])
             ->add('combatRecordText', TextType::class, [
-                'required' => false,
                 'help' => 'Only used if create combat records is enabled. If empty, a default message including the operation and mission will be used.',
+                'required' => false,
             ])
             ->add('briefing', RichTextEditorType::class)
         ;

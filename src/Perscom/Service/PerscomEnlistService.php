@@ -11,21 +11,26 @@ use Forumify\Forum\Repository\ForumRepository;
 use Forumify\Forum\Service\CreateTopicService;
 use Forumify\PerscomPlugin\Perscom\Entity\EnlistmentTopic;
 use Forumify\PerscomPlugin\Forum\Form\Enlistment;
+use Forumify\PerscomPlugin\Perscom\Entity\Form;
+use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Event\UserEnlistedEvent;
 use Forumify\PerscomPlugin\Perscom\Repository\EnlistmentTopicRepository;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\FormSubmissionRepository;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class PerscomEnlistService
 {
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
         private readonly PerscomUserService $perscomUserService,
         private readonly SettingRepository $settingRepository,
         private readonly ForumRepository $forumRepository,
         private readonly CreateTopicService $createTopicService,
         private readonly EnlistmentTopicRepository $enlistmentTopicRepository,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly FormRepository $formRepository,
+        private readonly FormSubmissionRepository $formSubmissionRepository,
     ) {
     }
 
@@ -40,50 +45,40 @@ class PerscomEnlistService
         }
 
         $allowedEnlistmentStatuses = $this->settingRepository->get('perscom.enlistment.status') ?? [];
-        return $perscomUser['status_id'] === null || in_array($perscomUser['status_id'], $allowedEnlistmentStatuses, true);
+        $statusId = $perscomUser->getStatus()?->getPerscomId();
+        return $statusId === null || in_array($statusId, $allowedEnlistmentStatuses, true);
     }
 
-    public function getEnlistmentForm(): ?array
+    public function getEnlistmentForm(): ?Form
     {
         $formId = $this->settingRepository->get('perscom.enlistment.form');
-
-        return $this->perscomFactory->getPerscom()
-            ->forms()
-            ->get($formId, ['fields'])
-            ->json('data') ?? [];
-    }
-
-    public function getCurrentEnlistment(int $submissionId): ?array
-    {
-        try {
-            return $this->perscomFactory
-                ->getPerscom()
-                ->submissions()
-                ->get($submissionId, ['statuses'])
-                ->json('data');
-        } catch (\Exception) {
+        if ($formId === null) {
             return null;
         }
+
+        return $this->formRepository->findOneByPerscomId($formId);
+    }
+
+    public function getCurrentEnlistment(int $submissionId): ?FormSubmission
+    {
+        return $this->formSubmissionRepository->findOneByPerscomId($submissionId);
     }
 
     public function enlist(Enlistment $enlistment): ?EnlistmentTopic
     {
         $perscomUser = $this->getOrCreatePerscomUser($enlistment);
-        $submission = $this->perscomFactory
-            ->getPerscom()
-            ->submissions()
-            ->create([
-                'form_id' => $this->getEnlistmentForm()['id'],
-                'user_id' => $perscomUser['id'],
-                ...$enlistment->additionalFormData,
-            ])
-            ->json('data');
+
+        $submission = new FormSubmission();
+        $submission->setForm($this->getEnlistmentForm());
+        $submission->setUser($perscomUser);
+        $submission->setData($enlistment->additionalFormData);
+        $this->formSubmissionRepository->save($submission);
 
         $this->eventDispatcher->dispatch(new UserEnlistedEvent($perscomUser, $submission));
         return $this->createEnlistmentTopic($perscomUser, $submission);
     }
 
-    private function getOrCreatePerscomUser(Enlistment $enlistment): array
+    private function getOrCreatePerscomUser(Enlistment $enlistment): PerscomUser
     {
         $perscomUser = $this->perscomUserService->getLoggedInPerscomUser();
 
@@ -93,7 +88,7 @@ class PerscomEnlistService
         );
     }
 
-    private function createEnlistmentTopic(array $perscomUser, array $submission): ?EnlistmentTopic
+    private function createEnlistmentTopic(PerscomUser $perscomUser, FormSubmission $submission): ?EnlistmentTopic
     {
         $forumId = $this->settingRepository->get('perscom.enlistment.forum');
         if (!$forumId) {
@@ -106,7 +101,7 @@ class PerscomEnlistService
         }
 
         $newTopic = new TopicData();
-        $newTopic->setTitle("New enlistment from \"{$perscomUser['name']}\"");
+        $newTopic->setTitle("New enlistment from \"{$perscomUser->getName()}\"");
         $newTopic->setContent($this->formSubmissionToMarkdown($submission));
 
         $topic = $this->createTopicService->createTopic($forum, $newTopic);
@@ -116,15 +111,15 @@ class PerscomEnlistService
         return $enlistmentTopic;
     }
 
-    private function formSubmissionToMarkdown(array $submission): string
+    private function formSubmissionToMarkdown(FormSubmission $submission): string
     {
         $content = '';
 
-        /** @var array $form */
         $form = $this->getEnlistmentForm();
-        foreach ($form['fields'] as $field) {
+        $data = $submission->getData();
+        foreach ($form->getFields() as $field) {
             $label = $field['name'];
-            $value = $submission[$field['key']] ?? '';
+            $value = $data[$field['key']] ?? '';
 
             $value = match ($field['type']) {
                 'boolean' => $value ? 'Yes': 'No',
