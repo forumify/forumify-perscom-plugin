@@ -52,7 +52,11 @@ class PerscomEnlistService
     public function getEnlistmentForm(): ?Form
     {
         $formId = $this->settingRepository->get('perscom.enlistment.form');
-        return $this->formRepository->find($formId);
+        if ($formId === null) {
+            return null;
+        }
+
+        return $this->formRepository->findOneByPerscomId($formId);
     }
 
     public function getCurrentEnlistment(int $submissionId): ?FormSubmission

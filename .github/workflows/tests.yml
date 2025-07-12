@@ -38,7 +38,6 @@ jobs:
           php bin/console forumify:platform:setting -k forumify.platform_installed --value true
           php bin/console forumify:plugins:refresh --env=test
           php bin/console forumify:plugins:activate forumify/forumify-perscom-plugin --env=test
-          php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
       - name: Run tests
         run: cd tests && vendor/bin/phpunit

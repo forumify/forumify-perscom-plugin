@@ -7,14 +7,15 @@
         "symfony/runtime": "6.4.*"
     },
     "require-dev": {
+        "dama/doctrine-test-bundle": "^8.0",
+        "dg/bypass-finals": "^1.9",
         "phpunit/phpunit": "^11.5",
         "symfony/browser-kit": "6.4.*",
         "symfony/css-selector": "6.4.*",
         "symfony/debug-bundle": "6.4.*",
         "symfony/stopwatch": "6.4.*",
         "symfony/web-profiler-bundle": "6.4.*",
-        "dama/doctrine-test-bundle": "^8.0",
-        "dg/bypass-finals": "^1.9"
+        "zenstruck/foundry": "2.x-dev"
     },
     "repositories": [
         {

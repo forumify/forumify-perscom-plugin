@@ -70,7 +70,9 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
 
         if (!empty($data['email']) && $user->getUser()?->getEmail() !== $data['email']) {
             $fUser = $this->userRepository->findOneBy(['email' => $data['email']]);
-            $user->setUser($fUser);
+            if ($fUser !== null) {
+                $user->setUser($fUser);
+            }
         }
 
         $user->setPosition($context['positions'][$data['position_id'] ?? 0] ?? null);

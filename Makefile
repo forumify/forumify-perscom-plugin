@@ -22,7 +22,6 @@ setup-tests:
 	@cd tests && php bin/console forumify:platform:setting -k forumify.platform_installed --value true
 	@cd tests && php bin/console forumify:plugins:refresh --env=test
 	@cd tests && php bin/console forumify:plugins:activate forumify/forumify-perscom-plugin --env=test
-	@cd tests && php bin/console doctrine:migrations:migrate --no-interaction --env=test
 
 .PHONY: run-tests
 run-tests:
