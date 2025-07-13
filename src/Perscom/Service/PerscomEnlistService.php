@@ -61,7 +61,7 @@ class PerscomEnlistService
 
     public function getCurrentEnlistment(int $submissionId): ?FormSubmission
     {
-        return $this->formSubmissionRepository->findOneByPerscomId($submissionId);
+        return $this->formSubmissionRepository->find($submissionId);
     }
 
     public function enlist(Enlistment $enlistment): ?EnlistmentTopic
@@ -105,7 +105,7 @@ class PerscomEnlistService
         $newTopic->setContent($this->formSubmissionToMarkdown($submission));
 
         $topic = $this->createTopicService->createTopic($forum, $newTopic);
-        $enlistmentTopic = new EnlistmentTopic($submission['id'], $topic);
+        $enlistmentTopic = new EnlistmentTopic($submission->getId(), $topic);
         $this->enlistmentTopicRepository->save($enlistmentTopic);
 
         return $enlistmentTopic;

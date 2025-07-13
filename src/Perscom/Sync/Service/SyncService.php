@@ -13,7 +13,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomSyncResult;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Sync\EventSubscriber\Event\PostSyncToPerscomEvent;
-use Forumify\PerscomPlugin\Perscom\Sync\Exception\SyncLockedException;
 use Perscom\Contracts\Batchable;
 use Perscom\Contracts\ResourceContract;
 use Perscom\Data\ResourceObject;
@@ -206,10 +205,7 @@ class SyncService
     public function syncToPerscom(array $changeSet): void
     {
         $mutex = $this->lockFactory->createLock(self::SYNC_LOCK_NAME);
-        $locked = $mutex->acquire(false);
-        if (!$locked) {
-            throw new SyncLockedException();
-        }
+        $mutex->acquire(true);
 
         $this->isRunning = true;
 
@@ -254,6 +250,7 @@ class SyncService
         $this->eventDispatcher->dispatch(new PostSyncToPerscomEvent($changeSet));
 
         $this->em->flush();
+        $this->em->clear();
         $mutex->release();
     }
 

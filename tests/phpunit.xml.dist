@@ -30,7 +30,7 @@
             <directory suffix=".php">../src</directory>
         </include>
         <exclude>
-            <directory>src/*/Entity</directory>
+            <directory>../src/*/Entity</directory>
         </exclude>
     </source>
 

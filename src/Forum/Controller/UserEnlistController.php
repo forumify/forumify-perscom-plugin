@@ -37,10 +37,10 @@ class UserEnlistController extends AbstractController
             return $this->redirectToRoute('forumify_core_index');
         }
 
-        /** @var EnlistmentTopic|null $enlistmentTopic */
-        $enlistmentTopic = $enlistmentTopicRepository->findOneBy(['user' => $user], ['submissionId' => 'DESC']);
-
-        if ($enlistmentTopic !== null && $request->get('force_new') === null) {
+        /** @var array<EnlistmentTopic> $enlistmentTopics */
+        $enlistmentTopics = $enlistmentTopicRepository->findBy(['user' => $user], ['submissionId' => 'DESC'], 1);
+        $enlistmentTopic = reset($enlistmentTopics);
+        if ($enlistmentTopic !== false && $request->get('force_new') === null) {
             $submission = $perscomEnlistService->getCurrentEnlistment($enlistmentTopic->getSubmissionId());
             if ($submission !== null) {
                 return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [

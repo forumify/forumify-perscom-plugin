@@ -1,8 +1,7 @@
 {
-    "minimum-stability": "dev",
     "require": {
         "forumify/forumify-platform": "dev-master",
-        "forumify/forumify-perscom-plugin": "*",
+        "forumify/forumify-perscom-plugin": "@dev",
         "symfony/flex": "^2",
         "symfony/runtime": "6.4.*"
     },
