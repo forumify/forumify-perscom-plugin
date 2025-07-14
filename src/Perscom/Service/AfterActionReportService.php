@@ -174,6 +174,10 @@ class AfterActionReportService
             : $notificationMessage;
 
         foreach ($absentUsers as $user) {
+            if ($user->getUser() === null) {
+                continue;
+            }
+
             $this->notificationService->sendNotification(new Notification(
                 GenericNotificationType::TYPE,
                 $user->getUser(),
@@ -226,6 +230,10 @@ class AfterActionReportService
 
         foreach ($absentUsers as $user) {
             if (!$this->isAbsentInAllAars($user, $pastAars)) {
+                continue;
+            }
+
+            if ($user->getUser() === null) {
                 continue;
             }
 

@@ -6,6 +6,7 @@ namespace PluginTests\Application;
 
 use DateInterval;
 use DateTimeImmutable;
+use Forumify\Core\Repository\SettingRepository;
 use PluginTests\Factories\Forumify\CalendarFactory;
 use PluginTests\Factories\Perscom\UserFactory;
 use PluginTests\Factories\Stories\MilsimStory;
@@ -31,6 +32,8 @@ class OperationsTest extends WebTestCase
 
         $user = $this->createAdmin();
         $client->loginUser($user);
+
+        self::getContainer()->get(SettingRepository::class)->set('perscom.operations.absent_notification', true);
 
         UserFactory::createOne(['user' => $user, 'status' => MilsimStory::statusActiveDuty()]);
 
