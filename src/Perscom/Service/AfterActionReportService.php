@@ -112,10 +112,11 @@ class AfterActionReportService
             return;
         }
 
+        $perscomUsers = $this->perscomUserRepository->findByPerscomIds($perscomUserIds);
         $this->recordService->createRecord('combat', [
             'sendNotification' => true,
             'text' => $aar->getMission()->getCombatRecordText() ?: $this->getDefaultCombatRecordText($aar->getMission()),
-            'users' => $perscomUserIds,
+            'users' => $perscomUsers,
         ]);
     }
 

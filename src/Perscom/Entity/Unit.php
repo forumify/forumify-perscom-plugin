@@ -59,11 +59,17 @@ class Unit implements PerscomEntityInterface, SortableEntityInterface
         $this->description = $description;
     }
 
+    /**
+     * @return Collection<int, PerscomUser>
+     */
     public function getUsers(): Collection
     {
         return $this->users;
     }
 
+    /**
+     * @param Collection<int, PerscomUser> $users
+     */
     public function setUsers(Collection $users): void
     {
         $this->users = $users;

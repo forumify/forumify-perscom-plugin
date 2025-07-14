@@ -17,7 +17,7 @@ class UserFactory extends PersistentProxyObjectFactory
     protected function defaults(): array|callable
     {
         return [
-            'name' => self::faker()->name(),
+            'name' => self::faker()->firstNameMale() . ' ' . self::faker()->lastName(),
             'perscomId' => self::faker()->unique()->numberBetween(1, 1000),
         ];
     }

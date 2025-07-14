@@ -15,6 +15,7 @@ use PluginTests\Factories\Perscom\RankFactory;
 use PluginTests\Factories\Perscom\SpecialtyFactory;
 use PluginTests\Factories\Perscom\StatusFactory;
 use PluginTests\Factories\Perscom\UnitFactory;
+use PluginTests\Factories\Perscom\UserFactory;
 use Zenstruck\Foundry\Story;
 
 /**
@@ -64,6 +65,7 @@ class MilsimStory extends Story
                 'type' => 'text',
             ]],
             'instructions' => 'Enlistment Instructions',
+            'name' => 'Enlistment',
             'successMessage' => 'Enlistment Success',
         ]);
         $this->settingRepository->set('perscom.enlistment.form', $enlistmentForm->getPerscomId());
@@ -72,6 +74,19 @@ class MilsimStory extends Story
         $enlistmentForum = ForumFactory::createOne(['title' => 'Enlistments']);
         $this->settingRepository->set('perscom.enlistment.forum', $enlistmentForum->getId());
 
+        FormFactory::createOne([
+            'defaultStatus' => $pending,
+            'fields' => [[
+                'help' => '',
+                'key' => 'reason',
+                'name' => 'Why do you need time off?',
+                'readonly' => false,
+                'required' => true,
+                'type' => 'text',
+            ]],
+            'name' => 'Leave Of Absence',
+        ]);
+
         // Units
         $firstSquad = UnitFactory::createOne(['name' => 'First Squad']);
         $this->addState('unitFirstSquad', $firstSquad);
@@ -79,6 +94,8 @@ class MilsimStory extends Story
         $this->addState('unitSecondSquad', $secondSquad);
 
         // Positions
+        $squadLeader = PositionFactory::createOne(['name' => 'Squad Leader']);
+        $teamLeader = PositionFactory::createOne(['name' => 'Team Leader']);
         $riflemanAT = PositionFactory::createOne(['name' => 'Rifleman AT']);
         $this->addState('positionRiflemanAT', $riflemanAT);
 
@@ -87,8 +104,34 @@ class MilsimStory extends Story
         $this->addState('specialtyInfantry', $infantry);
 
         // Ranks
-        $pvt = RankFactory::createOne(['name' => 'Private Trainee', 'abbreviation' => 'PVT', 'paygrade' => 'E-1']);
+        $sgt = RankFactory::createOne(['name' => 'Sergeant', 'abbreviation' => 'SGT', 'paygrade' => 'E5']);
+        $cpl = RankFactory::createOne(['name' => 'Corporal', 'abbreviation' => 'CPL', 'paygrade' => 'E4']);
+        $spc = RankFactory::createOne(['name' => 'Specialist', 'abbreviation' => 'SPC', 'paygrade' => 'E4']);
+        $pfc = RankFactory::createOne(['name' => 'Private First Class', 'abbreviation' => 'PFC', 'paygrade' => 'E3']);
+        $pv2 = RankFactory::createOne(['name' => 'Private Second Class', 'abbreviation' => 'PV2', 'paygrade' => 'E2']);
+        $pvt = RankFactory::createOne(['name' => 'Private Trainee', 'abbreviation' => 'PVT', 'paygrade' => 'E1']);
         $this->addState('rankPVT', $pvt);
+
+        // Users
+        $this->createUser($sgt, $firstSquad, $squadLeader, $infantry, $activeDuty);
+        $this->createUser($cpl, $firstSquad, $teamLeader, $infantry, $activeDuty);
+        $this->createUser($cpl, $firstSquad, $teamLeader, $infantry, $activeDuty);
+        $this->createUser($spc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($spc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($pfc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($pfc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($pv2, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($pv2, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+
+        $this->createUser($sgt, $secondSquad, $squadLeader, $infantry, $activeDuty);
+        $this->createUser($cpl, $secondSquad, $teamLeader, $infantry, $activeDuty);
+        $this->createUser($cpl, $secondSquad, $teamLeader, $infantry, $activeDuty);
+        $this->createUser($spc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($spc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($pfc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($pfc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($pv2, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->createUser($pv2, $secondSquad, $riflemanAT, $infantry, $activeDuty);
     }
 
     private function createPerscomMenu(): void
@@ -111,5 +154,16 @@ class MilsimStory extends Story
             'roster_guests' => true,
         ]);
         $this->menuItemRepository->save($perscomMenu);
+    }
+
+    private function createUser($rank, $unit, $position, $specialty, $status): Entity\PerscomUser
+    {
+        return UserFactory::createOne([
+            'rank' => $rank,
+            'unit' => $unit,
+            'position' => $position,
+            'specialty' => $specialty,
+            'status' => $status,
+        ]);
     }
 }
