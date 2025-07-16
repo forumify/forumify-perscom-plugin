@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Form;
 
 use DateTime;
+use Forumify\Core\Service\MediaService;
 use Forumify\PerscomPlugin\Perscom\Entity\Form;
 use Forumify\PerscomPlugin\Perscom\Perscom;
+use League\Flysystem\FilesystemOperator;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\DataMapperInterface;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -23,11 +25,18 @@ use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\TimezoneType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Traversable;
 
 class PerscomFormType extends AbstractType implements DataMapperInterface
 {
+    public function __construct(
+        private readonly FilesystemOperator $perscomAssetStorage,
+        private readonly MediaService $mediaService,
+    ) {
+    }
+
     private const FIELD_MAP = [
         'boolean' => CheckboxType::class,
         'code' => TextareaType::class,
@@ -111,6 +120,10 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
             $value = $form->getData();
             if ($value instanceof DateTime) {
                 $value = $value->format(Perscom::DATE_FORMAT);
+            }
+
+            if ($value instanceof UploadedFile) {
+                $value = $this->mediaService->saveToFilesystem($this->perscomAssetStorage, $value);
             }
 
             $viewData[$field] = $value;

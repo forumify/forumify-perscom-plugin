@@ -8,6 +8,8 @@
                 {% if value %}
                     {{ value|format_date }}
                 {% endif %}
+            {% elseif field.type is same as 'file' %}
+                <a href="{{ asset(value, 'perscom.asset') }}" target="_blank">{{ value }}</a>
             {% else %}
                 {{ value }}
             {% endif %}
