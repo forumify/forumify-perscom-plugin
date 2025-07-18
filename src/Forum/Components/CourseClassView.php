@@ -9,22 +9,23 @@ use Forumify\Core\Security\VoterAttribute;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassInstructor;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassStudent;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Entity\Rank;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\QualificationRecord;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassInstructorRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassStudentRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseInstructorRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\RankRepository;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent('Perscom\\CourseClassView', '@ForumifyPerscomPlugin/frontend/components/course_class/class.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\CourseClassView', '@ForumifyPerscomPlugin/frontend/components/course_class/class.html.twig')]
 class CourseClassView extends AbstractController
 {
     use DefaultActionTrait;
@@ -34,7 +35,7 @@ class CourseClassView extends AbstractController
 
     public function __construct(
         private readonly PerscomUserService $perscomUserService,
-        private readonly PerscomFactory $perscomFactory,
+        private readonly RankRepository $rankRepository,
         private readonly CourseInstructorRepository $instructorRepository,
         private readonly CourseClassStudentRepository $classStudentRepository,
         private readonly CourseClassInstructorRepository $classInstructorRepository,
@@ -51,27 +52,21 @@ class CourseClassView extends AbstractController
 
     public function canSignUpAsStudent(): bool
     {
-        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()['id'] ?? null;
-        if ($perscomUserId === null) {
-            // How did you even get here? lmao
+        $user = $this->perscomUserService->getLoggedInPerscomUser();
+        if ($user === null || $user->getPerscomId() === null) {
             return false;
         }
 
-        $perscom = $this->perscomFactory->getPerscom();
 
-        try {
-            $user = $perscom
-                ->users()
-                ->get($perscomUserId, ['rank', 'qualification_records'])
-                ->json('data');
-        } catch (\Exception) {
-            return false;
-        }
+        $qualificationIds = $user
+            ->getQualificationRecords()
+            ->map(fn (QualificationRecord $r) => $r->getQualification()->getPerscomId())
+            ->toArray()
+        ;
 
         $prerequisites = $this->class->getCourse()->getPrerequisites();
-        $qualifications = array_column($user['qualification_records'], 'qualification_id');
         foreach ($prerequisites as $prerequisiteId) {
-            if (!in_array((int)$prerequisiteId, $qualifications, true)) {
+            if (!in_array((int)$prerequisiteId, $qualificationIds, true)) {
                 return false;
             }
         }
@@ -81,21 +76,14 @@ class CourseClassView extends AbstractController
             return true;
         }
 
-        try {
-            $rankRequirement = $perscom
-                ->ranks()
-                ->get($rankId)
-                ->json('data');
-        } catch (\Exception) {
-            return false;
-        }
-
-        return $rankRequirement['order'] >= $user['rank']['order'];
+        /** @var Rank|null $rank */
+        $rank = $this->rankRepository->findOneBy(['perscomId' => $rankId]);
+        return $rank?->getPosition() >= $user->getRank()->getPosition();
     }
 
     public function isSignedUpAsStudent(): bool
     {
-        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()['id'] ?? null;
+        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()?->getPerscomId();
         if ($perscomUserId === null) {
             return false;
         }
@@ -111,7 +99,7 @@ class CourseClassView extends AbstractController
             return;
         }
 
-        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()['id'] ?? null;
+        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()?->getPerscomId();
         if ($perscomUserId === null) {
             return;
         }
@@ -131,18 +119,18 @@ class CourseClassView extends AbstractController
     public function registerInstructor(#[LiveArg] ?int $instructorId = null): void
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
-            'permission' => 'signup_as_instructor',
             'entity' => $this->class->getCourse(),
+            'permission' => 'signup_as_instructor',
         ]);
 
-        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()['id'] ?? null;
+        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()?->getPerscomId();
         if ($perscomUserId === null) {
             return;
         }
 
         $instructor = $this->classInstructorRepository->find([
-            'perscomUserId' => $perscomUserId,
             'class' => $this->class,
+            'perscomUserId' => $perscomUserId,
         ]);
 
         if ($instructor !== null) {
@@ -164,12 +152,12 @@ class CourseClassView extends AbstractController
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $this->class->getCourse(),
-            'permission' => 'manage_classes'
+            'permission' => 'manage_classes',
         ]);
 
         $student = $this->classStudentRepository->find([
-            'perscomUserId' => $perscomUserId,
             'class' => $this->class,
+            'perscomUserId' => $perscomUserId,
         ]);
 
         if ($student !== null) {
@@ -182,12 +170,12 @@ class CourseClassView extends AbstractController
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
             'entity' => $this->class->getCourse(),
-            'permission' => 'manage_classes'
+            'permission' => 'manage_classes',
         ]);
 
         $instructor = $this->classInstructorRepository->find([
-            'perscomUserId' => $perscomUserId,
             'class' => $this->class,
+            'perscomUserId' => $perscomUserId,
         ]);
 
         if ($instructor !== null) {
@@ -197,14 +185,14 @@ class CourseClassView extends AbstractController
 
     public function isSignedUpAsInstructor(): bool
     {
-        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()['id'] ?? null;
+        $perscomUserId = $this->perscomUserService->getLoggedInPerscomUser()?->getPerscomId();
         if ($perscomUserId === null) {
             return false;
         }
 
         return $this->classInstructorRepository->find([
-            'perscomUserId' => $perscomUserId,
             'class' => $this->class,
+            'perscomUserId' => $perscomUserId,
         ]) !== null;
     }
 

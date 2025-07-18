@@ -1,0 +1,8 @@
+{% if not setting('perscom.sync.is_initial_completed') %}
+    <div class="alert-warning mb-4">
+        <p>Initial PERSCOM.io sync has not finished yet! Data may be missing or incorrect!</p>
+        {% if is_granted('perscom-io.admin.run_sync') %}
+            <a class="mt-2" href="{{ path('perscom_admin_sync') }}" target="_blank">Track sync status.</a>
+        {% endif %}
+    </div>
+{% endif %}

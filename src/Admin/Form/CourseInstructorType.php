@@ -16,7 +16,7 @@ class CourseInstructorType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => CourseInstructor::class
+            'data_class' => CourseInstructor::class,
         ]);
     }
 

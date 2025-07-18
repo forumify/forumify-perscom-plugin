@@ -7,6 +7,7 @@ namespace Forumify\PerscomPlugin\Perscom\Automation\Trigger;
 use Forumify\Automation\Repository\AutomationRepository;
 use Forumify\Automation\Scheduler\AutomationScheduler;
 use Forumify\Automation\Trigger\TriggerInterface;
+use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Event\RecordsCreatedEvent;
 use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
@@ -31,14 +32,16 @@ class RecordTrigger implements TriggerInterface
 
     public function trigger(RecordsCreatedEvent $event): void
     {
+
         $automations = $this->automationRepository->findByTriggerType(self::getType());
         foreach ($automations as $automation) {
             $recordType = $automation->getTriggerArguments()['recordType'] ?? null;
-            if ($recordType === null || $recordType === $event->type) {
-                foreach ($event->records as $record) {
+            foreach ($event->records as $record) {
+                $type = RecordService::classToType($record);
+                if ($recordType === null || $type === $recordType) {
                     $this->automationScheduler->schedule($automation, [
-                        'type' => $event->type,
-                        'record' => $record
+                        'record' => $record,
+                        'type' => $type,
                     ]);
                 }
             }

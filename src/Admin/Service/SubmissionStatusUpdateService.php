@@ -6,50 +6,34 @@ namespace Forumify\PerscomPlugin\Admin\Service;
 
 use Forumify\Core\Entity\Notification;
 use Forumify\Core\Notification\NotificationService;
-use Forumify\Core\Repository\UserRepository;
-use Forumify\PerscomPlugin\Admin\Form\StatusRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
 use Forumify\PerscomPlugin\Perscom\Notification\SubmissionStatusUpdatedNotificationType;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
-use Perscom\Data\ResourceObject;
+use Forumify\PerscomPlugin\Perscom\Repository\FormSubmissionRepository;
 
 class SubmissionStatusUpdateService
 {
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
-        private readonly UserRepository $userRepository,
-        private readonly NotificationService $notificationService
+        private readonly NotificationService $notificationService,
+        private readonly FormSubmissionRepository $formSubmissionRepository,
     ) {
     }
 
-    public function createStatusRecord(StatusRecord $statusRecord): void
+    public function createStatusRecord(FormSubmission $submission, array $statusRecord): void
     {
-        $resource = new ResourceObject($statusRecord->status, ['text' => $statusRecord->text]);
-        $this->perscomFactory
-            ->getPerscom()
-            ->submissions()
-            ->statuses($statusRecord->submission['id'])
-            ->attach($resource);
+        $submission->setStatus($statusRecord['status']);
+        $submission->setStatusReason($statusRecord['reason'] ?? '');
+        $this->formSubmissionRepository->save($submission);
 
-        if ($statusRecord->sendNotification) {
-            $this->sendNotification($statusRecord);
+        if ($statusRecord['sendNotification'] ?? false) {
+            $this->sendNotification($submission);
         }
     }
 
-    private function sendNotification(StatusRecord $statusRecord): void
+    private function sendNotification(FormSubmission $submission): void
     {
-        $recipientEmail = $statusRecord->submission['user']['email'];
-        $user = $this->userRepository->findOneBy(['email' => $recipientEmail]);
-        if ($user === null) {
-            return;
-        }
-
-        $status = $this->perscomFactory
-            ->getPerscom()
-            ->statuses()
-            ->get($statusRecord->status)
-            ->json()['data'] ?? null;
-
-        if ($status === null) {
+        $user = $submission->getUser()->getUser();
+        $status = $submission->getStatus();
+        if ($status === null || $user === null) {
             return;
         }
 
@@ -57,10 +41,10 @@ class SubmissionStatusUpdateService
             SubmissionStatusUpdatedNotificationType::TYPE,
             $user,
             [
-                'form' => $statusRecord->submission['form']['name'],
-                'status' => $status['name'],
-                'text' => $statusRecord->text,
-                'submissionId' => $statusRecord->submission['id'],
+                'form' => $submission->getForm()->getName(),
+                'status' => $status->getName(),
+                'submissionId' => $submission->getId(),
+                'text' => $submission->getStatusReason(),
             ]
         ));
     }

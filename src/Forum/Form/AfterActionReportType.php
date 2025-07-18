@@ -17,8 +17,8 @@ class AfterActionReportType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => AfterActionReport::class,
             'allow_extra_fields' => true,
+            'data_class' => AfterActionReport::class,
             'is_new' => true,
         ]);
     }
@@ -32,12 +32,12 @@ class AfterActionReportType extends AbstractType
 
         $builder
             ->add('unitId', UnitType::class, [
-                'label' => 'Unit',
                 'disabled' => !$isNew,
+                'label' => 'Unit',
             ])
             ->add('attendanceJson', HiddenType::class, [
-                'mapped' => false,
                 'data' => $attendance,
+                'mapped' => false,
             ])
             ->add('report', RichTextEditorType::class);
     }

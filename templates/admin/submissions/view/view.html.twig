@@ -1,12 +1,18 @@
 {% extends '@Forumify/admin/base.html.twig' %}
 {% block title_page %}{% endblock %}
 {% block body %}
+    <div class="breadcrumbs text-small">
+        <a href="{{ path('perscom_admin_submission_list') }}">Submissions</a> &gt;
+        <a href="{{ path('perscom_admin_submission_list', { form: submission.form.id }) }}">
+            {{ submission.form.name }}
+        </a> &gt;
+        {{ submission.user.name }}
+    </div>
     <h1 class="flex items-center gap-2 mb-4">
         {{ submission.form.name }}
-        {% set status = submission.statuses|first %}
-        {% if status %}
+        {% if submission.status is not null %}
             {% include '@ForumifyPerscomPlugin/frontend/roster/components/status.html.twig' with {
-                status: submission.statuses[0],
+                status: submission.status,
                 class: 'text-small'
             } only %}
         {% endif %}
@@ -16,7 +22,7 @@
             <div class="box">
                 <div class="mb-2">
                     <p class="text-bold">{{ 'perscom.admin.submissions.view.user'|trans }}</p>
-                    <a href="{{ path('perscom_admin_user_edit', { id: submission.user.id }) }}">
+                    <a href="{{ path('perscom_admin_user_edit', { identifier: submission.user.id }) }}">
                         {{ submission.user.name }}
                     </a>
                 </div>
@@ -29,15 +35,15 @@
                     {% include '@Forumify/admin/components/simple_form.html.twig' %}
                 </li>
             {% endif %}
-            {% for status in submission.statuses %}
+            {% if submission.status is not null %}
                 <li class="box mb-2">
-                    <h4>{{ status.name }}</h4>
-                    <p class="text-small mb-2">{{ status.record.updated_at|perscom_date|format_date }}</p>
+                    <h4>{{ submission.status.name }}</h4>
+                    <p class="text-small mb-2">{{ submission.updatedAt|format_date }}</p>
                     <p>
-                        {{ status.record.text }}
+                        {{ submission.statusReason }}
                     </p>
                 </li>
-            {% endfor %}
+            {% endif %}
         </ul>
     </div>
 {% endblock %}

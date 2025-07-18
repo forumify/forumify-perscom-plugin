@@ -15,8 +15,8 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('Perscom\\CourseInstructorTable', '@Forumify/components/table/table.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\CourseInstructorTable', '@Forumify/components/table/table.html.twig')]
 #[IsGranted('perscom-io.admin.courses.manage')]
 class CourseInstructorTable extends AbstractDoctrineTable
 {
@@ -37,11 +37,11 @@ class CourseInstructorTable extends AbstractDoctrineTable
     {
         $this
             ->addColumn('position', [
-                'label' => '#',
+                'class' => 'w-10',
                 'field' => 'id',
+                'label' => '#',
                 'renderer' => $this->renderSortColumn(...),
                 'searchable' => false,
-                'class' => 'w-10',
             ])
             ->addColumn('title', [
                 'field' => 'title',

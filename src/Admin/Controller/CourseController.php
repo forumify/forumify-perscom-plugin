@@ -16,8 +16,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/courses', 'courses')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[Route('/courses', 'courses')]
 class CourseController extends AbstractCrudController
 {
     protected ?string $permissionView = 'perscom-io.admin.courses.view';
@@ -76,12 +76,12 @@ class CourseController extends AbstractCrudController
         if (!$form->isSubmitted() || !$form->isValid()) {
             return $this->render('@Forumify/form/simple_form_page.html.twig', [
                 'admin' => true,
-                'title' => 'perscom.admin.course.instructor.' . ($isNew ? 'create' : 'edit'),
-                'titleArgs' => $isNew ? [] : ['instructor' => $instructor->getTitle()],
-                'form' => $form->createView(),
                 'cancelPath' => $this->generateUrl('perscom_admin_courses_edit', [
                     'identifier' => $course->getId(),
                 ]),
+                'form' => $form->createView(),
+                'title' => 'perscom.admin.course.instructor.' . ($isNew ? 'create' : 'edit'),
+                'titleArgs' => $isNew ? [] : ['instructor' => $instructor->getTitle()],
             ]);
         }
 

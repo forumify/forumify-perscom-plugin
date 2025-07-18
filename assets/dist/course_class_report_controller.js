@@ -60,7 +60,7 @@ export default class extends Controller {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.classList.add('btn-link', 'btn-small', 'btn-icon');
-    btn.innerHTML = '<i class="ph ph-x"></i>'
+    btn.innerHTML = '<i class="ph ph-x"></i>';
 
     btn.addEventListener('click', () => {
       formRow.parentElement.removeChild(formRow);

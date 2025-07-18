@@ -22,7 +22,7 @@ class AfterActionReport
     #[ORM\Column(type: 'integer')]
     private int $unitId;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     private string $unitName;
 
     #[ORM\Column(type: 'integer', options: ['default' => 100])]

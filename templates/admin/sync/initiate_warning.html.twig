@@ -1,0 +1,9 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+
+{% block body %}
+    {% include '@Forumify/admin/components/confirm.html.twig' with {
+        warningText: 'This action will schedule a full data sync from PERSCOM.io. You may not see it start immediately, and a full sync can take several minutes to complete. Use with caution! Spamming multiple syncs at once may lead to data corruption or rate limit errors.',
+        confirmPath: path('perscom_admin_sync_initiate', { confirmed: 1 }),
+        cancelPath: path('perscom_admin_sync')
+    } only %}
+{% endblock %}
