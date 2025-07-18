@@ -9,7 +9,7 @@ perscom:
         title: 'PERSCOM.io Plugin Configuration'
         enlistment: 'Enlistment'
         enlistment_automations: 'Automations'
-        license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
+        license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor a valid subscription to PERSCOM.io is required for this plugin to function properly.'
         profile:
             display_name_format_help: >
                 Format to use. This code is in twig, and is given the user's PERSCOM object in context.<br/>

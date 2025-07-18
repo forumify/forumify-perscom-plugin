@@ -16,17 +16,15 @@ class SettingsType extends AbstractType
         $builder
             // general settings
             ->add('perscom__endpoint', TextType::class, [
+                'help' => 'Leave blank to use the standard API endpoint.',
                 'label' => 'Endpoint',
-            ])
-            ->add('perscom__perscom_id', TextType::class, [
-                'help' => 'Can be found on your PERSCOM dashboard. This is optional. Your PERSCOM ID can be resolved using your API Key.',
-                'label' => 'PERSCOM ID',
                 'required' => false,
             ])
             ->add('perscom__api_key', PasswordType::class, [
                 'help' => 'Create a new API key for forumify on your PERSCOM dashboard, under "Integrations" > "API Keys". Select "All scopes" to allow the API key to access every resource.',
                 'label' => 'API Key',
                 'required' => false,
-            ]);
+            ])
+        ;
     }
 }

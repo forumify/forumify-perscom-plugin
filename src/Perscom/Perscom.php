@@ -13,12 +13,11 @@ class Perscom extends PerscomConnection
     public const DATE_FORMAT = 'Y-m-d\TH:i:s.u\Z';
 
     public function __construct(
-        string $endpoint,
         string $apiKey,
-        string $perscomId,
+        ?string $endpoint = null,
         private readonly bool $bypassCache = false,
     ) {
-        parent::__construct($apiKey, $perscomId, $endpoint);
+        parent::__construct($apiKey, baseUrl: $endpoint);
     }
 
     protected function defaultHeaders(): array

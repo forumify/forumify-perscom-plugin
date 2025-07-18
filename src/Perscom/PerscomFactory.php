@@ -25,9 +25,8 @@ class PerscomFactory
         }
 
         $this->perscom = new Perscom(
-            (string)$this->settingRepository->get('perscom.endpoint'),
             (string)$this->settingRepository->get('perscom.api_key'),
-            (string)$this->settingRepository->get('perscom.perscom_id'),
+            (string)$this->settingRepository->get('perscom.endpoint') ?: null,
             $this->env === 'dev' ? true : $bypassCache,
         );
         return $this->perscom;
