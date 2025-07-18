@@ -1,0 +1,10 @@
+{% extends '!@Forumify/frontend/components/profile_header.html.twig' %}
+{% block profile_user_actions %}
+    {% set perscomUser = repository('PerscomUser').findOneBy({ user: user }) %}
+    {% if perscomUser is not null %}
+        <a class="btn-outlined btn-icon" href="{{ path('perscom_user', { id: perscomUser.id }) }}">
+            <i class="ph ph-shield-chevron"></i>
+        </a>
+    {% endif %}
+    {{ parent() }}
+{% endblock %}
