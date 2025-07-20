@@ -1,6 +1,6 @@
 {% for field in submission.form.fields %}
     <div class="mb-2">
-        <p class="text-bold">{{ field.name }}</p>
+        <p class="text-bold">{{ field.label }}</p>
         {% set value = submission.data[field.key] is defined ? submission.data[field.key] : '' %}
         <p>
             {% if field.type is same as 'date' %}

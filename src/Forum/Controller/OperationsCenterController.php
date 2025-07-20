@@ -37,7 +37,7 @@ class OperationsCenterController extends AbstractController
         $forms = $this->formRepository->findAll();
         $enlistmentFormId = $this->settingRepository->get('perscom.enlistment.form');
         if ($enlistmentFormId !== null) {
-            $forms = array_filter($forms, fn (Form $form) => $form->getId() !== $enlistmentFormId);
+            $forms = array_filter($forms, fn (Form $form) => $form->getPerscomId() !== $enlistmentFormId);
         }
 
         return $this->render('@ForumifyPerscomPlugin/frontend/operations_center/operations_center.html.twig', [

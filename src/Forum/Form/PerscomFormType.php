@@ -37,7 +37,7 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
     ) {
     }
 
-    private const FIELD_MAP = [
+    public const FIELD_MAP = [
         'boolean' => CheckboxType::class,
         'code' => TextareaType::class,
         'color' => ColorType::class,
@@ -71,29 +71,32 @@ class PerscomFormType extends AbstractType implements DataMapperInterface
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         foreach ($options['perscomForm']->getFields() as $field) {
-            if (!empty($options['allowedTypes']) && !in_array($field['type'], $options['allowedTypes'], true)) {
+            if (!empty($options['allowedTypes']) && !in_array($field->getType(), $options['allowedTypes'], true)) {
                 continue;
             }
 
-            $type = self::FIELD_MAP[$field['type']];
+            $type = self::FIELD_MAP[$field->getType()] ?? null;
+            if ($type === null) {
+                continue;
+            }
 
             $fieldOptions = [
-                'disabled' => $options['disabled'] || $field['readonly'],
-                'help' => $field['help'],
+                'disabled' => $options['disabled'] || $field->isReadonly(),
+                'help' => $field->getHelp(),
                 'help_html' => true,
-                'label' => $field['name'],
-                'required' => $field['required'],
+                'label' => $field->getLabel(),
+                'required' => $field->isRequired(),
             ];
 
             if ($type === ChoiceType::class) {
-                $fieldOptions['choices'] = array_flip($field['options']);
+                $fieldOptions['choices'] = $field->getOptions();
             }
 
             if ($type === DateType::class || $type === DateTimeType::class) {
                 $fieldOptions['widget'] = 'single_text';
             }
 
-            $builder->add($field['key'], $type, $fieldOptions);
+            $builder->add($field->getKey(), $type, $fieldOptions);
         }
 
         $builder->setDataMapper($this);

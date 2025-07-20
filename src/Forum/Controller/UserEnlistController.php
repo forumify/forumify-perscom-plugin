@@ -48,7 +48,6 @@ class UserEnlistController extends AbstractController
                     'successMessage' => $enlistmentForm->getSuccessMessage(),
                 ]);
             }
-            // The submission was deleted from PERSCOM.io, continue with the enlistment
         }
 
         $enlistment = new Enlistment();

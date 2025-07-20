@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Perscom\Serializer;
 
 use DateTime;
 use Forumify\PerscomPlugin\Perscom\Entity\Form;
+use Forumify\PerscomPlugin\Perscom\Entity\FormField;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
@@ -54,10 +55,26 @@ class FormSerializer implements NormalizerInterface, DenormalizerInterface
         $form->setDescription($data['description'] ?? '');
         $form->setSuccessMessage($data['success_message'] ?? '');
         $form->setInstructions($data['instructions'] ?? '');
-        $form->setFields($data['fields'] ?? []);
 
         if ($data['submission_status_id']) {
             $form->setDefaultStatus($context['statuses'][$data['submission_status_id']] ?? null);
+        }
+
+        foreach ($data['fields'] as $pField) {
+            $field = $this->findOrCreateField($form, $pField['key']);
+            $field->setType($pField['type']);
+            $field->setLabel($pField['name']);
+            $field->setHelp($pField['help'] ?? '');
+            $field->setRequired($pField['required'] ?? false);
+            $field->setReadonly($pField['readonly'] ?? false);
+            $field->setOptions(array_flip($pField['options'] ?? []));
+        }
+
+        $allKeys = array_column($data['fields'], 'key');
+        foreach ($form->getFields() as $field) {
+            if (!in_array($field->getKey(), $allKeys, true)) {
+                $form->removeField($field);
+            }
         }
 
         return $form;
@@ -66,5 +83,20 @@ class FormSerializer implements NormalizerInterface, DenormalizerInterface
     public function supportsDenormalization(mixed $data, string $type, ?string $format = null)
     {
         return is_array($data) && $type === Form::class;
+    }
+
+    private function findOrCreateField(Form $form, string $fieldKey): FormField
+    {
+        foreach ($form->getFields() as $field) {
+            if ($field->getKey() === $fieldKey) {
+                return $field;
+            }
+        }
+
+        $field = new FormField();
+        $field->setKey($fieldKey);
+        $field->setForm($form);
+        $form->addField($field);
+        return $field;
     }
 }

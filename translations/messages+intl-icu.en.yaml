@@ -21,7 +21,7 @@ perscom:
                     <li><strong>Commander Doe:</strong> <code>&lbrace;&lbrace;user.position.name&rbrace;&rbrace; &lbrace;&lbrace;user.name|split(&#039; &#039;)|last}}</code>
                 </ul>
     admin:
-        requires_perscom_account: 'This action requires a PERSCOM account that matches your email.'
+        requires_perscom_account: 'This action requires you to have a PERSCOM user linked to your forum user.'
         perscom_user:
             crud:
                 plural: 'Users'
@@ -43,7 +43,6 @@ perscom:
                 title: 'Editing {name}'
                 saved: 'User saved.'
                 general: 'General'
-                email_help: 'To link a PERSCOM.io user to a forumify user, their email must match. A user''s email can only be modified on PERSCOM.io.'
                 rank_help: 'Modifying the rank here does not create a new rank record, additionally, time in grade will not be reset. Use "Promote/Demote" in "Quick Actions" to create a new rank record.'
                 created_at_help: 'This date is used to calculate Time In Service on the user''s p-file.'
                 custom_fields_help: 'Custom fields are read-only. PERSCOM.io does not support updating custom fields through the API.'
@@ -73,6 +72,14 @@ perscom:
             crud:
                 single: 'document'
                 plural: 'documents'
+        form:
+            crud:
+                single: 'form'
+                plural: 'forms'
+        form_field:
+            crud:
+                single: 'field'
+                plural: 'fields'
         position:
             crud:
                 single: 'position'

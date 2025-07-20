@@ -4,44 +4,56 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Component;
 
+use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
-use Forumify\PerscomPlugin\Perscom\Entity\Award;
-use Forumify\PerscomPlugin\Perscom\Repository\AwardRepository;
+use Forumify\PerscomPlugin\Perscom\Entity\Form;
+use Forumify\PerscomPlugin\Perscom\Entity\FormField;
+use Forumify\PerscomPlugin\Perscom\Repository\FormFieldRepository;
+use Forumify\PerscomPlugin\Perscom\Sync\Service\SyncService;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveArg;
+use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('PerscomAwardTable', '@Forumify/components/table/table.html.twig')]
-#[IsGranted('perscom-io.admin.organization.awards.view')]
-class PerscomAwardTable extends AbstractDoctrineTable
+#[AsLiveComponent('PerscomFormFieldTable', '@Forumify/components/table/table.html.twig')]
+#[IsGranted('perscom-io.admin.organization.forms.manage')]
+class PerscomFormFieldTable extends AbstractDoctrineTable
 {
+    #[LiveProp]
+    public Form $form;
+
     public function __construct(
         private readonly Security $security,
-        private readonly AwardRepository $awardRepository,
+        private readonly FormFieldRepository $formFieldRepository,
+        private readonly SyncService $syncService,
     ) {
-        $this->sort = ['position' => self::SORT_ASC];
     }
 
     protected function getEntityClass(): string
     {
-        return Award::class;
+        return FormField::class;
     }
 
     protected function buildTable(): void
     {
-        $this
-            ->addColumn('position', [
+        if (!$this->syncService->isSyncEnabled()) {
+            $this->addColumn('position', [
                 'class' => 'w-10',
                 'field' => 'id',
                 'label' => '#',
                 'renderer' => $this->renderSortColumn(...),
                 'searchable' => false,
+            ]);
+        }
+
+        $this
+            ->addColumn('label', [
+                'field' => 'label',
             ])
-            ->addColumn('name', [
-                'field' => 'name',
-                'sortable' => true,
+            ->addColumn('type', [
+                'field' => 'type',
             ])
             ->addColumn('actions', [
                 'field' => 'id',
@@ -49,30 +61,20 @@ class PerscomAwardTable extends AbstractDoctrineTable
                 'renderer' => $this->renderActions(...),
                 'searchable' => false,
                 'sortable' => false,
-            ]);
+            ])
+        ;
     }
 
-    private function renderActions(int $id): string
+    protected function getQuery(array $search): QueryBuilder
     {
-        $actions = '';
-
-        if ($this->security->isGranted('perscom-io.admin.organization.awards.manage')) {
-            $actions .= $this->renderAction('perscom_admin_award_edit', ['identifier' => $id], 'pencil-simple-line');
-        }
-
-        if ($this->security->isGranted('perscom-io.admin.organization.awards.delete')) {
-            $actions .= $this->renderAction('perscom_admin_award_delete', ['identifier' => $id], 'x');
-        }
-
-        return $actions;
+        return parent::getQuery($search)
+            ->andWhere('e.form = :form')
+            ->setParameter('form', $this->form)
+        ;
     }
 
-    protected function renderSortColumn(int $id): string
+    private function renderSortColumn(int $id): string
     {
-        if (!$this->security->isGranted('perscom-io.admin.organization.awards.manage')) {
-            return '';
-        }
-
         return '
             <button
                 class="btn-link btn-small btn-icon p-1"
@@ -95,14 +97,25 @@ class PerscomAwardTable extends AbstractDoctrineTable
     }
 
     #[LiveAction]
-    #[IsGranted('perscom-io.admin.organization.awards.manage')]
     public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
     {
-        $award = $this->awardRepository->find($id);
-        if ($award === null) {
+        $field = $this->formFieldRepository->find($id);
+        if ($field === null) {
             return;
         }
 
-        $this->awardRepository->reorder($award, $direction);
+        $this->formFieldRepository->reorder($field, $direction);
+    }
+
+    private function renderActions(int $id): string
+    {
+        if ($this->syncService->isSyncEnabled()) {
+            return '';
+        }
+
+        $actions = '';
+        $actions .= $this->renderAction('perscom_admin_form_field_edit', ['formId' => $this->form->getId(), 'identifier' => $id], 'pencil-simple-line');
+        $actions .= $this->renderAction('perscom_admin_form_field_delete', ['formId' => $this->form->getId(), 'identifier' => $id], 'x');
+        return $actions;
     }
 }

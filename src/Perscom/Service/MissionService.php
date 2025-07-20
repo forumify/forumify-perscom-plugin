@@ -16,6 +16,7 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Notification\MissionCreatedNotificationType;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\StatusRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class MissionService
@@ -29,6 +30,7 @@ class MissionService
         private readonly CalendarEventRepository $calendarEventRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly PerscomUserRepository $perscomUserRepository,
+        private readonly StatusRepository $statusRepository,
     ) {
     }
 
@@ -133,10 +135,13 @@ class MissionService
 
         $enlistmentStatuses = $this->settingRepository->get('perscom.enlistment.status') ?? [];
         if (!empty($enlistmentStatuses)) {
-            $qb
-                ->andWhere('pu.status IN (:statuses)')
-                ->setParameter('statuses', $enlistmentStatuses)
-            ;
+            $statuses = $this->statusRepository->findByPerscomIds($enlistmentStatuses);
+            if (!empty($statuses)) {
+                $qb
+                    ->andWhere('pu.status NOT IN (:statuses)')
+                    ->setParameter('statuses', $statuses)
+                ;
+            }
         }
 
         return $qb->getQuery()->getResult();

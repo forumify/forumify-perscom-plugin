@@ -42,31 +42,19 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                 ],
                 'organization' => [
                     'view',
-                    'ranks' => [
-                        'view',
-                        'manage',
-                        'delete',
-                        'create',
-                    ],
-                    'qualifications' => [
-                        'view',
-                        'manage',
-                        'delete',
-                        'create',
-                    ],
-                    'statuses' => [
-                        'view',
-                        'manage',
-                        'delete',
-                        'create',
-                    ],
                     'awards' => [
                         'view',
                         'manage',
                         'delete',
                         'create',
                     ],
-                    'specialties' => [
+                    'documents' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'forms' => [
                         'view',
                         'manage',
                         'delete',
@@ -78,13 +66,31 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                         'delete',
                         'create',
                     ],
-                    'units' => [
+                    'qualifications' => [
                         'view',
                         'manage',
                         'delete',
                         'create',
                     ],
-                    'documents' => [
+                    'ranks' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'specialties' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'statuses' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'units' => [
                         'view',
                         'manage',
                         'delete',

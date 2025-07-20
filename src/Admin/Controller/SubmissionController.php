@@ -55,7 +55,7 @@ class SubmissionController extends AbstractController
             return $this->redirectToRoute('perscom_admin_submission_view', ['id' => $submission->getId()]);
         }
 
-        return $this->render('@ForumifyPerscomPlugin/admin/submissions/view/view.html.twig', [
+        return $this->render('@ForumifyPerscomPlugin/admin/submissions/view/form.html.twig', [
             'form' => $form->createView(),
             'submission' => $submission,
         ]);

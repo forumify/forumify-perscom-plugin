@@ -54,13 +54,15 @@ class PerscomRankTable extends AbstractDoctrineTable
 
     private function renderActions(int $id): string
     {
-        if (!$this->security->isGranted('perscom-io.admin.organization.ranks.manage')) {
-            return '';
+        $actions = '';
+
+        if ($this->security->isGranted('perscom-io.admin.organization.ranks.manage')) {
+            $actions .= $this->renderAction('perscom_admin_rank_edit', ['identifier' => $id], 'pencil-simple-line');
         }
 
-        $actions = '';
-        $actions .= $this->renderAction('perscom_admin_rank_edit', ['identifier' => $id], 'pencil-simple-line');
-        $actions .= $this->renderAction('perscom_admin_rank_delete', ['identifier' => $id], 'x');
+        if ($this->security->isGranted('perscom-io.admin.organization.ranks.delete')) {
+            $actions .= $this->renderAction('perscom_admin_rank_delete', ['identifier' => $id], 'x');
+        }
 
         return $actions;
     }

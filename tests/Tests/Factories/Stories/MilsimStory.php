@@ -10,6 +10,7 @@ use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Perscom\Entity;
 use PluginTests\Factories\Forumify\ForumFactory;
 use PluginTests\Factories\Perscom\FormFactory;
+use PluginTests\Factories\Perscom\FormFieldFactory;
 use PluginTests\Factories\Perscom\PositionFactory;
 use PluginTests\Factories\Perscom\RankFactory;
 use PluginTests\Factories\Perscom\SpecialtyFactory;
@@ -23,6 +24,8 @@ use Zenstruck\Foundry\Story;
  *
  * @method static Entity\Status statusActiveDuty()
  * @method static Entity\Status statusRetired()
+ * @method static Entity\Status statusPending()
+ * @method static Entity\Status statusApproved()
  * @method static Entity\Form formEnlistment()
  * @method static Entity\Unit unitFirstSquad()
  * @method static Entity\Unit unitSecondSquad()
@@ -48,7 +51,9 @@ class MilsimStory extends Story
         $retired = StatusFactory::createOne(['name' => 'Retired']);
         $this->addState('statusRetired', $retired);
         $pending = StatusFactory::createOne(['name' => 'Pending']);
-        StatusFactory::createOne(['name' => 'Approved']);
+        $this->addState('statusPending', $pending);
+        $approved = StatusFactory::createOne(['name' => 'Approved']);
+        $this->addState('statusApproved', $approved);
         StatusFactory::createOne(['name' => 'Denied']);
 
         $this->settingRepository->set('perscom.enlistment.status', [$retired->getPerscomId()]);
@@ -56,36 +61,22 @@ class MilsimStory extends Story
         // Forms
         $enlistmentForm = FormFactory::createOne([
             'defaultStatus' => $pending,
-            'fields' => [[
-                'help' => '',
-                'key' => 'reason',
-                'name' => 'Why would you like to join our unit?',
-                'readonly' => false,
-                'required' => true,
-                'type' => 'text',
-            ]],
             'instructions' => 'Enlistment Instructions',
             'name' => 'Enlistment',
             'successMessage' => 'Enlistment Success',
         ]);
+        FormFieldFactory::createOne([
+            'form' => $enlistmentForm,
+            'key' => 'reason',
+            'label' => 'Why would you like to join our unit',
+            'required' => true,
+        ]);
+
         $this->settingRepository->set('perscom.enlistment.form', $enlistmentForm->getPerscomId());
         $this->addState('formEnlistment', $enlistmentForm);
 
         $enlistmentForum = ForumFactory::createOne(['title' => 'Enlistments']);
         $this->settingRepository->set('perscom.enlistment.forum', $enlistmentForum->getId());
-
-        FormFactory::createOne([
-            'defaultStatus' => $pending,
-            'fields' => [[
-                'help' => '',
-                'key' => 'reason',
-                'name' => 'Why do you need time off?',
-                'readonly' => false,
-                'required' => true,
-                'type' => 'text',
-            ]],
-            'name' => 'Leave Of Absence',
-        ]);
 
         // Units
         $firstSquad = UnitFactory::createOne(['name' => 'First Squad']);

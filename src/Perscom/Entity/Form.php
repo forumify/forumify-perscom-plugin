@@ -40,15 +40,16 @@ class Form implements PerscomEntityInterface
     #[ORM\Column(type: Types::TEXT)]
     private string $instructions = '';
 
-    #[ORM\Column(type: Types::JSON, nullable: true)]
-    private ?array $fields = [];
-
     #[ORM\OneToMany(mappedBy: 'form', targetEntity: FormSubmission::class)]
     private Collection $submissions;
+
+    #[ORM\OneToMany(mappedBy: 'form', targetEntity: FormField::class, cascade: ['persist', 'remove'])]
+    private Collection $fields;
 
     public function __construct()
     {
         $this->submissions = new ArrayCollection();
+        $this->fields = new ArrayCollection();
     }
 
     public static function getPerscomResource(Perscom $perscom): ResourceContract
@@ -111,18 +112,41 @@ class Form implements PerscomEntityInterface
         return $this->submissions;
     }
 
-    public function getFields(): array
+    public function setSubmissions(Collection $submissions): void
     {
-        return $this->fields ?? [];
+        $this->submissions = $submissions;
     }
 
-    public function setFields(?array $fields): void
+    public function addSubmission(FormSubmission $submission): void
+    {
+        $this->submissions->add($submission);
+    }
+
+    public function removeSubmission(FormSubmission $submission): void
+    {
+        $this->submissions->removeElement($submission);
+    }
+
+    /**
+     * @return Collection<int, FormField>
+     */
+    public function getFields(): Collection
+    {
+        return $this->fields;
+    }
+
+    public function setFields(Collection $fields): void
     {
         $this->fields = $fields;
     }
 
-    public function setSubmissions(Collection $submissions): void
+    public function addField(FormField $field): void
     {
-        $this->submissions = $submissions;
+        $this->fields->add($field);
+    }
+
+    public function removeField(FormField $field): void
+    {
+        $this->fields->removeElement($field);
     }
 }
