@@ -12,21 +12,19 @@ use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 
 #[ORM\Entity(repositoryClass: AfterActionReportRepository::class)]
 #[ORM\Table('perscom_after_action_report')]
-#[ORM\UniqueConstraint(name: 'unit_mission_uniq', fields: ['mission', 'unitId'])]
 class AfterActionReport
 {
     use IdentifiableEntityTrait;
     use BlameableEntityTrait;
     use TimestampableEntityTrait;
 
-    #[ORM\Column(type: 'integer')]
-    private int $unitId;
+    /** @deprecated */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private int $perscomUnitId;
 
-    #[ORM\Column(length: 255)]
-    private string $unitName;
-
-    #[ORM\Column(type: 'integer', options: ['default' => 100])]
-    private int $unitPosition;
+    #[ORM\ManyToOne(targetEntity: Unit::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private ?Unit $unit = null;
 
     #[ORM\Column(type: 'text')]
     private string $report;
@@ -35,37 +33,31 @@ class AfterActionReport
     private array $attendance;
 
     #[ORM\ManyToOne(targetEntity: Mission::class, fetch: 'EXTRA_LAZY', inversedBy: 'afterActionReports')]
-    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(onDelete: 'CASCADE', nullable: false)]
     private Mission $mission;
 
+    /** @deprecated */
     public function getUnitId(): int
     {
-        return $this->unitId;
+        trigger_deprecation('forumify/forumify-perscom-plugin', '2.0', sprintf('%s is deprecated. Use %s instead', __CLASS__ . '::' . __FUNCTION__, __CLASS__ . '::' . 'getUnit()'));
+        return $this->perscomUnitId;
     }
 
+    /** @deprecated */
     public function setUnitId(int $unitId): void
     {
-        $this->unitId = $unitId;
+        trigger_deprecation('forumify/forumify-perscom-plugin', '2.0', sprintf('%s is deprecated. Use %s instead', __CLASS__ . '::' . __FUNCTION__, __CLASS__ . '::' . 'setUnit()'));
+        $this->perscomUnitId = $unitId;
     }
 
-    public function getUnitName(): string
+    public function getUnit(): ?Unit
     {
-        return $this->unitName;
+        return $this->unit;
     }
 
-    public function setUnitName(string $unitName): void
+    public function setUnit(Unit $unit): void
     {
-        $this->unitName = $unitName;
-    }
-
-    public function getUnitPosition(): int
-    {
-        return $this->unitPosition;
-    }
-
-    public function setUnitPosition(int $unitPosition): void
-    {
-        $this->unitPosition = $unitPosition;
+        $this->unit = $unit;
     }
 
     public function getReport(): string

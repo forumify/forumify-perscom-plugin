@@ -34,6 +34,10 @@ class Course implements AccessControlledEntityInterface, SortableEntityInterface
     #[ORM\Column(type: 'integer', nullable: true)]
     private ?int $rankRequirement = null;
 
+    #[ORM\ManyToOne(targetEntity: Rank::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Rank $minimumRank = null;
+
     #[ORM\Column(type: 'simple_array', nullable: true)]
     private array $prerequisites = [];
 
@@ -46,8 +50,6 @@ class Course implements AccessControlledEntityInterface, SortableEntityInterface
     #[ORM\OneToMany(mappedBy: 'course', targetEntity: CourseInstructor::class, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $instructors;
-
-    private array $hydratedPrerequisites = [];
 
     public function getTitle(): string
     {
@@ -81,12 +83,25 @@ class Course implements AccessControlledEntityInterface, SortableEntityInterface
 
     public function getRankRequirement(): ?int
     {
+        trigger_deprecation('forumify/forumify-perscom-plugin', '2.0', sprintf('%s is deprecated. Use %s instead', __CLASS__ . '::' . __FUNCTION__, __CLASS__ . '::' . 'getMinimumRank()'));
         return $this->rankRequirement;
     }
 
     public function setRankRequirement(?int $rankRequirement): void
     {
+        trigger_deprecation('forumify/forumify-perscom-plugin', '2.0', sprintf('%s is deprecated. Use %s instead', __CLASS__ . '::' . __FUNCTION__, __CLASS__ . '::' . 'setMinimumRank()'));
         $this->rankRequirement = $rankRequirement;
+    }
+
+    public function getMinimumRank(): ?Rank
+    {
+        return $this->minimumRank;
+    }
+
+    public function setMinimumRank(?Rank $minimumRank): void
+    {
+        $this->minimumRank = $minimumRank;
+        $this->rankRequirement = $minimumRank?->getPerscomId();
     }
 
     public function getPrerequisites(): array
@@ -110,16 +125,6 @@ class Course implements AccessControlledEntityInterface, SortableEntityInterface
     public function setQualifications(array $qualifications): void
     {
         $this->qualifications = $qualifications;
-    }
-
-    public function setHydratedPrerequisites(array $hydratedPrerequisites): void
-    {
-        $this->hydratedPrerequisites = $hydratedPrerequisites;
-    }
-
-    public function getHydratedPrerequisites(): array
-    {
-        return $this->hydratedPrerequisites;
     }
 
     public function getClasses(): Collection

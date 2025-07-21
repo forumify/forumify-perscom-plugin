@@ -5,8 +5,10 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Sync\Scheduler;
 
 use Forumify\Core\Notification\ContextSerializer;
+use Forumify\PerscomPlugin\Perscom\Sync\Message\PostInitialSyncMessage;
 use Forumify\PerscomPlugin\Perscom\Sync\Message\SyncAllFromPerscomMessage;
 use Forumify\PerscomPlugin\Perscom\Sync\Message\SyncToPerscomMessage;
+use Forumify\PerscomPlugin\Perscom\Sync\Service\MigrateOldDataService;
 use Forumify\PerscomPlugin\Perscom\Sync\Service\SyncService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
@@ -22,11 +24,15 @@ class SyncPerscomTaskHandler
         private readonly SyncService $syncService,
         private readonly ContextSerializer $contextSerializer,
         private readonly MessageBusInterface $messageBus,
+        private readonly MigrateOldDataService $migrateOldDataService,
     ) {
     }
 
     public function __invoke(?SyncAllFromPerscomMessage $message = null): void
     {
+        set_time_limit(0);
+        ini_set('memory_limit', -1);
+
         $this->syncService->syncAll($message?->resultId);
     }
 
@@ -42,5 +48,14 @@ class SyncPerscomTaskHandler
         } catch (Throwable) {
             $this->messageBus->dispatch($message, [new DelayStamp(30000)]);
         }
+    }
+
+    #[AsMessageHandler]
+    public function postInitialSync(PostInitialSyncMessage $message): void
+    {
+        set_time_limit(0);
+        ini_set('memory_limit', -1);
+
+        $this->migrateOldDataService->migrate($message->resultId);
     }
 }

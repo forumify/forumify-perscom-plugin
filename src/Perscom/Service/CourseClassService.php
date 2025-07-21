@@ -15,7 +15,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\Record\RecordInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
 use Forumify\PerscomPlugin\Perscom\Exception\PerscomException;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
-use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\QualificationRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -26,7 +25,6 @@ class CourseClassService
         private readonly CourseClassRepository $courseClassRepository,
         private readonly CalendarEventRepository $calendarEventRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly PerscomUserRepository $perscomUserRepository,
         private readonly QualificationRepository $qualificationRepository,
     ) {
     }
@@ -77,7 +75,7 @@ class CourseClassService
     private function addServiceRecords(array &$records, CourseClass $class): void
     {
         foreach ($class->getInstructors() as $instructor) {
-            $recipient = $this->perscomUserRepository->findOneBy(['perscomId' => $instructor->getPerscomUserId()]);
+            $recipient = $instructor->getUser();
             if ($recipient === null) {
                 continue;
             }
@@ -96,7 +94,7 @@ class CourseClassService
         $students = $class->getStudents()->filter(fn (CourseClassStudent $s) => $s->getResult() === 'passed');
         /** @var CourseClassStudent $student */
         foreach ($students as $student) {
-            $recipient = $this->perscomUserRepository->findOneBy(['perscomId' => $student->getPerscomUserId()]);
+            $recipient = $student->getUser();
             if ($recipient === null) {
                 continue;
             }
@@ -119,16 +117,15 @@ class CourseClassService
         $qualifications = [];
 
         foreach ($students as $student) {
-            $recipient = $this->perscomUserRepository->findOneBy(['perscomId' => $student->getPerscomUserId()]);
+            $recipient = $student->getUser();
             if ($recipient === null) {
                 continue;
             }
 
             foreach ($student->getQualifications() as $qualificationId) {
-                // TODO: make qualifications a FK instead of just an id.
                 $qualifications[$qualificationId] = isset($qualifications[$qualificationId])
                     ? $qualifications[$qualificationId]
-                    : $this->qualificationRepository->findOneBy(['perscomId' => $qualificationId]);
+                    : $this->qualificationRepository->find($qualificationId);
 
                 if ($qualifications[$qualificationId] === null) {
                     continue;

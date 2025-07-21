@@ -13,6 +13,7 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomSyncResult;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Sync\EventSubscriber\Event\PostSyncToPerscomEvent;
+use Forumify\PerscomPlugin\Perscom\Sync\Message\PostInitialSyncMessage;
 use Perscom\Contracts\Batchable;
 use Perscom\Contracts\ResourceContract;
 use Perscom\Data\ResourceObject;
@@ -20,6 +21,7 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
 use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 use Symfony\Component\Lock\LockFactory;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 use function Symfony\Component\String\u;
@@ -40,6 +42,7 @@ class SyncService
         private readonly NormalizerInterface&DenormalizerInterface $normalizer,
         private readonly LockFactory $lockFactory,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly MessageBusInterface $messageBus,
         PerscomFactory $perscomFactory,
     ) {
         $this->perscom = $perscomFactory->getPerscom();
@@ -56,9 +59,6 @@ class SyncService
 
         $mutex = $this->lockFactory->createLock(self::SYNC_LOCK_NAME, 1800);
         $mutex->acquire(true);
-
-        set_time_limit(0);
-        ini_set('memory_limit', -1);
 
         $start = microtime(true);
         $this->result->logMessage('Sync started.');
@@ -77,6 +77,12 @@ class SyncService
 
         $this->em->persist($this->result);
         $this->em->flush();
+
+        $isInitialSyncDone = $this->settingRepository->get(SyncService::SETTING_IS_INITIAL_SYNC_COMPLETED) ?? false;
+        if (!$isInitialSyncDone) {
+            $this->messageBus->dispatch(new PostInitialSyncMessage($this->result->getId()));
+            $this->settingRepository->set(SyncService::SETTING_IS_INITIAL_SYNC_COMPLETED, true);
+        }
 
         // Ensure the entity manager is cleared to avoid leaking memory in message handlers
         $this->em->clear();
@@ -187,11 +193,6 @@ class SyncService
             'statuses' => $statuses,
             'users' => $users,
         ]);
-
-        $isInitialSyncDone = $this->settingRepository->get(SyncService::SETTING_IS_INITIAL_SYNC_COMPLETED) ?? false;
-        if (!$isInitialSyncDone) {
-            $this->settingRepository->set(SyncService::SETTING_IS_INITIAL_SYNC_COMPLETED, true);
-        }
     }
 
     /**

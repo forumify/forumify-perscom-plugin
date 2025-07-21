@@ -39,6 +39,12 @@ class AssignRoleListener
             return;
         }
 
+        foreach ($user->getRoleEntities() as $existingRole) {
+            if ($role->getId() === $existingRole->getId()) {
+                return;
+            }
+        }
+
         $user->addRoleEntity($role);
         $this->userRepository->save($user);
     }

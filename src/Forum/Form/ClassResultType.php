@@ -76,7 +76,7 @@ class ClassResultType extends AbstractType
         $users = $this->courseExtension->getUsers(new ArrayCollection($data));
 
         foreach ($views as $view) {
-            $id = $view->vars['data']->getPerscomUserId();
+            $id = $view->vars['data']->getUser()->getId();
             $user = $users[$id]['user'] ?? null;
             if ($user === null) {
                 continue;

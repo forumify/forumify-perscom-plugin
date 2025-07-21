@@ -10,6 +10,7 @@ use Forumify\PerscomPlugin\Forum\Form\AfterActionReportType;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 use Forumify\PerscomPlugin\Perscom\Entity\MissionRSVP;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
@@ -55,8 +56,8 @@ class AfterActionReportController extends AbstractController
         }
 
         /** @var array<PerscomUser> $users */
-        $users = $this->userRepository->findByPerscomIds($allUserIds);
-        $allUserIds = array_map(fn (PerscomUser $user) => $user->getPerscomId(), $users);
+        $users = $this->userRepository->findBy(['id' => $allUserIds]);
+        $allUserIds = array_map(fn (PerscomUser $user) => $user->getId(), $users);
         $users = array_combine($allUserIds, $users);
 
         $attendance = $aar->getAttendance();
@@ -170,31 +171,30 @@ class AfterActionReportController extends AbstractController
     }
 
     #[Route('/unit/{id}', 'unit')]
-    public function getUnit(int $id, Request $request, MissionRSVPRepository $missionRSVPRepository): JsonResponse
+    public function getUnit(Unit $unit, Request $request, MissionRSVPRepository $missionRSVPRepository): JsonResponse
     {
-        $users = $this->afterActionReportService->findUsersByUnit($id);
-
+        $users = $unit->getUsers()->toArray();
         $missionId = $request->get('mission');
         $rsvps = $missionId === null
             ? []
             : $missionRSVPRepository->findBy([
                 'mission' => $missionId,
-                'perscomUserId' => array_map(fn (PerscomUser $u) => $u->getPerscomId(), $users),
+                'user' => $users,
             ]);
 
         $usersToRsvp = [];
         /** @var MissionRSVP $rsvp */
         foreach ($rsvps as $rsvp) {
-            $usersToRsvp[$rsvp->getPerscomUserId()] = $rsvp->isGoing();
+            $usersToRsvp[$rsvp->getUser()->getId()] = $rsvp->isGoing();
         }
 
         $response = [];
         foreach ($users as $user) {
             $row = [
-                'id' => $user->getPerscomId(),
+                'id' => $user->getId(),
                 'name' => $user->getName(),
                 'rankImage' => null,
-                'rsvp' => $usersToRsvp[$user->getPerscomId()] ?? null,
+                'rsvp' => $usersToRsvp[$user->getId()] ?? null,
             ];
 
             $rankImg = $user->getRank()?->getImage();

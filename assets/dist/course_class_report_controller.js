@@ -23,7 +23,7 @@ export default class extends Controller {
     this.instructorsTarget.firstElementChild.append(row);
 
     document
-      .getElementById(`class_result_instructors_${this.instructorIdx}_perscomUserId`)
+      .getElementById(`class_result_instructors_${this.instructorIdx}_user`)
       .classList
       .remove('d-none')
     ;
@@ -43,7 +43,7 @@ export default class extends Controller {
     this.studentsTarget.firstElementChild.append(row);
 
     document
-      .getElementById(`class_result_students_${this.studentIdx}_perscomUserId`)
+      .getElementById(`class_result_students_${this.studentIdx}_user`)
       .classList
       .remove('d-none')
     ;

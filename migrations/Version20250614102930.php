@@ -22,7 +22,7 @@ final class Version20250614102930 extends AbstractMigration
         $this->addSql('TRUNCATE TABLE perscom_user');
         $this->addSql('ALTER TABLE perscom_user DROP PRIMARY KEY');
         $this->addSql('ALTER TABLE perscom_user CHANGE id perscom_id INT DEFAULT NULL');
-        $this->addSql('ALTER TABLE perscom_user ADD id INT AUTO_INCREMENT NOT NULL, ADD PRIMARY KEY (id)');
+        $this->addSql('ALTER TABLE perscom_user ADD id INT AUTO_INCREMENT NOT NULL FIRST, ADD PRIMARY KEY (id)');
         $this->addSql(<<<'SQL'
             ALTER TABLE perscom_user ADD rank_id INT DEFAULT NULL, ADD unit_id INT DEFAULT NULL,
                 ADD position_id INT DEFAULT NULL,

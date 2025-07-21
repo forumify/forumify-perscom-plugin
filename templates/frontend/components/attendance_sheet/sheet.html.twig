@@ -54,10 +54,10 @@
                             {{ user.name }}
                         </span>
                         </td>
-                        <td>{{ this.userAttendance(user.perscomId) }}%</td>
-                        <td>{{ this.userAccountability(user.perscomId) }}%</td>
+                        <td>{{ this.userAttendance(user.id) }}%</td>
+                        <td>{{ this.userAccountability(user.id) }}%</td>
                         {% for missionId, mission in this.missions %}
-                            {% set state = this.sheet[missionId][unitId][user.perscomId] ?? 'unknown' %}
+                            {% set state = this.sheet[missionId][unitId][user.id] ?? 'unknown' %}
                             {% set icon = {
                                 present: 'ph ph-check-circle',
                                 excused: 'ph ph-prohibit-inset',

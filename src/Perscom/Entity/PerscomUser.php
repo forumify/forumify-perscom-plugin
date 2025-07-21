@@ -7,10 +7,10 @@ namespace Forumify\PerscomPlugin\Perscom\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Doctrine\ORM\Mapping\JoinColumn;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\Core\Entity\User;
+use Forumify\Forum\Entity\Topic;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AwardRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\CombatRecord;
@@ -50,14 +50,6 @@ class PerscomUser implements PerscomEntityInterface
     #[ORM\ManyToOne(targetEntity: Specialty::class, fetch: 'EAGER')]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Specialty $specialty = null;
-
-    #[ORM\ManyToMany(targetEntity: Position::class, fetch: 'EAGER')]
-    #[ORM\JoinTable(
-        name: 'perscom_user_secondary_positions',
-        joinColumns: new JoinColumn(nullable: false, onDelete: 'CASCADE'),
-        inverseJoinColumns: new JoinColumn(nullable: false, onDelete: 'CASCADE')
-    )]
-    private Collection $secondaryPositions;
 
     #[ORM\ManyToOne(targetEntity: Status::class, fetch: 'EAGER')]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
@@ -99,9 +91,18 @@ class PerscomUser implements PerscomEntityInterface
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: QualificationRecord::class, fetch: 'EXTRA_LAZY')]
     private Collection $qualificationRecords;
 
+    #[ORM\OneToOne(targetEntity: Topic::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    private ?Topic $enlistmentTopic = null;
+
     public function __construct()
     {
-        $this->secondaryPositions = new ArrayCollection();
+        $this->serviceRecords = new ArrayCollection();
+        $this->awardRecords = new ArrayCollection();
+        $this->combatRecords = new ArrayCollection();
+        $this->rankRecords = new ArrayCollection();
+        $this->assignmentRecords = new ArrayCollection();
+        $this->qualificationRecords = new ArrayCollection();
     }
 
     public static function getPerscomResource(Perscom $perscom): ResourceContract
@@ -167,16 +168,6 @@ class PerscomUser implements PerscomEntityInterface
     public function setSpecialty(?Specialty $specialty): void
     {
         $this->specialty = $specialty;
-    }
-
-    public function getSecondaryPositions(): Collection
-    {
-        return $this->secondaryPositions;
-    }
-
-    public function setSecondaryPositions(Collection $secondaryPositions): void
-    {
-        $this->secondaryPositions = $secondaryPositions;
     }
 
     public function getStatus(): ?Status
@@ -307,5 +298,15 @@ class PerscomUser implements PerscomEntityInterface
     public function setQualificationRecords(Collection $qualificationRecords): void
     {
         $this->qualificationRecords = $qualificationRecords;
+    }
+
+    public function getEnlistmentTopic(): ?Topic
+    {
+        return $this->enlistmentTopic;
+    }
+
+    public function setEnlistmentTopic(?Topic $enlistmentTopic): void
+    {
+        $this->enlistmentTopic = $enlistmentTopic;
     }
 }

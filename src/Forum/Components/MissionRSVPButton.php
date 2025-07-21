@@ -39,7 +39,7 @@ class MissionRSVPButton extends AbstractController
 
         return $this->missionRSVPRepository->findOneBy([
             'mission' => $this->mission,
-            'perscomUserId' => $perscomUser->getPerscomId(),
+            'user' => $perscomUser,
         ]);
     }
 
@@ -77,7 +77,7 @@ class MissionRSVPButton extends AbstractController
 
         $rsvp = new MissionRSVP();
         $rsvp->setMission($this->mission);
-        $rsvp->setPerscomUserId($perscomUser->getPerscomId());
+        $rsvp->setUser($perscomUser);
 
         return $rsvp;
     }

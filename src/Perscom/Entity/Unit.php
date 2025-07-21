@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
@@ -33,6 +34,15 @@ class Unit implements PerscomEntityInterface, SortableEntityInterface
 
     #[ORM\OneToMany(mappedBy: 'unit', targetEntity: PerscomUser::class)]
     private Collection $users;
+
+    #[ORM\ManyToMany(targetEntity: Roster::class, mappedBy: 'units')]
+    private Collection $rosters;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+        $this->rosters = new ArrayCollection();
+    }
 
     public static function getPerscomResource(Perscom $perscom): ResourceContract
     {
@@ -73,5 +83,15 @@ class Unit implements PerscomEntityInterface, SortableEntityInterface
     public function setUsers(Collection $users): void
     {
         $this->users = $users;
+    }
+
+    public function getRosters(): Collection
+    {
+        return $this->rosters;
+    }
+
+    public function setRosters(Collection $rosters): void
+    {
+        $this->rosters = $rosters;
     }
 }

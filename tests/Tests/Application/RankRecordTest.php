@@ -9,32 +9,22 @@ use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use PluginTests\Factories\Perscom\UserFactory;
 use PluginTests\Factories\Stories\MilsimStory;
 use PluginTests\Traits\UserTrait;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Zenstruck\Foundry\Test\Factories;
 
-class RankRecordTest extends WebTestCase
+class RankRecordTest extends PerscomWebTestCase
 {
     use Factories;
     use UserTrait;
 
     public function testCreateRankRecord(): void
     {
-        $client = static::createClient();
-        $client->followRedirects();
-
-        MilsimStory::load();
-
-        $user = $this->createAdmin();
-        $client->loginUser($user);
-
         $targetUser = UserFactory::createOne();
 
-        $c = $client->request('GET', '/admin/perscom/records/rank');
+        $c = $this->client->request('GET', '/admin/perscom/records/rank');
         $newRecordLink = $c->filter('a[aria-label="New rank record"]')->link();
-        $client->click($newRecordLink);
+        $this->client->click($newRecordLink);
 
-        // phpcs:ignore
-        $client->submitForm('Save', [
+        $this->client->submitForm('Save', [
             'record[users]' => [$targetUser->getId()],
             'record[type]' => 'promotion',
             'record[rank]' => MilsimStory::rankPVT()->getId(),

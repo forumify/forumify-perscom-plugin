@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Form;
 
-use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
+use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassInstructor;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseInstructor;
-use Forumify\PerscomPlugin\Perscom\Form\UserType;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -27,10 +26,15 @@ class ClassInstructorResultType extends AbstractType
 
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        /** @var CourseClass $class */
+        $class = $options['course_class'];
+
         $builder
-            ->add('perscomUserId', UserType::class, [
+            ->add('user', EntityType::class, [
                 'attr' => ['class' => 'd-none'],
                 'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => PerscomUser::class,
                 'label' => false,
                 'placeholder' => 'Please select a user',
             ])
@@ -39,13 +43,10 @@ class ClassInstructorResultType extends AbstractType
             ])
             ->add('instructor', EntityType::class, [
                 'autocomplete' => true,
+                'choices' => $class->getCourse()->getInstructors(),
                 'choice_label' => 'title',
                 'class' => CourseInstructor::class,
                 'label' => 'Role',
-                'query_builder' => fn (EntityRepository $er): QueryBuilder => $er
-                    ->createQueryBuilder('ci')
-                    ->andWhere('ci.course = :course')
-                    ->setParameter('course', $options['course_class']->getCourse()),
                 'required' => false,
             ])
         ;

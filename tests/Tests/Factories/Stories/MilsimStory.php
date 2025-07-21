@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace PluginTests\Factories\Stories;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Forumify\Core\Entity\MenuItem;
 use Forumify\Core\Repository\MenuItemRepository;
 use Forumify\Core\Repository\SettingRepository;
@@ -12,7 +13,9 @@ use PluginTests\Factories\Forumify\ForumFactory;
 use PluginTests\Factories\Perscom\FormFactory;
 use PluginTests\Factories\Perscom\FormFieldFactory;
 use PluginTests\Factories\Perscom\PositionFactory;
+use PluginTests\Factories\Perscom\QualificationFactory;
 use PluginTests\Factories\Perscom\RankFactory;
+use PluginTests\Factories\Perscom\RosterFactory;
 use PluginTests\Factories\Perscom\SpecialtyFactory;
 use PluginTests\Factories\Perscom\StatusFactory;
 use PluginTests\Factories\Perscom\UnitFactory;
@@ -29,9 +32,13 @@ use Zenstruck\Foundry\Story;
  * @method static Entity\Form formEnlistment()
  * @method static Entity\Unit unitFirstSquad()
  * @method static Entity\Unit unitSecondSquad()
+ * @method static Entity\Roster rosterAlphaCompany()
  * @method static Entity\Position positionRiflemanAT()
  * @method static Entity\Specialty specialtyInfantry()
  * @method static Entity\Rank rankPVT()
+ * @method static Entity\Rank rankPFC()
+ * @method static Entity\Qualification qualificationLandNav()
+ * @method static Entity\Qualification qualificationCLS()
  */
 class MilsimStory extends Story
 {
@@ -56,7 +63,7 @@ class MilsimStory extends Story
         $this->addState('statusApproved', $approved);
         StatusFactory::createOne(['name' => 'Denied']);
 
-        $this->settingRepository->set('perscom.enlistment.status', [$retired->getPerscomId()]);
+        $this->settingRepository->set('perscom.enlistment.status', [$retired->getId()]);
 
         // Forms
         $enlistmentForm = FormFactory::createOne([
@@ -72,7 +79,7 @@ class MilsimStory extends Story
             'required' => true,
         ]);
 
-        $this->settingRepository->set('perscom.enlistment.form', $enlistmentForm->getPerscomId());
+        $this->settingRepository->set('perscom.enlistment.form', $enlistmentForm->getId());
         $this->addState('formEnlistment', $enlistmentForm);
 
         $enlistmentForum = ForumFactory::createOne(['title' => 'Enlistments']);
@@ -83,6 +90,12 @@ class MilsimStory extends Story
         $this->addState('unitFirstSquad', $firstSquad);
         $secondSquad = UnitFactory::createOne(['name' => 'Second Squad']);
         $this->addState('unitSecondSquad', $secondSquad);
+
+        $alphaCompany = RosterFactory::createOne([
+            'name' => 'Alpha Company',
+            'units' => new ArrayCollection([$firstSquad->_real(), $secondSquad->_real()]),
+        ]);
+        $this->addState('rosterAlphaCompany', $alphaCompany);
 
         // Positions
         $squadLeader = PositionFactory::createOne(['name' => 'Squad Leader']);
@@ -99,6 +112,7 @@ class MilsimStory extends Story
         $cpl = RankFactory::createOne(['name' => 'Corporal', 'abbreviation' => 'CPL', 'paygrade' => 'E4']);
         $spc = RankFactory::createOne(['name' => 'Specialist', 'abbreviation' => 'SPC', 'paygrade' => 'E4']);
         $pfc = RankFactory::createOne(['name' => 'Private First Class', 'abbreviation' => 'PFC', 'paygrade' => 'E3']);
+        $this->addState('rankPFC', $pfc);
         $pv2 = RankFactory::createOne(['name' => 'Private Second Class', 'abbreviation' => 'PV2', 'paygrade' => 'E2']);
         $pvt = RankFactory::createOne(['name' => 'Private Trainee', 'abbreviation' => 'PVT', 'paygrade' => 'E1']);
         $this->addState('rankPVT', $pvt);
@@ -123,6 +137,12 @@ class MilsimStory extends Story
         $this->createUser($pfc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
         $this->createUser($pv2, $secondSquad, $riflemanAT, $infantry, $activeDuty);
         $this->createUser($pv2, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+
+        // Qualifications
+        $landNav = QualificationFactory::createOne(['name' => 'Land Navigation']);
+        $this->addState('qualificationLandNav', $landNav);
+        $cls = QualificationFactory::createOne(['name' => 'Combat Life Saver']);
+        $this->addState('qualificationCLS', $cls);
     }
 
     private function createPerscomMenu(): void

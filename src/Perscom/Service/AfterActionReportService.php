@@ -14,12 +14,10 @@ use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Status;
-use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\StatusRepository;
-use Forumify\PerscomPlugin\Perscom\Repository\UnitRepository;
 use JsonException;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -30,12 +28,10 @@ class AfterActionReportService
         private readonly SettingRepository $settingRepository,
         private readonly AfterActionReportRepository $afterActionReportRepository,
         private readonly RecordService $recordService,
-        private readonly PerscomUserService $userService,
         private readonly PerscomUserRepository $perscomUserRepository,
         private readonly NotificationService $notificationService,
         private readonly Packages $packages,
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly UnitRepository $unitRepository,
         private readonly StatusRepository $statusRepository,
     ) {
     }
@@ -58,13 +54,6 @@ class AfterActionReportService
             }
         }
         $aar->setAttendance($attendance);
-
-        if ($isNew) {
-            /** @var Unit|null */
-            $unit = $this->unitRepository->findOneBy(['perscomId' => $aar->getUnitId()]);
-            $aar->setUnitName($unit?->getName() ?? 'unknown');
-            $aar->setUnitPosition($unit?->getPosition() ?? 999);
-        }
         $this->afterActionReportRepository->save($aar);
 
         if (!$isNew) {
@@ -84,7 +73,7 @@ class AfterActionReportService
     {
         $existing = $this->afterActionReportRepository->findBy([
             'mission' => $aar->getMission(),
-            'unitId' => $aar->getUnitId(),
+            'unit' => $aar->getUnit(),
         ]);
 
         if (!empty($existing)) {
@@ -107,12 +96,12 @@ class AfterActionReportService
 
     public function createCombatRecords(AfterActionReport $aar): void
     {
-        $perscomUserIds = $aar->getAttendance()['present'] ?? [];
-        if (empty($perscomUserIds)) {
+        $userIds = $aar->getAttendance()['present'] ?? [];
+        if (empty($userIds)) {
             return;
         }
 
-        $perscomUsers = $this->perscomUserRepository->findByPerscomIds($perscomUserIds);
+        $perscomUsers = $this->perscomUserRepository->findBy(['id' => $userIds]);
         $this->recordService->createRecord('combat', [
             'sendNotification' => true,
             'text' => $aar->getMission()->getCombatRecordText() ?: $this->getDefaultCombatRecordText($aar->getMission()),
@@ -123,22 +112,6 @@ class AfterActionReportService
     private function getDefaultCombatRecordText(Mission $mission): string
     {
         return "Operation {$mission->getOperation()->getTitle()}: Mission {$mission->getTitle()}";
-    }
-
-    /**
-     * @return array<PerscomUser>
-     */
-    public function findUsersByUnit(int $unitId): array
-    {
-        /** @var Unit|null $unit */
-        $unit = $this->unitRepository->findOneBy(['perscomId' => $unitId]);
-        if ($unit === null) {
-            return [];
-        }
-
-        $users = $unit->getUsers()->toArray();
-        $this->userService->sortPerscomUsers($users);
-        return $users;
     }
 
     private function handleAbsence(AfterActionReport $aar): void
@@ -211,10 +184,10 @@ class AfterActionReportService
         $pastAars = $this->afterActionReportRepository
             ->createQueryBuilder('aar')
             ->join('aar.mission', 'm')
-            ->where('aar.unitId = :unitId')
+            ->where('aar.unit = :unit')
             ->orderBy('m.start', 'DESC')
             ->setMaxResults($consecutiveCount)
-            ->setParameter('unitId', $aar->getUnitId())
+            ->setParameter('unit', $aar->getUnit())
             ->getQuery()
             ->getResult()
         ;

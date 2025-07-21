@@ -7,8 +7,8 @@ namespace Forumify\PerscomPlugin\Admin\Form;
 use Forumify\Core\Form\RichTextEditorType;
 use Forumify\Core\Repository\RoleRepository;
 use Forumify\Forum\Repository\ForumRepository;
-use Forumify\PerscomPlugin\Perscom\Form\PerscomFormType;
-use Forumify\PerscomPlugin\Perscom\Form\StatusType;
+use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\StatusRepository;
 use Forumify\Plugin\Service\PluginVersionChecker;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -20,8 +20,12 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 class ConfigurationType extends AbstractType
 {
+    private ?array $statusChoices = null;
+
     public function __construct(
         private readonly ForumRepository $forumRepository,
+        private readonly StatusRepository $statusRepository,
+        private readonly FormRepository $formRepository,
         private readonly RoleRepository $roleRepository,
         private readonly PluginVersionChecker $pluginVersionChecker,
     ) {
@@ -36,20 +40,24 @@ class ConfigurationType extends AbstractType
                 'required' => false,
             ])
             // Enlistment
-            ->add('perscom__enlistment__status', StatusType::class, [
+            ->add('perscom__enlistment__status', ChoiceType::class, [
                 'autocomplete' => true,
+                'choices' => $this->getStatusChoices(),
                 'help' => 'Only users in these statuses can start the enlistment process. Users who do not have a PERSCOM account yet will always be allowed to enlist.',
                 'label' => 'Eligible Status',
                 'multiple' => true,
                 'required' => false,
             ])
-            ->add('perscom__enlistment__form', PerscomFormType::class, [
+            ->add('perscom__enlistment__form', ChoiceType::class, [
+                'autocomplete' => true,
+                'choices' => $this->getFormChoices(),
                 'help' => 'The form to use for enlistments, by default, all required fields to create a PERSCOM user are already added by this plugin.',
                 'label' => 'Enlistment Form',
                 'placeholder' => 'Select a form to use for enlistments',
                 'required' => false,
             ])
             ->add('perscom__enlistment__forum', ChoiceType::class, [
+                'autocomplete' => true,
                 'choices' => $this->getForumChoices(),
                 'help' => 'Automatically post a topic containing the enlistment to this forum.',
                 'label' => 'Enlistment Forum',
@@ -57,6 +65,7 @@ class ConfigurationType extends AbstractType
                 'required' => false,
             ])
             ->add('perscom__enlistment__role', ChoiceType::class, [
+                'autocomplete' => true,
                 'choices' => $this->getRoleChoices(),
                 'help' => 'Automatically assign this role to the user upon creating an enlistment.',
                 'label' => 'Enlistee Role',
@@ -96,8 +105,9 @@ class ConfigurationType extends AbstractType
                     'label' => 'Enabled',
                     'required' => false,
                 ])
-                ->add('perscom__report_in__enabled_status', StatusType::class, [
+                ->add('perscom__report_in__enabled_status', ChoiceType::class, [
                     'autocomplete' => true,
+                    'choices' => $this->getStatusChoices(),
                     'help' => 'Which statuses need to be checked for report in activity?',
                     'label' => 'Enabled status',
                     'multiple' => true,
@@ -117,7 +127,9 @@ class ConfigurationType extends AbstractType
                     'required' => false,
                     'scale' => 0,
                 ])
-                ->add('perscom__report_in__failure_status', StatusType::class, [
+                ->add('perscom__report_in__failure_status', ChoiceType::class, [
+                    'autocomplete' => true,
+                    'choices' => $this->getStatusChoices(),
                     'help' => 'Status to move the user to when they fail to report in. For example: AWOL',
                     'label' => 'Failure status',
                     'required' => false,
@@ -150,7 +162,9 @@ class ConfigurationType extends AbstractType
                     'label' => 'Consecutive absence email content',
                     'required' => false,
                 ])
-                ->add('perscom__operations__consecutive_absent_status', StatusType::class, [
+                ->add('perscom__operations__consecutive_absent_status', ChoiceType::class, [
+                    'autocomplete' => true,
+                    'choices' => $this->getStatusChoices(),
                     'help' => 'Automatically move users with consecutive absences to a different status.',
                     'label' => 'Consecutive absence status',
                     'placeholder' => 'Do not change status',
@@ -166,8 +180,7 @@ class ConfigurationType extends AbstractType
             ->createQueryBuilder('f')
             ->select('f.id', 'f.title')
             ->getQuery()
-            ->getArrayResult()
-        ;
+            ->getArrayResult();
 
         return array_combine(
             array_column($choices, 'title'),
@@ -181,11 +194,44 @@ class ConfigurationType extends AbstractType
             ->createQueryBuilder('r')
             ->select('r.id', 'r.title')
             ->getQuery()
-            ->getArrayResult()
-        ;
+            ->getArrayResult();
 
         return array_combine(
             array_column($choices, 'title'),
+            array_column($choices, 'id'),
+        );
+    }
+
+    private function getStatusChoices(): array
+    {
+        if ($this->statusChoices !== null) {
+            return $this->statusChoices;
+        }
+
+        $choices = $this->statusRepository
+            ->createQueryBuilder('s')
+            ->select('s.id', 's.name')
+            ->orderBy('s.position', 'ASC')
+            ->getQuery()
+            ->getArrayResult();
+
+        $this->statusChoices = array_combine(
+            array_column($choices, 'name'),
+            array_column($choices, 'id'),
+        );
+        return $this->statusChoices;
+    }
+
+    private function getFormChoices(): array
+    {
+        $choices = $this->formRepository
+            ->createQueryBuilder('f')
+            ->select('f.id', 'f.name')
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_combine(
+            array_column($choices, 'name'),
             array_column($choices, 'id'),
         );
     }

@@ -11,6 +11,8 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class PerscomUserService
 {
+    private array $userIdToPerscomUser = [];
+
     public function __construct(
         private readonly PerscomUserRepository $perscomUserRepository,
         private readonly Security $security,
@@ -29,7 +31,13 @@ class PerscomUserService
 
     public function getPerscomUser(User $user): ?PerscomUser
     {
-        return $this->perscomUserRepository->findOneBy(['user' => $user]);
+        $userId = $user->getId();
+        if (isset($this->userIdToPerscomUser[$userId])) {
+            return $this->userIdToPerscomUser[$userId];
+        }
+
+        $this->userIdToPerscomUser[$userId] = $this->perscomUserRepository->findOneBy(['user' => $user]);
+        return $this->userIdToPerscomUser[$userId];
     }
 
     public function createUser(string $firstName, string $lastName): PerscomUser

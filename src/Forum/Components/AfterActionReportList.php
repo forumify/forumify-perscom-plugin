@@ -28,7 +28,8 @@ class AfterActionReportList extends AbstractDoctrineList
     {
         return $this->afterActionReportRepository->createQueryBuilder('aar')
             ->where('aar.mission = :mission')
-            ->orderBy('aar.unitPosition')
+            ->join('aar.unit', 'u')
+            ->orderBy('u.position')
             ->setParameter('mission', $this->mission);
     }
 

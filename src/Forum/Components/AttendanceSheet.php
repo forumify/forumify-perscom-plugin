@@ -6,9 +6,9 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 
 use DateTime;
 use Forumify\PerscomPlugin\Perscom\Entity\Operation;
-use Forumify\PerscomPlugin\Perscom\Form\UnitType;
+use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
-use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
+use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -36,7 +36,7 @@ class AttendanceSheet extends AbstractController
 
     public function __construct(
         private readonly AfterActionReportRepository $aarRepository,
-        private readonly AfterActionReportService $aarService,
+        private readonly PerscomUserService $userService,
     ) {
     }
 
@@ -51,8 +51,10 @@ class AttendanceSheet extends AbstractController
                 'data' => new DateTime(),
                 'widget' => 'single_text',
             ])
-            ->add('unit', UnitType::class, [
+            ->add('unit', EntityType::class, [
                 'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => Unit::class,
                 'help' => 'Leave empty to calculate attendance for all units that have at least 1 after action report in the selected time period.',
                 'multiple' => true,
                 'required' => false,
@@ -99,7 +101,7 @@ class AttendanceSheet extends AbstractController
         $aars = $this->aarRepository->findByMissionStartAndUnit(
             $data['from'],
             $data['to'],
-            $data['unit'] ?? [],
+            $data['unit']?->toArray() ?? [],
             $data['operation']?->toArray() ?? [],
         );
         $missions = [];
@@ -109,18 +111,16 @@ class AttendanceSheet extends AbstractController
             $mission = $aar->getMission();
             $missions[$mission->getId()] = $mission;
 
-            $unitId = $aar->getUnitId();
-            $units[$unitId] = [
-                'id' => $unitId,
-                'name' => $aar->getUnitName(),
-                'position' => $aar->getUnitPosition(),
-            ];
+            $unit = $aar->getUnit();
+            $units[$unit->getId()] = $unit;
         }
-        uasort($units, fn (array $a, array $b): int => $a['position'] <=> $b['position']);
+        uasort($units, fn(Unit $a, Unit $b): int => $a->getPosition() <=> $b->getPosition());
 
         $users = [];
         foreach ($units as $unit) {
-            $users[$unit['id']] = $this->aarService->findUsersByUnit($unit['id']);
+            $unitUsers = $unit->getUsers()->toArray();
+            $this->userService->sortPerscomUsers($unitUsers);
+            $users[$unit->getId()] = $unitUsers;
         }
 
         $sheetData = [];
@@ -129,14 +129,14 @@ class AttendanceSheet extends AbstractController
             foreach (array_keys($units) as $unitId) {
                 $sheetData[$missionId][$unitId] = [];
                 foreach (($users[$unitId] ?? []) as $user) {
-                    $sheetData[$missionId][$unitId][$user->getPerscomId()] = '';
+                    $sheetData[$missionId][$unitId][$user->getId()] = '';
                 }
             }
         }
 
         foreach ($aars as $aar) {
             $missionId = $aar->getMission()->getId();
-            $unitId = $aar->getUnitId();
+            $unitId = $aar->getUnit()->getId();
 
             foreach ($aar->getAttendance() as $state => $userIds) {
                 foreach ($userIds as $userId) {

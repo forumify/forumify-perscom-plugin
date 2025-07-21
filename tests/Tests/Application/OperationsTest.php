@@ -11,37 +11,23 @@ use PluginTests\Factories\Forumify\CalendarFactory;
 use PluginTests\Factories\Perscom\UserFactory;
 use PluginTests\Factories\Stories\MilsimStory;
 use PluginTests\Traits\SessionTrait;
-use PluginTests\Traits\UserTrait;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
-use Zenstruck\Foundry\Test\Factories;
 
-class OperationsTest extends WebTestCase
+class OperationsTest extends PerscomWebTestCase
 {
-    use Factories;
-    use UserTrait;
     use InteractsWithLiveComponents;
     use SessionTrait;
 
     public function testOperationToAttendance(): void
     {
-        $client = self::createClient();
-        $client->followRedirects();
-
-        MilsimStory::load();
-
-        $user = $this->createAdmin();
-        $client->loginUser($user);
-
         self::getContainer()->get(SettingRepository::class)->set('perscom.operations.absent_notification', true);
 
-        UserFactory::createOne(['user' => $user, 'status' => MilsimStory::statusActiveDuty()]);
+        UserFactory::createOne(['user' => $this->user, 'status' => MilsimStory::statusActiveDuty()]);
 
-        $c = $client->request('GET', '/admin/perscom/operations');
-        $newOperationLink = $c->filter('a[aria-label="New Operation"]')->link();
-        $client->click($newOperationLink);
+        $c = $this->client->request('GET', '/admin/perscom/operations');
+        $this->client->click($c->filter('a[aria-label="New Operation"]')->link());
 
-        $client->submitForm('Save', [
+        $this->client->submitForm('Save', [
             'operation[title]' => 'Sandstorm',
             'operation[description]' => 'Operation description',
             'operation[content]' => '<p>Operation content</p>',
@@ -50,14 +36,15 @@ class OperationsTest extends WebTestCase
             'operation[missionBriefingTemplate]' => 'Briefing template',
             'operation[afterActionReportTemplate]' => 'After action report template',
         ]);
-        $client->submitForm('Save'); // ACL
+        // ACLs
+        $this->client->submitForm('Save');
 
-        $client->request('GET', '/perscom/operations/sandstorm');
+        $this->client->request('GET', '/perscom/operations/sandstorm');
         self::assertSelectorTextSame('h1', 'Sandstorm');
 
         $calendar = CalendarFactory::createOne(['title' => 'Missions']);
 
-        $c = $client->clickLink('New Mission');
+        $c = $this->client->clickLink('New Mission');
         $initialBriefingText = $c->filter('#mission_briefing')->innerText();
         self::assertSame('Briefing template', $initialBriefingText);
 
@@ -65,7 +52,7 @@ class OperationsTest extends WebTestCase
         $start = $now->add(new DateInterval('P1D'));
         $end = $now->add(new DateInterval('P1DT1H'));
 
-        $c = $client->submitForm('Save', [
+        $c = $this->client->submitForm('Save', [
             'mission[title]' => 'Test Mission',
             'mission[start]' => $start->format('Y-m-d H:i:s'),
             'mission[end]' => $end->format('Y-m-d H:i:s'),
@@ -78,7 +65,7 @@ class OperationsTest extends WebTestCase
         self::assertSelectorTextSame('h1', 'Test Mission');
         self::assertAnySelectorTextContains('button', 'RSVP');
 
-        $c = $client->clickLink('New After Action Report');
+        $c = $this->client->clickLink('New After Action Report');
         $initialAarText = $c->filter('#after_action_report_report')->innerText();
         self::assertSame('After action report template', $initialAarText);
 
@@ -90,21 +77,21 @@ class OperationsTest extends WebTestCase
         $present = [];
         foreach ($unit->getUsers() as $unitUser) {
             $attendance = $attendances[$i++];
-            $attendanceJson[$attendance][] = $unitUser->getPerscomId();
+            $attendanceJson[$attendance][] = $unitUser->getId();
             if ($attendance === 'present') {
                 $present[] = $unitUser;
             }
         }
         self::assertCount(3, $present);
 
-        $c = $client->submitForm('Save', [
-            'after_action_report[unitId]' => $unit->getPerscomId(),
+        $c = $this->client->submitForm('Save', [
+            'after_action_report[unit]' => $unit->getId(),
             'after_action_report[report]' => '<span id="test-aar-report">After action report content</span>',
             'after_action_report[attendanceJson]' => json_encode($attendanceJson),
         ]);
 
         self::assertSelectorExists('#test-aar-report');
-        foreach($present as $presentUser) {
+        foreach ($present as $presentUser) {
             $cr = $presentUser->getCombatRecords()->first();
             self::assertNotNull($cr);
             self::assertEquals('Operation Sandstorm: Mission Test Mission', $cr->getText());
@@ -113,7 +100,7 @@ class OperationsTest extends WebTestCase
         $this->initializeSession();
         $c = $this
             ->createLiveComponent('Perscom\\AttendanceSheet')
-            ->actingAs($user)
+            ->actingAs($this->user)
             ->submitForm([
                 'form' => [
                     'from' => $now->sub(new DateInterval('P3D'))->format('Y-m-d'),

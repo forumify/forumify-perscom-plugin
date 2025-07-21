@@ -8,33 +8,19 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use PluginTests\Factories\Perscom\UserFactory;
 use PluginTests\Factories\Stories\MilsimStory;
-use PluginTests\Traits\UserTrait;
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-use Zenstruck\Foundry\Test\Factories;
 
-class AssignmentRecordTest extends WebTestCase
+class AssignmentRecordTest extends PerscomWebTestCase
 {
-    use Factories;
-    use UserTrait;
-
     public function testCreatePrimaryAssignmentRecord(): void
     {
-        $client = static::createClient();
-        $client->followRedirects();
-
-        MilsimStory::load();
-
-        $user = $this->createAdmin();
-        $client->loginUser($user);
-
         $targetUser = UserFactory::createOne();
 
-        $c = $client->request('GET', '/admin/perscom/records/assignment');
+        $c = $this->client->request('GET', '/admin/perscom/records/assignment');
         $newRecordLink = $c->filter('a[aria-label="New assignment record"]')->link();
-        $client->click($newRecordLink);
+        $this->client->click($newRecordLink);
 
         // phpcs:ignore
-        $client->submitForm('Save', [
+        $this->client->submitForm('Save', [
             'record[users]' => [$targetUser->getId()],
             'record[type]' => 'primary',
             'record[status]' => MilsimStory::statusActiveDuty()->getId(),
@@ -56,22 +42,13 @@ class AssignmentRecordTest extends WebTestCase
 
     public function testCreateSecondaryAssignmentRecord(): void
     {
-        $client = static::createClient();
-        $client->followRedirects();
-
-        MilsimStory::load();
-
-        $user = $this->createAdmin();
-        $client->loginUser($user);
-
         $targetUser = UserFactory::createOne();
 
-        $c = $client->request('GET', '/admin/perscom/records/assignment');
+        $c = $this->client->request('GET', '/admin/perscom/records/assignment');
         $newRecordLink = $c->filter('a[aria-label="New assignment record"]')->link();
-        $client->click($newRecordLink);
+        $this->client->click($newRecordLink);
 
-        // phpcs:ignore
-        $client->submitForm('Save', [
+        $this->client->submitForm('Save', [
             'record[users]' => [$targetUser->getId()],
             'record[type]' => 'secondary',
             'record[status]' => MilsimStory::statusActiveDuty()->getId(),

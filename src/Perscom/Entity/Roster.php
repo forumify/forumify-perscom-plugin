@@ -32,7 +32,7 @@ class Roster implements PerscomEntityInterface, SortableEntityInterface
     #[ORM\Column(type: 'text')]
     private string $description = '';
 
-    #[ORM\ManyToMany(targetEntity: Unit::class)]
+    #[ORM\ManyToMany(targetEntity: Unit::class, inversedBy: 'rosters')]
     #[ORM\JoinTable(
         name: 'perscom_roster_units',
         joinColumns: new JoinColumn(nullable: false, onDelete: 'CASCADE'),

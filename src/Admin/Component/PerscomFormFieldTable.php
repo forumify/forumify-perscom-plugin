@@ -10,7 +10,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\Form;
 use Forumify\PerscomPlugin\Perscom\Entity\FormField;
 use Forumify\PerscomPlugin\Perscom\Repository\FormFieldRepository;
 use Forumify\PerscomPlugin\Perscom\Sync\Service\SyncService;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -25,7 +24,6 @@ class PerscomFormFieldTable extends AbstractDoctrineTable
     public Form $form;
 
     public function __construct(
-        private readonly Security $security,
         private readonly FormFieldRepository $formFieldRepository,
         private readonly SyncService $syncService,
     ) {

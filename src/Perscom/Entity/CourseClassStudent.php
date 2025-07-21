@@ -5,17 +5,22 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Forumify\Core\Entity\IdentifiableEntityTrait;
 
 #[ORM\Entity]
 #[ORM\Table('perscom_course_class_student')]
 class CourseClassStudent
 {
-    #[ORM\Id]
-    #[ORM\Column(type: 'integer')]
-    private int $perscomUserId;
-    private ?array $perscomUser = null;
+    use IdentifiableEntityTrait;
 
-    #[ORM\Id]
+    /** @deprecated */
+    #[ORM\Column(type: 'integer', nullable: true)]
+    private ?int $perscomUserId = null;
+
+    #[ORM\ManyToOne(targetEntity: PerscomUser::class)]
+    #[ORM\JoinColumn(onDelete: 'CASCADE')]
+    private ?PerscomUser $user = null;
+
     #[ORM\ManyToOne(targetEntity: CourseClass::class, inversedBy: 'students')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private CourseClass $class;
@@ -29,24 +34,28 @@ class CourseClassStudent
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $serviceRecordTextOverride = null;
 
-    public function getPerscomUserId(): int
+    /** @deprecated */
+    public function getPerscomUserId(): ?int
     {
+        trigger_deprecation('forumify/forumify-perscom-plugin', '2.0', sprintf('%s is deprecated. Use %s instead', __CLASS__ . '::' . __FUNCTION__, __CLASS__ . '::' . 'getUser()'));
         return $this->perscomUserId;
     }
 
+    /** @deprecated */
     public function setPerscomUserId(int $perscomUserId): void
     {
+        trigger_deprecation('forumify/forumify-perscom-plugin', '2.0', sprintf('%s is deprecated. Use %s instead', __CLASS__ . '::' . __FUNCTION__, __CLASS__ . '::' . 'getUser()'));
         $this->perscomUserId = $perscomUserId;
     }
 
-    public function getPerscomUser(): ?array
+    public function getUser(): ?PerscomUser
     {
-        return $this->perscomUser;
+        return $this->user;
     }
 
-    public function setPerscomUser(?array $perscomUser): void
+    public function setUser(PerscomUser $user): void
     {
-        $this->perscomUser = $perscomUser;
+        $this->user = $user;
     }
 
     public function getClass(): CourseClass
