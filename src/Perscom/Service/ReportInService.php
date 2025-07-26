@@ -53,10 +53,11 @@ class ReportInService
         $now = new DateTime();
         $failures = [];
         foreach ($usersToCheck as $perscomUser) {
-            $lastReportIn = $this->reportInRepository->find($perscomUser->getPerscomId());
+            /** @var ReportIn|null $lastReportIn */
+            $lastReportIn = $this->reportInRepository->findOneBy(['user' => $perscomUser]);
             if ($lastReportIn === null) {
                 $reportIn = new ReportIn();
-                $reportIn->setPerscomUserId($perscomUser->getPerscomId());
+                $reportIn->setUser($perscomUser);
                 $reportIn->setLastReportInDate($now);
                 $this->reportInRepository->save($reportIn, false);
                 continue;
@@ -66,7 +67,7 @@ class ReportInService
             if ($diff > $period) {
                 $failures[] = $perscomUser;
 
-                $lastReportIn->setPreviousStatusId($perscomUser->getStatus()?->getPerscomId());
+                $lastReportIn->setReturnStatus($perscomUser->getStatus());
                 $this->reportInRepository->save($lastReportIn, false);
                 continue;
             }
@@ -116,7 +117,7 @@ class ReportInService
             return false;
         }
 
-        $statusId = $this->perscomUserService->getLoggedInPerscomUser()?->getStatus()?->getPerscomId();
+        $statusId = $this->perscomUserService->getLoggedInPerscomUser()?->getStatus()?->getId();
         if ($statusId === null) {
             return false;
         }
@@ -134,31 +135,27 @@ class ReportInService
             return false;
         }
 
-        $perscomUserId = $perscomUser->getPerscomId();
-        $lastReportIn = $this->reportInRepository->find($perscomUserId);
+        /** @var ReportIn|null $lastReportIn */
+        $lastReportIn = $this->reportInRepository->findOneBy(['user' => $perscomUser]);
         if ($lastReportIn === null) {
             $lastReportIn = new ReportIn();
-            $lastReportIn->setPerscomUserId($perscomUserId);
+            $lastReportIn->setUser($perscomUser);
         }
         $lastReportIn->setLastReportInDate(new DateTime());
 
         $updated = false;
-        if ($previousStatusId = $lastReportIn->getPreviousStatusId()) {
-            $previousStatus = $this->statusRepository->findOneByPerscomId($previousStatusId);
-            if ($previousStatus !== null) {
-                $this->recordService->createRecord('assignment', [
-                    'status' => $previousStatus,
-                    'text' => "Status reverted back to original due to reporting in.",
-                    'type' => 'primary',
-                    'users' => [$perscomUser],
-                ]);
-            }
-            $lastReportIn->setPreviousStatusId(null);
+        $returnStatus = $lastReportIn->getReturnStatus();
+        if ($returnStatus !== null && $perscomUser->getStatus()?->getId() !== $returnStatus->getId()) {
+            $this->recordService->createRecord('assignment', [
+                'status' => $returnStatus,
+                'text' => "Status reverted back to original due to reporting in.",
+                'type' => 'primary',
+                'users' => [$perscomUser],
+            ]);
             $updated = true;
         }
-
+        $lastReportIn->setReturnStatus(null);
         $this->reportInRepository->save($lastReportIn);
-
         return $updated;
     }
 
@@ -169,7 +166,7 @@ class ReportInService
         }
 
         $failureStatusId = (int)$this->settingRepository->get('perscom.report_in.failure_status');
-        $this->failureStatus = $this->statusRepository->findOneByPerscomId($failureStatusId);
+        $this->failureStatus = $this->statusRepository->find($failureStatusId);
         if ($this->failureStatus === null) {
             throw new \RuntimeException('No failure status found.');
         }
@@ -186,8 +183,14 @@ class ReportInService
             return [];
         }
 
-        $statuses = $this->statusRepository->findByPerscomIds($enabledStatuses);
-        return $this->perscomUserRepository->findBy(['status' => $statuses]);
+        return $this->perscomUserRepository
+            ->createQueryBuilder('pu')
+            ->select('pu')
+            ->where('pu.status IN (:statusIds)')
+            ->setParameter('statusIds', $enabledStatuses)
+            ->getQuery()
+            ->getResult()
+        ;
     }
 
     private function sendWarning(User $user, int $daysLeft): void

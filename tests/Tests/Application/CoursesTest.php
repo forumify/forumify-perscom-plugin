@@ -6,9 +6,7 @@ namespace PluginTests\Application;
 
 use DateInterval;
 use DateTimeImmutable;
-use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
-use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\QualificationRecordRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\ServiceRecordRepository;
 use PluginTests\Application\PerscomWebTestCase;
