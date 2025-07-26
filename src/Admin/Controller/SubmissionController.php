@@ -4,10 +4,11 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Controller;
 
-use Forumify\PerscomPlugin\Admin\Form\StatusRecord;
-use Forumify\PerscomPlugin\Admin\Form\StatusRecordType;
+use Forumify\PerscomPlugin\Admin\Form\SubmissionStatusType;
 use Forumify\PerscomPlugin\Admin\Service\SubmissionStatusUpdateService;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
+use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\FormSubmissionRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,45 +19,65 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 #[IsGranted('perscom-io.admin.submissions.view')]
 class SubmissionController extends AbstractController
 {
+    public function __construct(
+        private readonly FormRepository $formRepository,
+        private readonly FormSubmissionRepository $formSubmissionRepository,
+    ) {
+    }
+
     #[Route('', 'list')]
-    public function list(): Response
+    public function list(Request $request): Response
     {
-        return $this->render('@ForumifyPerscomPlugin/admin/submissions/list/list.html.twig');
+        $formId = $request->get('form');
+        $form = $formId !== null ? $this->formRepository->find($formId) : null;
+
+        return $this->render('@ForumifyPerscomPlugin/admin/submissions/list/list.html.twig', [
+            'form' => $form,
+        ]);
     }
 
     #[Route('/{id}', 'view')]
     public function view(
-        PerscomFactory $perscomFactory,
         SubmissionStatusUpdateService $submissionStatusUpdateService,
-        int $id,
+        FormSubmission $submission,
         Request $request
     ): Response {
-        $perscom = $perscomFactory->getPerscom();
-        $submission = $perscom
-            ->submissions()
-            ->get($id, ['form', 'form.fields', 'user', 'statuses', 'statuses.record'])
-            ->json('data');
-
-        usort($submission['statuses'], static fn ($a, $b) => $b['record']['updated_at'] <=> $a['record']['updated_at']);
-
-        $record = new StatusRecord();
-        $record->submission = $submission;
-        $form = $this->createForm(StatusRecordType::class, $record);
+        $form = $this->createForm(SubmissionStatusType::class);
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->denyAccessUnlessGranted('perscom-io.admin.submissions.assign_statuses');
 
             $statusRecord = $form->getData();
-            $submissionStatusUpdateService->createStatusRecord($statusRecord);
+            $submissionStatusUpdateService->createStatusRecord($submission, $statusRecord);
 
             $this->addFlash('success', 'perscom.admin.submissions.view.status_created');
-            return $this->redirectToRoute('perscom_admin_submission_view', ['id' => $id]);
+            return $this->redirectToRoute('perscom_admin_submission_view', ['id' => $submission->getId()]);
         }
 
-        return $this->render('@ForumifyPerscomPlugin/admin/submissions/view/view.html.twig', [
-            'submission' => $submission,
+        return $this->render('@ForumifyPerscomPlugin/admin/submissions/view/form.html.twig', [
             'form' => $form->createView(),
+            'submission' => $submission,
         ]);
+    }
+
+    #[Route('/{id}/delete', 'delete')]
+    public function delete(Request $request, FormSubmission $formSubmission): Response
+    {
+        if (!$this->isGranted('perscom-io.admin.submissions.delete')) {
+            $this->addFlash('error', 'You are not allowed to delete submissions.');
+            return $this->redirectToRoute('perscom_admin_submission_list');
+        }
+
+        if (!$request->get('confirmed')) {
+            return $this->render('@ForumifyPerscomPlugin/admin/submissions/delete/delete.html.twig', [
+                'submission' => $formSubmission,
+            ]);
+        }
+
+        $this->formSubmissionRepository->remove($formSubmission);
+
+        $this->addFlash('success', 'Submission deleted.');
+        return $this->redirectToRoute('perscom_admin_submission_list');
     }
 }

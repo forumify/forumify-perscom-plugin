@@ -5,10 +5,10 @@
     <tr>
         <td>
             <span class="flex items-center gap-1 p-1">
-                {% if instructor.rankImage is not null %}
-                    <img width="24px" height="24px" src="{{ instructor.rankImage }}">
+                {% if instructor.user.rank is not null and instructor.user.rank.image is not null %}
+                    <img width="24px" height="24px" src="{{ asset(instructor.user.rank.image, 'perscom.asset') }}">
                 {% endif %}
-                {{ instructor.name }}
+                {{ instructor.user.name }}
                 {% set instructorAttended = instructor.courseUser.present %}
                 {% if instructorAttended is null %}
                 {% elseif instructorAttended %}
@@ -22,7 +22,7 @@
             {% if canManage %}
                 <button
                     class="btn-link btn-icon btn-small"
-                    {{ live_action('removeInstructor', { perscomUserId: instructor.id }) }}
+                    {{ live_action('removeInstructor', { userId: instructor.user.id }) }}
                 >
                     <i class="ph ph-x"></i>
                 </button>

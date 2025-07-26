@@ -25,7 +25,7 @@ class Mission
     use BlameableEntityTrait;
     use TimestampableEntityTrait;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     private string $title;
 
     #[ORM\Column(type: 'text')]
@@ -50,7 +50,7 @@ class Mission
     #[ORM\Column(type: 'boolean', options: ['default' => false])]
     private bool $createCombatRecords;
 
-    #[ORM\Column(nullable: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $combatRecordText = null;
 
     #[ORM\ManyToOne(targetEntity: Calendar::class, fetch: 'EXTRA_LAZY')]

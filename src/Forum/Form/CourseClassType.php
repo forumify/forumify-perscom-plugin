@@ -38,38 +38,38 @@ class CourseClassType extends AbstractType
         $builder
             ->add('title', TextType::class)
             ->add('description', RichTextEditorType::class, [
+                'empty_data' => '',
                 'help' => 'perscom.course.class.description_help',
                 'required' => false,
-                'empty_data' => '',
             ])
             ->add('signupFrom', DateTimeType::class, [
-                'widget' => 'single_text',
                 'view_timezone' => $user?->getTimezone() ?? 'UTC',
+                'widget' => 'single_text',
             ])
             ->add('signupUntil', DateTimeType::class, [
-                'widget' => 'single_text',
                 'view_timezone' => $user?->getTimezone() ?? 'UTC',
+                'widget' => 'single_text',
             ])
             ->add('start', DateTimeType::class, [
-                'widget' => 'single_text',
                 'view_timezone' => $user?->getTimezone() ?? 'UTC',
+                'widget' => 'single_text',
             ])
             ->add('end', DateTimeType::class, [
-                'widget' => 'single_text',
                 'view_timezone' => $user?->getTimezone() ?? 'UTC',
+                'widget' => 'single_text',
             ])
             ->add('calendar', EntityType::class, [
-                'required' => false,
-                'class' => Calendar::class,
-                'choice_label' => 'title',
                 'autocomplete' => true,
-                'placeholder' => 'Do not create a calendar event',
+                'choice_label' => 'title',
+                'class' => Calendar::class,
                 'help' => 'Automatically create a calendar event after posting this class.',
+                'placeholder' => 'Do not create a calendar event',
+                'required' => false,
             ])
             ->add('studentSlots', NumberType::class, [
-                'required' => false,
+                'help' => 'perscom.course.class.student_slots_help',
                 'html5' => true,
-                'help' => 'perscom.course.class.student_slots_help'
+                'required' => false,
             ]);
     }
 }

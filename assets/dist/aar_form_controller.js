@@ -9,7 +9,7 @@ export default class extends Controller {
 
   connect() {
     const form = this.element.querySelector('form');
-    const unitSelect = form.querySelector('#after_action_report_unitId');
+    const unitSelect = form.querySelector('#after_action_report_unit');
     unitSelect.addEventListener('change', (e) => this._handleUnitChange(e.target.value));
 
     if (unitSelect.value) {

@@ -17,7 +17,7 @@ class CourseInstructor implements SortableEntityInterface
     use IdentifiableEntityTrait;
     use SortableEntityTrait;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     private string $title;
 
     #[ORM\Column(type: 'text')]

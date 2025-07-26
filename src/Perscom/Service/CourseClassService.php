@@ -10,8 +10,12 @@ use Forumify\Calendar\Repository\CalendarEventRepository;
 use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClassStudent;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\QualificationRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\RecordInterface;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
 use Forumify\PerscomPlugin\Perscom\Exception\PerscomException;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\QualificationRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class CourseClassService
@@ -21,6 +25,7 @@ class CourseClassService
         private readonly CourseClassRepository $courseClassRepository,
         private readonly CalendarEventRepository $calendarEventRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
+        private readonly QualificationRepository $qualificationRepository,
     ) {
     }
 
@@ -56,56 +61,81 @@ class CourseClassService
      */
     public function processResult(CourseClass $class): void
     {
-        $serviceRecords = $this->getServiceRecords($class);
-        $this->recordService->createRecords('service', $serviceRecords, true);
-
-        $qualificationRecords = $this->getQualificationRecords($class->getStudents());
-        $this->recordService->createRecords('qualification', $qualificationRecords, true);
-    }
-
-    private function getServiceRecords(CourseClass $class): array
-    {
         $records = [];
 
+        $this->addServiceRecords($records, $class);
+        $this->addQualificationRecords($records, $class->getStudents());
+
+        $this->recordService->createRecords($records, true);
+    }
+
+    /**
+     * @param array<RecordInterface> $records
+     */
+    private function addServiceRecords(array &$records, CourseClass $class): void
+    {
         foreach ($class->getInstructors() as $instructor) {
+            $recipient = $instructor->getUser();
+            if ($recipient === null) {
+                continue;
+            }
+
             $text = 'Attended ' . $class->getTitle();
             if ($instructor->getInstructor() !== null) {
                 $text .= ' as ' . $instructor->getInstructor()->getTitle();
             }
 
-            $records[] = [
-                'user_id' => $instructor->getPerscomUserId(),
-                'text' =>  $text,
-            ];
+            $record = new ServiceRecord();
+            $record->setUser($recipient);
+            $record->setText($text);
+            $records[] = $record;
         }
 
         $students = $class->getStudents()->filter(fn (CourseClassStudent $s) => $s->getResult() === 'passed');
         /** @var CourseClassStudent $student */
         foreach ($students as $student) {
-            $records[] = [
-                'user_id' => $student->getPerscomUserId(),
-                'text' => $student->getServiceRecordTextOverride() ?: "Graduated {$class->getTitle()}",
-            ];
-        }
+            $recipient = $student->getUser();
+            if ($recipient === null) {
+                continue;
+            }
 
-        return $records;
+            $text = $student->getServiceRecordTextOverride() ?: "Graduated {$class->getTitle()}";
+
+            $record = new ServiceRecord();
+            $record->setUser($recipient);
+            $record->setText($text);
+            $records[] = $record;
+        }
     }
 
     /**
+     * @param array<RecordInterface> $records
      * @param Collection<int, CourseClassStudent> $students
      */
-    private function getQualificationRecords(Collection $students): array
+    private function addQualificationRecords(array &$records, Collection $students): void
     {
-        $records = [];
+        $qualifications = [];
+
         foreach ($students as $student) {
+            $recipient = $student->getUser();
+            if ($recipient === null) {
+                continue;
+            }
+
             foreach ($student->getQualifications() as $qualificationId) {
-                $records[] = [
-                    'user_id' => $student->getPerscomUserId(),
-                    'qualification_id' => $qualificationId,
-                ];
+                $qualifications[$qualificationId] = isset($qualifications[$qualificationId])
+                    ? $qualifications[$qualificationId]
+                    : $this->qualificationRepository->find($qualificationId);
+
+                if ($qualifications[$qualificationId] === null) {
+                    continue;
+                }
+
+                $record = new QualificationRecord();
+                $record->setQualification($qualifications[$qualificationId]);
+                $record->setUser($recipient);
+                $records[] = $record;
             }
         }
-
-        return $records;
     }
 }

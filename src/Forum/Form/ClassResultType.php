@@ -7,6 +7,7 @@ namespace Forumify\PerscomPlugin\Forum\Form;
 use Doctrine\Common\Collections\ArrayCollection;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\PerscomPlugin\Perscom\Twig\PerscomCourseExtensionRuntime;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,8 +17,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ClassResultType extends AbstractType
 {
-    public function __construct(private readonly PerscomCourseExtensionRuntime $courseExtension)
-    {
+    public function __construct(
+        private readonly PerscomCourseExtensionRuntime $courseExtension,
+        private readonly Packages $packages,
+    ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
@@ -31,22 +34,22 @@ class ClassResultType extends AbstractType
     {
         $builder
             ->add('students', CollectionType::class, [
-                'entry_type' => ClassStudentResultType::class,
-                'entry_options' => [
-                    'course_class' => $options['data'],
-                ],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
+                'entry_options' => [
+                    'course_class' => $options['data'],
+                ],
+                'entry_type' => ClassStudentResultType::class,
             ])
             ->add('instructors', CollectionType::class, [
-                'entry_type' => ClassInstructorResultType::class,
-                'entry_options' => [
-                    'course_class' => $options['data'],
-                ],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
+                'entry_options' => [
+                    'course_class' => $options['data'],
+                ],
+                'entry_type' => ClassInstructorResultType::class,
             ])
         ;
     }
@@ -73,16 +76,21 @@ class ClassResultType extends AbstractType
         $users = $this->courseExtension->getUsers(new ArrayCollection($data));
 
         foreach ($views as $view) {
-            $id = $view->vars['data']->getPerscomUserId();
-            $user = $users[$id] ?? null;
+            $id = $view->vars['data']->getUser()->getId();
+            $user = $users[$id]['user'] ?? null;
             if ($user === null) {
                 continue;
             }
 
+            $rankImg = $user->getRank()?->getImage();
+            if ($rankImg !== null) {
+                $rankImg = $this->packages->getUrl($rankImg, 'perscom.asset');
+            }
+
             $view->vars['label_html'] = true;
             $view->vars['label'] = "<span class='flex items-center gap-1 mb-2'>
-                <img width='24px' height='24px' src='{$user['rankImage']}'>
-                {$user['name']}
+                <img width='24px' height='24px' src='{$rankImg}'>
+                {$user->getName()}
             </span>";
         }
     }

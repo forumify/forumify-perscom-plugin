@@ -4,20 +4,27 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Service;
 
-use Exception;
+use DateTime;
+use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManagerInterface;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\AwardRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\CombatRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\QualificationRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\RankRecord;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\RecordInterface;
+use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
 use Forumify\PerscomPlugin\Perscom\Event\RecordsCreatedEvent;
 use Forumify\PerscomPlugin\Perscom\Exception\PerscomException;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
-use Perscom\Data\ResourceObject;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class RecordService
 {
     public function __construct(
-        private readonly PerscomFactory $perscomFactory,
         private readonly PerscomUserService $perscomUserService,
         private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly EntityManagerInterface $entityManager,
     ) {
     }
 
@@ -27,77 +34,91 @@ class RecordService
     public function createRecord(string $type, array $data): void
     {
         $sendNotification = $data['sendNotification'] ?? false;
-        unset($data['sendNotification']);
-
-        $userIds = $data['users'] ?? [];
-        unset($data['users']);
-
-        if (empty($userIds)) {
+        $users = $data['users'] ?? [];
+        if (empty($users)) {
             return;
         }
 
-        $resources = array_map(fn (int|string $userId) => new ResourceObject(null, [
-            'user_id' => (int)$userId,
-            'author_id' => $this->getAuthorId(),
-            ...$data,
-        ]), $userIds);
+        $class = self::typeToClass($type);
 
-        $this->batchCreate($type, $resources, $sendNotification);
+        $records = [];
+        foreach ($users as $user) {
+            /** @var RecordInterface $record */
+            $record = new $class();
+            $record->setUser($user);
+            $record->setText($data['text'] ?? '');
+            $record->setCreatedAt($data['created_at'] ?? new DateTime());
+            $record->setDocument($data['document'] ?? null);
+
+            if ($record instanceof AwardRecord) {
+                $record->setAward($data['award']);
+            } elseif ($record instanceof AssignmentRecord) {
+                $record->setType($data['type'] ?? 'primary');
+                $record->setStatus($data['status'] ?? null);
+                $record->setSpecialty($data['specialty'] ?? null);
+                $record->setUnit($data['unit'] ?? null);
+                $record->setPosition($data['position'] ?? null);
+            } elseif ($record instanceof RankRecord) {
+                $record->setType($data['type']);
+                $record->setRank($data['rank']);
+            } elseif ($record instanceof QualificationRecord) {
+                $record->setQualification($data['qualification']);
+            }
+
+            $records[] = $record;
+        }
+        $this->createRecords($records, $sendNotification);
     }
 
     /**
-     * @throws PerscomException
+     * @param array<RecordInterface> $records
      */
-    public function createRecords(string $type, array $records, bool $sendNotification): void
+    public function createRecords(array $records, bool $sendNotification): void
     {
         if (empty($records)) {
             return;
         }
 
-        $resources = array_map(fn (array $data) => new ResourceObject(null, [
-            'author_id' => $this->getAuthorId(),
-            ...$data,
-        ]), $records);
-
-        $this->batchCreate($type, $resources, $sendNotification);
-    }
-
-    private function getAuthorId(): ?int
-    {
         $author = $this->perscomUserService->getLoggedInPerscomUser();
-        if ($author === null || empty($author['id'])) {
-            return null;
+        foreach ($records as $record) {
+            if ($record->getAuthor() === null) {
+                $record->setAuthor($author);
+            }
+            $this->entityManager->persist($record);
         }
-        return $author['id'];
+        $this->entityManager->flush();
+
+        $this->eventDispatcher->dispatch(new RecordsCreatedEvent($records, $sendNotification));
     }
 
     /**
-     * @param array<ResourceObject> $resources
-     * @return void
-     * @throws PerscomException
+     * @return class-string<RecordInterface>
      */
-    private function batchCreate(string $type, array $resources, bool $sendNotification): void
+    public static function typeToClass(string $type): string
     {
-        $perscom = $this->perscomFactory->getPerscom();
-        $recordResource = match ($type) {
-            'service' => $perscom->serviceRecords(),
-            'award' => $perscom->awardRecords(),
-            'combat' => $perscom->combatRecords(),
-            'rank' => $perscom->rankRecords(),
-            'assignment' => $perscom->assignmentRecords(),
-            'qualification' => $perscom->qualificationRecords(),
-            default => null,
+        return match ($type) {
+            'service' => ServiceRecord::class,
+            'award' => AwardRecord::class,
+            'assignment' => AssignmentRecord::class,
+            'combat' => CombatRecord::class,
+            'rank' => RankRecord::class,
+            'qualification' => QualificationRecord::class,
+            default => ServiceRecord::class,
         };
-        if ($recordResource === null) {
-            return;
-        }
+    }
 
-        try {
-            $responses = $recordResource->batchCreate($resources)->json('data');
-        } catch (Exception $ex) {
-            throw new PerscomException($ex->getMessage(), 0, $ex);
-        }
+    public static function classToType(RecordInterface $record): string
+    {
+        $class = ClassUtils::getRealClass(get_class($record));
 
-        $this->eventDispatcher->dispatch(new RecordsCreatedEvent($type, $responses, $sendNotification));
+        return match ($class) {
+            ServiceRecord::class => 'service',
+            AwardRecord::class => 'award',
+            AssignmentRecord::class => 'assignment',
+            CombatRecord::class => 'combat',
+            RankRecord::class => 'rank',
+            QualificationRecord::class => 'qualification',
+            default => 'service',
+        };
     }
 }

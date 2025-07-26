@@ -12,8 +12,8 @@ use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('Perscom\\AfterActionReportList', '@ForumifyPerscomPlugin/frontend/components/aar_list.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\AfterActionReportList', '@ForumifyPerscomPlugin/frontend/components/aar_list.html.twig')]
 class AfterActionReportList extends AbstractDoctrineList
 {
     #[LiveProp]
@@ -28,7 +28,8 @@ class AfterActionReportList extends AbstractDoctrineList
     {
         return $this->afterActionReportRepository->createQueryBuilder('aar')
             ->where('aar.mission = :mission')
-            ->orderBy('aar.unitPosition')
+            ->join('aar.unit', 'u')
+            ->orderBy('u.position')
             ->setParameter('mission', $this->mission);
     }
 

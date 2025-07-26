@@ -7,10 +7,9 @@ namespace Forumify\PerscomPlugin\Forum\Controller;
 use Forumify\Core\Entity\User;
 use Forumify\PerscomPlugin\Forum\Form\Enlistment;
 use Forumify\PerscomPlugin\Forum\Form\EnlistmentType;
-use Forumify\PerscomPlugin\Perscom\Entity\EnlistmentTopic;
-use Forumify\PerscomPlugin\Perscom\Repository\EnlistmentTopicRepository;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomEnlistService;
+use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,54 +17,55 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class UserEnlistController extends AbstractController
 {
+    public function __construct(
+        private readonly PerscomEnlistService $perscomEnlistService,
+        private readonly PerscomUserService $perscomUserService,
+    ) {
+    }
+
     #[Route('/enlist', 'enlist')]
-    public function __invoke(
-        PerscomEnlistService $perscomEnlistService,
-        PerscomFactory $perscomFactory,
-        EnlistmentTopicRepository $enlistmentTopicRepository,
-        Request $request,
-    ): Response {
+    public function __invoke(Request $request): Response
+    {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        if (!$perscomEnlistService->canEnlist()) {
+        if (!$this->perscomEnlistService->canEnlist()) {
             $this->addFlash('error', 'perscom.enlistment.not_eligible');
             return $this->redirectToRoute('forumify_core_index');
         }
 
         /** @var User $user */
         $user = $this->getUser();
-        $enlistmentForm = $perscomEnlistService->getEnlistmentForm();
+        $enlistmentForm = $this->perscomEnlistService->getEnlistmentForm();
+        if ($enlistmentForm === null) {
+            $this->addFlash('error', 'perscom.enlistment.not_enabled');
+            return $this->redirectToRoute('forumify_core_index');
+        }
 
-        /** @var EnlistmentTopic|null $enlistmentTopic */
-        $enlistmentTopic = $enlistmentTopicRepository->findOneBy(['user' => $user], ['submissionId' => 'DESC']);
-
-        if ($enlistmentTopic !== null && $request->get('force_new') === null) {
-            $submission = $perscomEnlistService->getCurrentEnlistment($enlistmentTopic->getSubmissionId());
-            if (!empty($submission)) {
-                return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
-                    'successMessage' => $enlistmentForm['success_message'] ?? '',
-                    'enlistmentTopic' => $enlistmentTopic,
-                ]);
-            }
-            // The submission was deleted from PERSCOM.io, continue with the enlistment
+        /** @var PerscomUser|null $perscomUser */
+        $perscomUser = $this->perscomUserService->getPerscomUser($user);
+        if ($perscomUser !== null && !$request->get('force_new')) {
+            return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
+                'enlistmentTopic' => $perscomUser->getEnlistmentTopic(),
+                'successMessage' => $enlistmentForm->getSuccessMessage(),
+            ]);
         }
 
         $enlistment = new Enlistment();
         $enlistment->email = $user->getEmail();
 
-        $form = $this->createForm(EnlistmentType::class, $enlistment, ['perscom_form' => $enlistmentForm]);
+        $form = $this->createForm(EnlistmentType::class, $enlistment, ['form' => $enlistmentForm]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $enlistmentTopic = $perscomEnlistService->enlist($form->getData());
+            $perscomUser = $this->perscomEnlistService->enlist($form->getData());
 
             return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
-                'successMessage' => $enlistmentForm['success_message'] ?? '',
-                'enlistmentTopic' => $enlistmentTopic
+                'enlistmentTopic' => $perscomUser->getEnlistmentTopic(),
+                'successMessage' => $enlistmentForm->getSuccessMessage(),
             ]);
         }
 
         return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist.html.twig', [
             'form' => $form->createView(),
-            'instructions' => $enlistmentForm['instructions'] ?? '',
+            'instructions' => $enlistmentForm->getInstructions(),
         ]);
     }
 }

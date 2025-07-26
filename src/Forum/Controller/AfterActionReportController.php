@@ -9,31 +9,34 @@ use Forumify\Core\Security\VoterAttribute;
 use Forumify\PerscomPlugin\Forum\Form\AfterActionReportType;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
 use Forumify\PerscomPlugin\Perscom\Entity\MissionRSVP;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Exception\AfterActionReportAlreadyExistsException;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Repository\AfterActionReportRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRSVPRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Service\AfterActionReportService;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Forumify\Plugin\Attribute\PluginVersion;
-use Perscom\Data\FilterObject;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/aar', 'aar_')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[Route('/aar', 'aar_')]
 class AfterActionReportController extends AbstractController
 {
     public function __construct(
         private readonly AfterActionReportRepository $afterActionReportRepository,
         private readonly MissionRepository $missionRepository,
-        private readonly PerscomFactory $perscomFactory,
         private readonly AfterActionReportService $afterActionReportService,
         private readonly PerscomUserService $userService,
+        private readonly PerscomUserRepository $userRepository,
+        private readonly Packages $packages,
     ) {
     }
 
@@ -52,20 +55,10 @@ class AfterActionReportController extends AbstractController
             }
         }
 
-        $users = $this->perscomFactory
-            ->getPerscom()
-            ->users()
-            ->search(
-                filter: new FilterObject('id', 'in', $allUserIds),
-                include: [
-                    'rank',
-                    'rank.image',
-                    'position',
-                    'specialty',
-                ]
-            )
-            ->json('data');
-        $users = array_combine(array_column($users, 'id'), $users);
+        /** @var array<PerscomUser> $users */
+        $users = $this->userRepository->findBy(['id' => $allUserIds]);
+        $allUserIds = array_map(fn (PerscomUser $user) => $user->getId(), $users);
+        $users = array_combine($allUserIds, $users);
 
         $attendance = $aar->getAttendance();
         foreach ($attendance as &$list) {
@@ -77,15 +70,7 @@ class AfterActionReportController extends AbstractController
 
         foreach ($attendance as &$list) {
             $list = array_filter($list);
-            $this->userService->sortUsers($list);
-
-            foreach ($list as $k => $user) {
-                $list[$k] = [
-                    'id' => $user['id'],
-                    'name' => $user['name'],
-                    'rankImage' => !empty($user['rank']['image']) ? $user['rank']['image']['image_url'] : null,
-                ];
-            }
+            $this->userService->sortPerscomUsers($list);
         }
         unset($list);
 
@@ -176,42 +161,48 @@ class AfterActionReportController extends AbstractController
 
         return $this->render('@ForumifyPerscomPlugin/frontend/aar/form.html.twig', [
             'aar' => $aar,
-            'form' => $form->createView(),
-            'title' => $isNew ? 'perscom.aar.create' : 'perscom.aar.edit',
+            'attendanceStatus' => $this->afterActionReportService->getAttendanceStates(),
             'cancelPath' => $isNew
                 ? $this->generateUrl('perscom_missions_view', ['id' => $aar->getMission()->getId()])
                 : $this->generateUrl('perscom_aar_view', ['id' => $aar->getId()]),
-            'attendanceStatus' => $this->afterActionReportService->getAttendanceStates(),
+            'form' => $form->createView(),
+            'title' => $isNew ? 'perscom.aar.create' : 'perscom.aar.edit',
         ]);
     }
 
     #[Route('/unit/{id}', 'unit')]
-    public function getUnit(int $id, Request $request, MissionRSVPRepository $missionRSVPRepository): JsonResponse
+    public function getUnit(Unit $unit, Request $request, MissionRSVPRepository $missionRSVPRepository): JsonResponse
     {
-        $users = $this->afterActionReportService->findUsersByUnit($id);
-
+        $users = $unit->getUsers()->toArray();
         $missionId = $request->get('mission');
         $rsvps = $missionId === null
             ? []
             : $missionRSVPRepository->findBy([
                 'mission' => $missionId,
-                'perscomUserId' => array_column($users, 'id'),
+                'user' => $users,
             ]);
 
         $usersToRsvp = [];
         /** @var MissionRSVP $rsvp */
         foreach ($rsvps as $rsvp) {
-            $usersToRsvp[$rsvp->getPerscomUserId()] = $rsvp->isGoing();
+            $usersToRsvp[$rsvp->getUser()->getId()] = $rsvp->isGoing();
         }
 
         $response = [];
         foreach ($users as $user) {
-            $response[] = [
-                'id' => $user['id'],
-                'name' => $user['name'],
-                'rankImage' => !empty($user['rank']['image']) ? $user['rank']['image']['image_url'] : null,
-                'rsvp' => $usersToRsvp[$user['id']] ?? null,
+            $row = [
+                'id' => $user->getId(),
+                'name' => $user->getName(),
+                'rankImage' => null,
+                'rsvp' => $usersToRsvp[$user->getId()] ?? null,
             ];
+
+            $rankImg = $user->getRank()?->getImage();
+            if ($rankImg) {
+                $row['rankImage'] = $this->packages->getUrl($rankImg, 'perscom.asset');
+            }
+
+            $response[] = $row;
         }
 
         return new JsonResponse($response);

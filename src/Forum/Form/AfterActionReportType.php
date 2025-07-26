@@ -6,7 +6,8 @@ namespace Forumify\PerscomPlugin\Forum\Form;
 
 use Forumify\Core\Form\RichTextEditorType;
 use Forumify\PerscomPlugin\Perscom\Entity\AfterActionReport;
-use Forumify\PerscomPlugin\Perscom\Form\UnitType;
+use Forumify\PerscomPlugin\Perscom\Entity\Unit;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -17,8 +18,8 @@ class AfterActionReportType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => AfterActionReport::class,
             'allow_extra_fields' => true,
+            'data_class' => AfterActionReport::class,
             'is_new' => true,
         ]);
     }
@@ -31,13 +32,16 @@ class AfterActionReportType extends AbstractType
             : null;
 
         $builder
-            ->add('unitId', UnitType::class, [
-                'label' => 'Unit',
+            ->add('unit', EntityType::class, [
+                'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => Unit::class,
                 'disabled' => !$isNew,
+                'label' => 'Unit',
             ])
             ->add('attendanceJson', HiddenType::class, [
-                'mapped' => false,
                 'data' => $attendance,
+                'mapped' => false,
             ])
             ->add('report', RichTextEditorType::class);
     }
