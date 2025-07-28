@@ -8,7 +8,6 @@ use DateTime;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Forumify\PerscomPlugin\Perscom\Entity\Operation;
 use Forumify\Plugin\Attribute\PluginVersion;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
@@ -17,7 +16,7 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 #[IsGranted('perscom-io.admin.operations.view')]
 class PerscomOperationTable extends AbstractDoctrineTable
 {
-    public function __construct(private readonly Security $security)
+    public function __construct()
     {
         $this->sort = ['start' => 'DESC'];
     }
