@@ -8,12 +8,9 @@ use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Forumify\PerscomPlugin\Perscom\Entity\Form;
 use Forumify\PerscomPlugin\Perscom\Entity\FormField;
-use Forumify\PerscomPlugin\Perscom\Repository\FormFieldRepository;
 use Forumify\PerscomPlugin\Perscom\Sync\Service\SyncService;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveAction;
-use Symfony\UX\LiveComponent\Attribute\LiveArg;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
 #[AsLiveComponent('PerscomFormFieldTable', '@Forumify/components/table/table.html.twig')]
@@ -23,10 +20,10 @@ class PerscomFormFieldTable extends AbstractDoctrineTable
     #[LiveProp]
     public Form $form;
 
-    public function __construct(
-        private readonly FormFieldRepository $formFieldRepository,
-        private readonly SyncService $syncService,
-    ) {
+    protected ?string $permissionReorder = 'perscom-io.admin.organization.forms.manage';
+
+    public function __construct(private readonly SyncService $syncService)
+    {
     }
 
     protected function getEntityClass(): string
@@ -37,13 +34,7 @@ class PerscomFormFieldTable extends AbstractDoctrineTable
     protected function buildTable(): void
     {
         if (!$this->syncService->isSyncEnabled()) {
-            $this->addColumn('position', [
-                'class' => 'w-10',
-                'field' => 'id',
-                'label' => '#',
-                'renderer' => $this->renderSortColumn(...),
-                'searchable' => false,
-            ]);
+            $this->addPositionColumn();
         }
 
         $this
@@ -71,38 +62,15 @@ class PerscomFormFieldTable extends AbstractDoctrineTable
         ;
     }
 
-    private function renderSortColumn(int $id): string
+    protected function reorderItem(object $entity, string $direction): void
     {
-        return '
-            <button
-                class="btn-link btn-small btn-icon p-1"
-                data-action="live#action"
-                data-live-action-param="reorder"
-                data-live-id-param="' . $id . '"
-                data-live-direction-param="down"
-            >
-                <i class="ph ph-arrow-down"></i>
-            </button>
-            <button
-                class="btn-link btn-small btn-icon p-1"
-                data-action="live#action"
-                data-live-action-param="reorder"
-                data-live-id-param="' . $id . '"
-                data-live-direction-param="up"
-            >
-                <i class="ph ph-arrow-up"></i>
-            </button>';
-    }
-
-    #[LiveAction]
-    public function reorder(#[LiveArg] int $id, #[LiveArg] string $direction): void
-    {
-        $field = $this->formFieldRepository->find($id);
-        if ($field === null) {
-            return;
-        }
-
-        $this->formFieldRepository->reorder($field, $direction);
+        $this->repository->reorder(
+            $entity,
+            $direction,
+            fn (QueryBuilder $qb) => $qb
+                ->andWhere('e.form = :form')
+                ->setParameter('form', $this->form),
+        );
     }
 
     private function renderActions(int $id): string

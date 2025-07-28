@@ -6,7 +6,6 @@ namespace Forumify\PerscomPlugin\Admin\Component;
 
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Forumify\PerscomPlugin\Perscom\Entity\Document;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
@@ -16,11 +15,6 @@ use function Symfony\Component\String\u;
 #[IsGranted('perscom-io.admin.organization.documents.view')]
 class PerscomDocumentTable extends AbstractDoctrineTable
 {
-    public function __construct(
-        private readonly Security $security
-    ) {
-    }
-
     protected function getEntityClass(): string
     {
         return Document::class;

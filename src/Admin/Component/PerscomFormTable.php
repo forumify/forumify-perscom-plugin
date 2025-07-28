@@ -6,7 +6,6 @@ namespace Forumify\PerscomPlugin\Admin\Component;
 
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Forumify\PerscomPlugin\Perscom\Entity\Form;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
@@ -14,10 +13,6 @@ use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 #[IsGranted('perscom-io.admin.organization.forms.view')]
 class PerscomFormTable extends AbstractDoctrineTable
 {
-    public function __construct(private readonly Security $security)
-    {
-    }
-
     protected function getEntityClass(): string
     {
         return Form::class;

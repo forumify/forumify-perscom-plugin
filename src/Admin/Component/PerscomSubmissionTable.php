@@ -8,7 +8,6 @@ use DateTimeInterface;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
 use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -21,10 +20,8 @@ class PerscomSubmissionTable extends AbstractDoctrineTable
     #[LiveProp]
     public ?int $form = null;
 
-    public function __construct(
-        private readonly Security $security,
-        private readonly Environment $twig,
-    ) {
+    public function __construct(private readonly Environment $twig)
+    {
         $this->sort = ['createdAt' => self::SORT_DESC];
     }
 

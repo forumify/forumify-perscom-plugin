@@ -6,14 +6,12 @@ namespace Forumify\PerscomPlugin\Admin\Component\RecordTable;
 
 use DateTimeInterface;
 use Forumify\Core\Component\Table\AbstractDoctrineTable;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 abstract class AbstractAdminRecordTable extends AbstractDoctrineTable
 {
     public function __construct(
         protected readonly UrlGeneratorInterface $urlGenerator,
-        private readonly Security $security,
     ) {
         $this->sort = ['createdAt' => self::SORT_DESC];
     }

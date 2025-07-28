@@ -25,4 +25,4 @@ setup-tests:
 
 .PHONY: run-tests
 run-tests:
-	@./vendor/bin/phpunit -c tests/phpunit.xml.dist
+	@cd tests && ./vendor/bin/phpunit -c phpunit.xml.dist
