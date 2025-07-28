@@ -135,7 +135,7 @@ class MissionService
 
         $enlistmentStatuses = $this->settingRepository->get('perscom.enlistment.status') ?? [];
         if (!empty($enlistmentStatuses)) {
-            $statuses = $this->statusRepository->findByPerscomIds($enlistmentStatuses);
+            $statuses = $this->statusRepository->findBy(['id' => $enlistmentStatuses]);
             if (!empty($statuses)) {
                 $qb
                     ->andWhere('pu.status NOT IN (:statuses)')

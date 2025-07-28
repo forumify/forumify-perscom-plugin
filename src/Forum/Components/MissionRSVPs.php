@@ -8,7 +8,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\Mission;
 use Forumify\PerscomPlugin\Perscom\Entity\MissionRSVP;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
-use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -21,39 +20,25 @@ class MissionRSVPs
 
     use DefaultActionTrait;
 
-    public function __construct(
-        private readonly PerscomUserRepository $perscomUserRepository,
-    ) {
-    }
-
     /**
      * @return array<int, array{ unit: Unit, rsvps: array<array{ rsvp: MissionRSVP, user: PerscomUser }>}>
      */
     public function getRSVPs(): array
     {
-        $perscomUserIds = [];
         $rsvps = [];
         foreach ($this->mission->getRsvps() as $rsvp) {
-            $id = $rsvp->getPerscomUserId();
-            $perscomUserIds[] = $id;
-            $rsvps[$id] = $rsvp;
-        }
-
-        $perscomUsers = $this->perscomUserRepository->findByPerscomIds($perscomUserIds);
-        $allRsvps = [];
-        foreach ($perscomUsers as $user) {
-            $rsvp = $rsvps[$user->getPerscomId()] ?? null;
-            if ($rsvp === null) {
+            $user = $rsvp->getUser();
+            if ($user === null) {
                 continue;
             }
 
-            $allRsvps[] = [
+            $rsvps[] = [
                 'rsvp' => $rsvp,
                 'user' => $user,
             ];
         }
 
-        return $this->groupByUnit($allRsvps);
+        return $this->groupByUnit($rsvps);
     }
 
     /**

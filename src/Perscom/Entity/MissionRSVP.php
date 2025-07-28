@@ -16,6 +16,7 @@ class MissionRSVP
     use IdentifiableEntityTrait;
     use TimestampableEntity;
 
+    /** @deprecated */
     #[ORM\Column(type: 'integer')]
     private int $perscomUserId;
 
@@ -30,12 +31,14 @@ class MissionRSVP
     #[ORM\Column(type: 'boolean')]
     private bool $going = false;
 
+    /** @deprecated */
     public function getPerscomUserId(): int
     {
         trigger_deprecation('forumify/forumify-perscom-plugin', '2.0', sprintf('%s is deprecated. Use %s instead', __CLASS__ . '::' . __FUNCTION__, __CLASS__ . '::' . 'getUser()'));
         return $this->perscomUserId;
     }
 
+    /** @deprecated */
     public function setPerscomUserId(int $perscomUserId): void
     {
         trigger_deprecation('forumify/forumify-perscom-plugin', '2.0', sprintf('%s is deprecated. Use %s instead', __CLASS__ . '::' . __FUNCTION__, __CLASS__ . '::' . 'setUser()'));

@@ -11,7 +11,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\CourseClassStudent;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Qualification;
 use Forumify\PerscomPlugin\Perscom\Repository\QualificationRepository;
-use Forumify\PerscomPlugin\Perscom\Repository\RankRepository;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Twig\Extension\RuntimeExtensionInterface;
 
@@ -19,14 +18,13 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(
         private readonly PerscomUserService $userService,
-        private readonly RankRepository $rankRepository,
         private readonly QualificationRepository $qualificationRepository,
     ) {
     }
 
     public function getQualifications(array $ids): array
     {
-        $qualifications = $this->qualificationRepository->findByPerscomIds($ids);
+        $qualifications = $this->qualificationRepository->findBy(['id' => $ids]);
         return array_map((fn (Qualification $qual) => $qual->getName()), $qualifications);
     }
 
@@ -34,12 +32,9 @@ class PerscomCourseExtensionRuntime implements RuntimeExtensionInterface
     {
         $prerequisites = [];
 
-        $rankRequirementId = $course->getRankRequirement();
-        if ($rankRequirementId !== null) {
-            $rank = $this->rankRepository->findOneByPerscomId($rankRequirementId);
-            if ($rank !== null) {
-                $prerequisites[] = $rank->getName();
-            }
+        $rank = $course->getMinimumRank();
+        if ($rank !== null) {
+            $prerequisites[] = $rank->getName();
         }
 
         $qualifications = $this->getQualifications($course->getPrerequisites());

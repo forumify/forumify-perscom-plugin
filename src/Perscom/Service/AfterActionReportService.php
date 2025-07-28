@@ -121,7 +121,7 @@ class AfterActionReportService
             return;
         }
 
-        $absentUsers = $this->perscomUserRepository->findByPerscomIds($absences);
+        $absentUsers = $this->perscomUserRepository->findBy(['id' => $absences]);
         if (empty($absentUsers)) {
             return;
         }
