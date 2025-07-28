@@ -18,7 +18,10 @@ class RankList extends AbstractDoctrineList
 
     protected function getQueryBuilder(): QueryBuilder
     {
-        return $this->rankRepository->createQueryBuilder('e');
+        return $this->rankRepository
+            ->createQueryBuilder('e')
+            ->addOrderBy('e.position', 'ASC')
+        ;
     }
 
     protected function getCount(): int

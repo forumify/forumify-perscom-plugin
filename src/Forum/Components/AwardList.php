@@ -18,7 +18,10 @@ class AwardList extends AbstractDoctrineList
 
     protected function getQueryBuilder(): QueryBuilder
     {
-        return $this->awardRepository->createQueryBuilder('e');
+        return $this->awardRepository
+            ->createQueryBuilder('e')
+            ->addOrderBy('e.position', 'ASC')
+        ;
     }
 
     protected function getCount(): int
