@@ -13,12 +13,12 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UnitType extends AbstractType
+class RosterType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Unit::class,
+            'data_class' => Roster::class,
         ]);
     }
 
@@ -27,14 +27,15 @@ class UnitType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('description', RichTextEditorType::class, [
+                'empty_data' => '',
                 'required' => false,
             ])
-            ->add('rosters', EntityType::class, [
-                'class' => Roster::class,
-                'choice_label' => 'name',
+            ->add('units', EntityType::class, [
                 'autocomplete' => true,
                 'multiple' => true,
                 'required' => false,
+                'class' => Unit::class,
+                'choice_label' => 'name',
             ])
         ;
     }

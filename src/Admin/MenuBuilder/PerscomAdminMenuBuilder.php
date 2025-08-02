@@ -64,6 +64,7 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
             new MenuItem('Positions', $u('perscom_admin_position_list'), ['permission' => 'perscom-io.admin.organization.positions.view']),
             new MenuItem('Qualifications', $u('perscom_admin_qualification_list'), ['permission' => 'perscom-io.admin.organization.qualifications.view']),
             new MenuItem('Ranks', $u('perscom_admin_rank_list'), ['permission' => 'perscom-io.admin.organization.ranks.view']),
+            new MenuItem('Rosters', $u('perscom_admin_roster_list'), ['permission' => 'perscom-io.admin.organization.rosters.view']),
             new MenuItem('Specialties', $u('perscom_admin_specialty_list'), ['permission' => 'perscom-io.admin.organization.specialties.view']),
             new MenuItem('Statuses', $u('perscom_admin_status_list'), ['permission' => 'perscom-io.admin.organization.statuses.view']),
             new MenuItem('Units', $u('perscom_admin_unit_list'), ['permission' => 'perscom-io.admin.organization.units.view']),

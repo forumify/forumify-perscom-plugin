@@ -92,6 +92,10 @@ perscom:
             crud:
                 single: 'rank'
                 plural: 'ranks'
+        roster:
+            crud:
+                single: 'roster'
+                plural: 'rosters'
         unit:
             crud:
                 single: 'unit'

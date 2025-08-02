@@ -13,10 +13,11 @@ use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Perscom;
+use Forumify\PerscomPlugin\Perscom\Repository\RosterRepository;
 use Perscom\Contracts\ResourceContract;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: RosterRepository::class)]
 #[ORM\Table('perscom_roster')]
 class Roster implements PerscomEntityInterface, SortableEntityInterface
 {
@@ -79,5 +80,15 @@ class Roster implements PerscomEntityInterface, SortableEntityInterface
     public function setUnits(Collection $units): void
     {
         $this->units = $units;
+    }
+
+    public function addUnit(Unit $unit): void
+    {
+        $this->units->add($unit);
+    }
+
+    public function removeUnit(Unit $unit): void
+    {
+        $this->units->removeElement($unit);
     }
 }
