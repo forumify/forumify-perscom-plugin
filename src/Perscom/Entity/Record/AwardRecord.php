@@ -9,7 +9,8 @@ use Forumify\PerscomPlugin\Perscom\Entity\Award;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\AwardRecordRepository;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 
 #[ORM\Entity(repositoryClass: AwardRecordRepository::class)]
 #[ORM\Table('perscom_record_award')]
@@ -25,7 +26,7 @@ class AwardRecord implements RecordInterface
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Award $award;
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         return $perscom->awardRecords();
     }

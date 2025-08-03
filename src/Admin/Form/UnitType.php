@@ -5,9 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Admin\Form;
 
 use Forumify\Core\Form\RichTextEditorType;
-use Forumify\PerscomPlugin\Perscom\Entity\Roster;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -27,13 +25,6 @@ class UnitType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('description', RichTextEditorType::class, [
-                'required' => false,
-            ])
-            ->add('rosters', EntityType::class, [
-                'class' => Roster::class,
-                'choice_label' => 'name',
-                'autocomplete' => true,
-                'multiple' => true,
                 'required' => false,
             ])
         ;

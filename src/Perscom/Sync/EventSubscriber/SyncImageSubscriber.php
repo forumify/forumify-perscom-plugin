@@ -13,11 +13,12 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
 use JsonException;
 use League\Flysystem\FilesystemOperator;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 
 use function Symfony\Component\String\u;
 
-class SyncImageSubscriber implements EventSubscriberInterface
+#[AsEventListener]
+class SyncImageSubscriber
 {
     public function __construct(
         private readonly SettingRepository $settingRepository,
@@ -25,14 +26,7 @@ class SyncImageSubscriber implements EventSubscriberInterface
     ) {
     }
 
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            PostSyncToPerscomEvent::class => 'handlePostSync',
-        ];
-    }
-
-    public function handlePostSync(PostSyncToPerscomEvent $event): void
+    public function __invoke(PostSyncToPerscomEvent $event): void
     {
         $cs = $event->changeSet;
         foreach ($cs['create'] as $createdEntity) {

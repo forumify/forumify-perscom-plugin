@@ -8,7 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\ServiceRecordRepository;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 
 #[ORM\Entity(repositoryClass: ServiceRecordRepository::class)]
 #[ORM\Table('perscom_record_service')]
@@ -20,7 +21,7 @@ class ServiceRecord implements RecordInterface
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private PerscomUser $user;
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         return $perscom->serviceRecords();
     }

@@ -15,7 +15,7 @@ use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Sync\EventSubscriber\Event\PostSyncToPerscomEvent;
 use Forumify\PerscomPlugin\Perscom\Sync\Message\PostInitialSyncMessage;
 use Perscom\Contracts\Batchable;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Crudable;
 use Perscom\Data\ResourceObject;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\Normalizer\DenormalizerInterface;
@@ -280,7 +280,7 @@ class SyncService
     /**
      * @param array<PerscomEntityInterface> $entities
      */
-    public function batchCreateSeq(ResourceContract $resource, array $entities): void
+    public function batchCreateSeq(Crudable $resource, array $entities): void
     {
         foreach ($entities as $entity) {
             if (!$entity->isDirty()) {
@@ -319,7 +319,7 @@ class SyncService
     /**
      * @param array<PerscomEntityInterface> $entities
      */
-    public function batchUpdateSeq(ResourceContract $resource, array $entities): void
+    public function batchUpdateSeq(Crudable $resource, array $entities): void
     {
         foreach ($entities as $entity) {
             $resource->update(
@@ -345,7 +345,7 @@ class SyncService
      * @return array<int, T> all entities indexed by Perscom ID
      */
     private function syncAllOfResource(
-        ResourceContract $resource,
+        Crudable $resource,
         string $entityClass,
         ?array $includes = [],
         ?array $context = [],

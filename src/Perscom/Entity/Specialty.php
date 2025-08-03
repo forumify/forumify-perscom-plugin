@@ -11,7 +11,8 @@ use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\SpecialtyRepository;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: SpecialtyRepository::class)]
@@ -34,7 +35,7 @@ class Specialty implements PerscomEntityInterface, SortableEntityInterface
     #[Assert\Length(max: 8)]
     private string $abbreviation = '';
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         return $perscom->specialties();
     }

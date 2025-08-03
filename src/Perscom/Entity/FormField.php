@@ -13,7 +13,8 @@ use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\FormFieldRepository;
 use LogicException;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FormFieldRepository::class)]
@@ -54,7 +55,7 @@ class FormField implements PerscomEntityInterface, SortableEntityInterface
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $options = null;
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         throw new LogicException('Not Implemented');
     }

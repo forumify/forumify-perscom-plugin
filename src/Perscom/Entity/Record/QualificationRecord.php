@@ -9,7 +9,8 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Qualification;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\QualificationRecordRepository;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 
 #[ORM\Entity(repositoryClass: QualificationRecordRepository::class)]
 #[ORM\Table('perscom_record_qualification')]
@@ -25,7 +26,7 @@ class QualificationRecord implements RecordInterface
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Qualification $qualification;
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         return $perscom->qualificationRecords();
     }

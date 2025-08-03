@@ -11,7 +11,8 @@ use Forumify\Core\Entity\User;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\DocumentRepository;
 use Gedmo\Mapping\Annotation as Gedmo;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: DocumentRepository::class)]
@@ -37,7 +38,7 @@ class Document implements PerscomEntityInterface
     #[ORM\Column(type: 'text')]
     private string $content;
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         return $perscom->documents();
     }

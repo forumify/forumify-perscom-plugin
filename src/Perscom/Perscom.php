@@ -15,22 +15,16 @@ class Perscom extends PerscomConnection
     public function __construct(
         string $apiKey,
         ?string $endpoint = null,
-        private readonly bool $bypassCache = false,
     ) {
         parent::__construct($apiKey, baseUrl: $endpoint);
     }
 
     protected function defaultHeaders(): array
     {
-        $headers = [
+        return [
             ...parent::defaultHeaders(),
+            'X-Perscom-Bypass-Cache' => 'true',
             'X-Perscom-Notifications' => 'false',
         ];
-
-        if ($this->bypassCache) {
-            $headers['X-Perscom-Bypass-Cache'] = true;
-        }
-
-        return $headers;
     }
 }

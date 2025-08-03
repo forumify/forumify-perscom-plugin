@@ -19,7 +19,8 @@ use Forumify\PerscomPlugin\Perscom\Entity\Record\RankRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 
 #[ORM\Entity(repositoryClass: PerscomUserRepository::class)]
 class PerscomUser implements PerscomEntityInterface
@@ -105,7 +106,7 @@ class PerscomUser implements PerscomEntityInterface
         $this->qualificationRecords = new ArrayCollection();
     }
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         return $perscom->users();
     }

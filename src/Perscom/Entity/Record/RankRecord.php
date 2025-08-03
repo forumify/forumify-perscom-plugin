@@ -9,7 +9,8 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Rank;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\RankRecordRepository;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 
 #[ORM\Entity(repositoryClass: RankRecordRepository::class)]
 #[ORM\Table('perscom_record_rank')]
@@ -28,7 +29,7 @@ class RankRecord implements RecordInterface
     #[ORM\Column(length: 16)]
     private string $type = 'promotion';
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         return $perscom->rankRecords();
     }

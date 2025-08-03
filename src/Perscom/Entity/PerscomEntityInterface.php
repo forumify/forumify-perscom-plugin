@@ -6,11 +6,12 @@ namespace Forumify\PerscomPlugin\Perscom\Entity;
 
 use DateTime;
 use Forumify\PerscomPlugin\Perscom\Perscom;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 
 interface PerscomEntityInterface
 {
-    public static function getPerscomResource(Perscom $perscom): ResourceContract;
+    public static function getPerscomResource(Perscom $perscom): Crudable|Batchable;
 
     public function getId(): int;
 

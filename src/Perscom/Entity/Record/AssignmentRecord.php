@@ -13,7 +13,8 @@ use Forumify\PerscomPlugin\Perscom\Entity\Status;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\AssignmentRecordRepository;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 
 #[ORM\Entity(repositoryClass: AssignmentRecordRepository::class)]
 #[ORM\Index(fields: ['type'])]
@@ -45,7 +46,7 @@ class AssignmentRecord implements RecordInterface
     #[ORM\JoinColumn(nullable: false, onDelete: 'CASCADE')]
     private PerscomUser $user;
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         return $perscom->assignmentRecords();
     }

@@ -10,10 +10,11 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Sync\EventSubscriber\Event\PostSyncToPerscomEvent;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 use Symfony\Component\Filesystem\Path;
 
-class SyncUserImagesSubscriber implements EventSubscriberInterface
+#[AsEventListener]
+class SyncUserImagesListener
 {
     public function __construct(
         #[Autowire(param: 'kernel.project_dir')]
@@ -22,14 +23,7 @@ class SyncUserImagesSubscriber implements EventSubscriberInterface
     ) {
     }
 
-    public static function getSubscribedEvents(): array
-    {
-        return [
-            PostSyncToPerscomEvent::class => 'handlePostSync',
-        ];
-    }
-
-    public function handlePostSync(PostSyncToPerscomEvent $event): void
+    public function __invoke(PostSyncToPerscomEvent $event): void
     {
         $cs = $event->changeSet;
         foreach ($cs['create'] as $createdEntity) {

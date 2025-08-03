@@ -25,7 +25,7 @@ class PerscomRosterTable extends AbstractDoctrineTable
         $this
             ->addPositionColumn()
             ->addColumn('name', [
-                'field' => 'name'
+                'field' => 'name',
             ])
             ->addColumn('actions', [
                 'field' => 'id',

@@ -32,10 +32,10 @@ class RosterType extends AbstractType
             ])
             ->add('units', EntityType::class, [
                 'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => Unit::class,
                 'multiple' => true,
                 'required' => false,
-                'class' => Unit::class,
-                'choice_label' => 'name',
             ])
         ;
     }

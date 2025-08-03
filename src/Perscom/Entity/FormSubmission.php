@@ -10,7 +10,8 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\FormSubmissionRepository;
-use Perscom\Contracts\ResourceContract;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
 
 #[ORM\Entity(repositoryClass: FormSubmissionRepository::class)]
 #[ORM\Table('perscom_form_submission')]
@@ -38,7 +39,7 @@ class FormSubmission implements PerscomEntityInterface
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $statusReason = null;
 
-    public static function getPerscomResource(Perscom $perscom): ResourceContract
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
         return $perscom->submissions();
     }
