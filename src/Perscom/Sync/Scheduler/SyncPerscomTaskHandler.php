@@ -13,6 +13,7 @@ use Forumify\PerscomPlugin\Perscom\Sync\Service\SyncService;
 use Symfony\Component\Messenger\Attribute\AsMessageHandler;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Messenger\Stamp\DelayStamp;
+use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 use Throwable;
 
@@ -45,8 +46,18 @@ class SyncPerscomTaskHandler
 
         try {
             $this->syncService->syncToPerscom($changeSet);
-        } catch (Throwable) {
-            $this->messageBus->dispatch($message, [new DelayStamp(30000)]);
+        } catch (Throwable $ex) {
+            if ($message->attempts >= 10) {
+                throw $ex;
+            }
+
+            $this->messageBus->dispatch(new SyncToPerscomMessage(
+                $message->changeSet,
+                $message->attempts + 1,
+            ), [
+                ErrorDetailsStamp::create($ex),
+                new DelayStamp($message->attempts * 10000),
+            ]);
         }
     }
 

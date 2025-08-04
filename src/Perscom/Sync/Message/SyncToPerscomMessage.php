@@ -10,6 +10,7 @@ class SyncToPerscomMessage implements AsyncMessageInterface
 {
     public function __construct(
         public readonly array $changeSet,
+        public readonly int $attempts = 1,
     ) {
     }
 }
