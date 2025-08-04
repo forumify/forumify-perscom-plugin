@@ -13,8 +13,8 @@ use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
-#[AsLiveComponent('Perscom\\ReportInButton', '@ForumifyPerscomPlugin/frontend/components/report_in_button.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\ReportInButton', '@ForumifyPerscomPlugin/frontend/components/report_in_button.html.twig')]
 class ReportInButton extends AbstractController
 {
     use DefaultActionTrait;

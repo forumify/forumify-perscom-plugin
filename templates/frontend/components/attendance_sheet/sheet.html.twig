@@ -45,9 +45,9 @@
                     <tr>
                         <td>
                         <span class="flex items-center gap-1">
-                            {% if user.rank is defined and user.rank is not null %}
-                                {% if user.rank.image is defined and user.rank.image is not null %}
-                                    <img width="24" height="24" src="{{ user.rank.image.image_url }}">
+                            {% if user.rank is not null %}
+                                {% if user.rank.image is not null %}
+                                    <img width="24" height="24" src="{{ asset(user.rank.image, 'perscom.asset') }}">
                                 {% endif %}
                                 {{ user.rank.abbreviation }}
                             {% endif %}
@@ -83,31 +83,31 @@
                 </th>
             </tr>
             <tr>
-                <td colspan="3" class="text-right text-bold">{{ 'perscom.attendance_sheet.total_present'|trans }}</td>
+                <td colspan="3" class="text-right text-bold" data-testid="total-present">{{ 'perscom.attendance_sheet.total_present'|trans }}</td>
                 {% for mission in this.missions %}
                     <td>{{ this.missionTotalPresent(mission.id) }}</td>
                 {% endfor %}
             </tr>
             <tr>
-                <td colspan="3" class="text-right text-bold">{{ 'perscom.attendance_sheet.total_excused'|trans }}</td>
+                <td colspan="3" class="text-right text-bold" data-testid="total-excused">{{ 'perscom.attendance_sheet.total_excused'|trans }}</td>
                 {% for mission in this.missions %}
                     <td>{{ this.missionTotalExcused(mission.id) }}</td>
                 {% endfor %}
             </tr>
             <tr>
-                <td colspan="3" class="text-right text-bold">{{ 'perscom.attendance_sheet.total_absent'|trans }}</td>
+                <td colspan="3" class="text-right text-bold" data-testid="total-absent">{{ 'perscom.attendance_sheet.total_absent'|trans }}</td>
                 {% for mission in this.missions %}
                     <td>{{ this.missionTotalAbsent(mission.id) }}</td>
                 {% endfor %}
             </tr>
             <tr>
-                <td colspan="3" class="text-right text-bold">{{ 'perscom.attendance_sheet.perc_attended'|trans }}</td>
+                <td colspan="3" class="text-right text-bold" data-testid="perc-attended">{{ 'perscom.attendance_sheet.perc_attended'|trans }}</td>
                 {% for mission in this.missions %}
                     <td>{{ this.missionPercentageAttended(mission.id) }}%</td>
                 {% endfor %}
             </tr>
             <tr>
-                <td colspan="3" class="text-right text-bold">{{ 'perscom.attendance_sheet.perc_accountable'|trans }}</td>
+                <td colspan="3" class="text-right text-bold" data-testid="perc-accountable">{{ 'perscom.attendance_sheet.perc_accountable'|trans }}</td>
                 {% for mission in this.missions %}
                     <td>{{ this.missionPercentageAccountable(mission.id) }}%</td>
                 {% endfor %}

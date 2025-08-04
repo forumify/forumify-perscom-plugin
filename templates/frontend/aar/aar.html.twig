@@ -8,11 +8,11 @@
         <a href="{{ path('perscom_operations_center') }}">{{ 'perscom.opcenter.operations_center'|trans }}</a> &gt;
         <a href="{{ path('perscom_operations_view', { slug: mission.operation.slug }) }}">{{ mission.operation.title }}</a> &gt;
         <a href="{{ path('perscom_missions_view', { id: mission.id }) }}">{{ mission.title }}</a> &gt;
-        {{ aar.unitName }}
+        {{ aar.unit.name }}
     </div>
     <div class="mb-8 flex justify-between">
         <div>
-            <h1 class="mb-0">{{ aar.unitName }}</h1>
+            <h1 class="mb-0">{{ aar.unit.name }}</h1>
             <div class="flex items-center gap-2 text-small">
                 {{ 'perscom.aar.aar_by'|trans }}
                 {% include '@Forumify/components/avatar.html.twig' with { user: aar.createdBy, className: 'avatar-xs' } only %}
@@ -52,8 +52,8 @@
                             {% if attendance[state][i] is defined %}
                                 <span class="flex items-center">
                                     {% set user = attendance[state][i] %}
-                                    {% if user.rankImage is not null %}
-                                        <img class="mr-2" width="24" height="24" src="{{ user.rankImage }}" alt="">
+                                    {% if user.rank is not null and user.rank.image is not null %}
+                                        <img class="mr-2" width="24" height="24" src="{{ asset(user.rank.image, 'perscom.asset') }}" alt="">
                                     {% endif %}
                                     {{ user.name }}
                                 </span>

@@ -10,11 +10,13 @@ use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
-#[AsLiveComponent('PerscomCourseTable', '@Forumify/components/table/table.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('PerscomCourseTable', '@Forumify/components/table/table.html.twig')]
 #[IsGranted('perscom-io.admin.courses.view')]
 class PerscomCourseTable extends AbstractDoctrineTable
 {
+    protected ?string $permissionReorder = 'perscom-io.admin.courses.manage';
+
     protected function getEntityClass(): string
     {
         return Course::class;
@@ -28,11 +30,11 @@ class PerscomCourseTable extends AbstractDoctrineTable
                 'field' => 'title',
             ])
             ->addColumn('actions', [
-                'label' => '',
                 'field' => 'id',
+                'label' => '',
+                'renderer' => $this->renderActions(...),
                 'searchable' => false,
                 'sortable' => false,
-                'renderer' => $this->renderActions(...),
             ]);
     }
 

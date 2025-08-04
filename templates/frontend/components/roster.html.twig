@@ -1,14 +1,14 @@
 <div {{ attributes }}>
     <div class="tablist" role="tablist">
-        {% for group in this.groups %}
+        {% for roster in this.rosters %}
             <button
-                class="btn-link{% if this.selectedGroup == group.id or (loop.first and this.selectedGroup is null) %} active{% endif %}"
+                class="btn-link{% if this.selectedRosterId == roster.id %} active{% endif %}"
                 role="tab"
                 data-action="live#action"
-                data-live-action-param="selectGroup"
-                data-live-group-id-param="{{ group.id }}"
+                data-live-action-param="selectRoster"
+                data-live-roster-id-param="{{ roster.id }}"
             >
-                {{ group.name }}
+                {{ roster.name }}
             </button>
         {% endfor %}
     </div>
@@ -18,11 +18,12 @@
         </div>
     </div>
     <div data-loading="hide">
-        {% set group = this.group %}
-        {% if group is not empty %}
-            <ul id="group-{{ group.id }}">
-                {% for unit in group.units %}
-                    {% if unit.users is not empty %}
+        {% set roster = this.roster %}
+        {% if roster is not null %}
+            <ul id="roster-{{ roster.id }}">
+                {% for unit in roster.units %}
+                    {% set users = this.usersInUnit(unit) %}
+                    {% if users is not empty %}
                         {% block roster_unit %}
                             <li class="card mb-4">
                                 {% block roster_unit_name %}
@@ -30,7 +31,7 @@
                                 {% endblock %}
                                 {% block roster_unit_users %}
                                     <ul class="card-body">
-                                        {% for user in unit.users %}
+                                        {% for user in users %}
                                             <li class="text-small">
                                                 <a href="{{ path('perscom_user', { id: user.id }) }}" class="btn-link w-100">
                                                     {% include '@ForumifyPerscomPlugin/frontend/roster/components/soldier_row.html.twig' with {
@@ -46,18 +47,8 @@
                     {% endif %}
                 {% endfor %}
             </ul>
+        {% else %}
+            No rosters found.
         {% endif %}
     </div>
 </div>
-{% macro placeholder(props) %}
-    <div class="tablist" role="tablist">
-        {% for group in props.groups %}
-            <button class="btn-link" role="tab" disabled>
-                {{ group.name }}
-            </button>
-        {% endfor %}
-    </div>
-    <div class="flex justify-center">
-        {% include '@Forumify/components/loader.html.twig' %}
-    </div>
-{% endmacro %}

@@ -15,8 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/missions', 'missions_')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[Route('/missions', 'missions_')]
 class MissionController extends AbstractController
 {
     public function __construct(
@@ -107,13 +107,13 @@ class MissionController extends AbstractController
         }
 
         return $this->render('@Forumify/form/simple_form_page.html.twig', [
-            'form' => $form->createView(),
-            'title' => $isNew ? 'perscom.mission.create' : 'perscom.mission.edit',
             'cancelPath' => $isNew
                 ? $this->generateUrl('perscom_operations_view', [
                     'slug' => $mission->getOperation()->getSlug(),
                 ])
                 : $this->generateUrl('perscom_missions_view', ['id' => $mission->getId()]),
+            'form' => $form->createView(),
+            'title' => $isNew ? 'perscom.mission.create' : 'perscom.mission.edit',
         ]);
     }
 }

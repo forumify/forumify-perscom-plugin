@@ -6,14 +6,13 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
-use Forumify\PerscomPlugin\Perscom\Entity\Operation;
 use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('Perscom\\UpcomingMissionList', '@ForumifyPerscomPlugin/frontend/components/upcoming_mission_list.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('Perscom\\UpcomingMissionList', '@ForumifyPerscomPlugin/frontend/components/upcoming_mission_list.html.twig')]
 class UpcomingMissionList extends AbstractDoctrineList
 {
     #[LiveProp]

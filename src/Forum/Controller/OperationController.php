@@ -11,8 +11,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/operations', 'operations_')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[Route('/operations', 'operations_')]
 class OperationController extends AbstractController
 {
     #[Route('/', 'list')]

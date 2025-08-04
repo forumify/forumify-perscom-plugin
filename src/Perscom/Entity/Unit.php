@@ -1,0 +1,98 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Forumify\PerscomPlugin\Perscom\Entity;
+
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Forumify\Core\Entity\IdentifiableEntityTrait;
+use Forumify\Core\Entity\SortableEntityInterface;
+use Forumify\Core\Entity\SortableEntityTrait;
+use Forumify\Core\Entity\TimestampableEntityTrait;
+use Forumify\PerscomPlugin\Perscom\Perscom;
+use Forumify\PerscomPlugin\Perscom\Repository\UnitRepository;
+use Perscom\Contracts\Batchable;
+use Perscom\Contracts\Crudable;
+use Symfony\Component\Validator\Constraints as Assert;
+
+#[ORM\Entity(repositoryClass: UnitRepository::class)]
+#[ORM\Table('perscom_unit')]
+class Unit implements PerscomEntityInterface, SortableEntityInterface
+{
+    use IdentifiableEntityTrait;
+    use PerscomEntityTrait;
+    use SortableEntityTrait;
+    use TimestampableEntityTrait;
+
+    #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(allowNull: false)]
+    private string $name;
+
+    #[ORM\Column(type: 'text')]
+    private string $description = '';
+
+    #[ORM\OneToMany(mappedBy: 'unit', targetEntity: PerscomUser::class)]
+    private Collection $users;
+
+    #[ORM\ManyToMany(targetEntity: Roster::class, mappedBy: 'units')]
+    private Collection $rosters;
+
+    public function __construct()
+    {
+        $this->users = new ArrayCollection();
+        $this->rosters = new ArrayCollection();
+    }
+
+    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
+    {
+        return $perscom->units();
+    }
+
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function setName(string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getDescription(): string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    /**
+     * @return Collection<int, PerscomUser>
+     */
+    public function getUsers(): Collection
+    {
+        return $this->users;
+    }
+
+    /**
+     * @param Collection<int, PerscomUser> $users
+     */
+    public function setUsers(Collection $users): void
+    {
+        $this->users = $users;
+    }
+
+    public function getRosters(): Collection
+    {
+        return $this->rosters;
+    }
+
+    public function setRosters(Collection $rosters): void
+    {
+        $this->rosters = $rosters;
+    }
+}

@@ -11,8 +11,8 @@ use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 
-#[AsLiveComponent('PerscomOperationTable', '@Forumify/components/table/table.html.twig')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[AsLiveComponent('PerscomOperationTable', '@Forumify/components/table/table.html.twig')]
 #[IsGranted('perscom-io.admin.operations.view')]
 class PerscomOperationTable extends AbstractDoctrineTable
 {
@@ -41,11 +41,11 @@ class PerscomOperationTable extends AbstractDoctrineTable
                 'renderer' => fn (?DateTime $start) => $start?->format('Y-m-d'),
             ])
             ->addColumn('actions', [
-                'label' => '',
                 'field' => 'id',
+                'label' => '',
+                'renderer' => $this->renderActions(...),
                 'searchable' => false,
                 'sortable' => false,
-                'renderer' => $this->renderActions(...),
             ]);
     }
 

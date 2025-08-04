@@ -1,44 +1,6 @@
+{% set course = class.course %}
+{% set canManage = can('manage_classes', course) %}
 <div {{ attributes }}>
-    {% set course = class.course %}
-    {% set canManage = can('manage_classes', course) %}
-    <div class="breadcrumbs text-small">
-        <a href="{{ path('perscom_operations_center') }}">{{ 'perscom.opcenter.operations_center'|trans }}</a> &gt;
-        <a href="{{ path('perscom_courses_view', { slug: course.slug }) }}">{{ course.title }}</a> &gt;
-        {{ class.title }}
-    </div>
-    <div class="mb-8 flex justify-between flex-wrap">
-        <div>
-            <h1 class="mb-0">{{ class.title }}</h1>
-            <div class="flex items-center gap-2 text-small">
-                {{ 'perscom.course.class.created_by'|trans }}
-                {% include '@Forumify/components/avatar.html.twig' with { user: class.createdBy, className: 'avatar-xs' } only %}
-                <span class="flex items-baseline gap-2">
-                    {% include '@Forumify/components/username.html.twig' with { user: class.createdBy } only %}
-                    {{ class.createdAt|format_date }}
-                </span>
-            </div>
-        </div>
-        {% if canManage %}
-            <div class="flex gap-2">
-                {% if class.result %}
-                    <a class="btn-link btn-icon" href="{{ path('perscom_course_class_report', { id: class.id }) }}" title="Edit class report">
-                        <i class="ph ph-note-pencil"></i>
-                    </a>
-                {% else %}
-                    <a class="btn-primary" href="{{ path('perscom_course_class_report', { id: class.id }) }}">
-                        <i class="ph ph-note-pencil"></i>
-                        {{ 'perscom.course.class.new_report'|trans }}
-                    </a>
-                {% endif %}
-                <a class="btn-link btn-icon" href="{{ path('perscom_course_class_edit', { id: class.id }) }}" title="Edit class">
-                    <i class="ph ph-pencil-simple-line"></i>
-                </a>
-                <a class="btn-link btn-icon" href="{{ path('perscom_course_class_delete', { id: class.id }) }}" title="Delete class">
-                    <i class="ph ph-trash"></i>
-                </a>
-            </div>
-        {% endif %}
-    </div>
     <div class="grid-12 items-start gap-4">
         <div class="col-xs-12 col-md-5 col-lg-3 flex flex-col box">
             {% if course.image %}
@@ -113,10 +75,10 @@
                         <tr>
                             <td>
                                 <span class="flex items-center gap-1 p-1">
-                                    {% if student.rankImage is not null %}
-                                        <img width="24px" height="24px" src="{{ student.rankImage }}">
+                                    {% if student.user.rank is not null and student.user.rank.image is not null %}
+                                        <img width="24px" height="24px" src="{{ asset(student.user.rank.image, 'perscom.asset') }}">
                                     {% endif %}
-                                    {{ student.name }}
+                                    {{ student.user.name }}
                                     {% set studentResult = student.courseUser.result %}
                                     {% if studentResult %}
                                         {% set color = {
@@ -133,7 +95,7 @@
                                 {% if canManage %}
                                     <button
                                         class="btn-link btn-icon btn-small"
-                                        {{ live_action('removeStudent', { perscomUserId: student.id }) }}
+                                        {{ live_action('removeStudent', { userId: student.user.id }) }}
                                     >
                                         <i class="ph ph-x"></i>
                                     </button>

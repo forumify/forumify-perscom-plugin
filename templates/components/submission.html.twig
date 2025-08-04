@@ -1,13 +1,15 @@
 {% for field in submission.form.fields %}
     <div class="mb-2">
-        <p class="text-bold">{{ field.name }}</p>
-        {% set value = submission[field.key] is defined ? submission[field.key] : '' %}
+        <p class="text-bold">{{ field.label }}</p>
+        {% set value = submission.data[field.key] is defined ? submission.data[field.key] : '' %}
         <p>
             {% if field.type is same as 'date' %}
                 {% set value = value|perscom_date %}
                 {% if value %}
                     {{ value|format_date }}
                 {% endif %}
+            {% elseif field.type is same as 'file' %}
+                <a href="{{ asset(value, 'perscom.asset') }}" target="_blank">{{ value }}</a>
             {% else %}
                 {{ value }}
             {% endif %}

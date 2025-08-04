@@ -4,24 +4,19 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\MenuBuilder;
 
-use DateInterval;
 use Forumify\Admin\MenuBuilder\AdminMenuBuilderInterface;
 use Forumify\Core\MenuBuilder\Menu;
 use Forumify\Core\MenuBuilder\MenuItem;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
+use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
 use Forumify\Plugin\Service\PluginVersionChecker;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
-use Symfony\Contracts\Cache\CacheInterface;
-use Symfony\Contracts\Cache\ItemInterface;
 
 class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
 {
     public function __construct(
         private readonly UrlGeneratorInterface $urlGenerator,
-        private readonly PerscomFactory $perscomFactory,
-        private readonly CacheInterface $cache,
         private readonly PluginVersionChecker $pluginVersionChecker,
+        private readonly FormRepository $formRepository,
     ) {
     }
 
@@ -29,16 +24,9 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
     {
         $u = $this->urlGenerator->generate(...);
 
-        $submissionMenu = new Menu('Submissions', ['icon' => 'ph ph-table', 'permission' => 'perscom-io.admin.submissions.view']);
-        $submissionMenu->addItem(new MenuItem('View All', $u('perscom_admin_submission_list')));
-        foreach ($this->getSubmissionForms() as $form) {
-            $submissionMenu->addItem(new MenuItem($form, $u('perscom_admin_submission_list', ['form' => $form])));
-        }
-
         $perscomMenu = new Menu('PERSCOM', ['icon' => 'ph ph-shield-chevron', 'permission' => 'perscom-io.admin.view'], [
             new MenuItem('Configuration', $u('perscom_admin_configuration'), ['icon' => 'ph ph-wrench', 'permission' => 'perscom-io.admin.configuration.manage']),
             new MenuItem('Users', $u('perscom_admin_user_list'), ['icon' => 'ph ph-users', 'permission' => 'perscom-io.admin.users.view']),
-            $submissionMenu,
         ]);
 
         if ($this->pluginVersionChecker->isVersionInstalled('forumify/forumify-perscom-plugin', 'premium')) {
@@ -53,30 +41,40 @@ class PerscomAdminMenuBuilder implements AdminMenuBuilderInterface
                 ]));
         }
 
+        $submissionMenu = new Menu('Submissions', ['icon' => 'ph ph-table', 'permission' => 'perscom-io.admin.submissions.view']);
+        $submissionMenu->addItem(new MenuItem('View All', $u('perscom_admin_submission_list')));
+        foreach ($this->formRepository->findAll() as $form) {
+            $submissionMenu->addItem(new MenuItem($form->getName(), $u('perscom_admin_submission_list', ['form' => $form->getId()])));
+        }
+        $perscomMenu->addItem($submissionMenu);
+
+        $perscomMenu->addItem(new Menu('Records', ['icon' => 'ph ph-files', 'permission' => 'perscom-io.admin.records.view'], [
+            new MenuItem('Service Records', $u('perscom_admin_service_records_list'), ['permission' => 'perscom-io.admin.records.service_records.view']),
+            new MenuItem('Award Records', $u('perscom_admin_award_records_list'), ['permission' => 'perscom-io.admin.records.award_records.view']),
+            new MenuItem('Combat Records', $u('perscom_admin_combat_records_list'), ['permission' => 'perscom-io.admin.records.combat_records.view']),
+            new MenuItem('Rank Records', $u('perscom_admin_rank_records_list'), ['permission' => 'perscom-io.admin.records.rank_records.view']),
+            new MenuItem('Assignment Records', $u('perscom_admin_assignment_records_list'), ['permission' => 'perscom-io.admin.records.assignment_records.view']),
+            new MenuItem('Qualification Records', $u('perscom_admin_qualification_records_list'), ['permission' => 'perscom-io.admin.records.qualification_records.view']),
+        ]));
+
         $perscomMenu->addItem(new Menu('Organization', ['icon' => 'ph ph-buildings', 'permission' => 'perscom-io.admin.organization.view'], [
-            new MenuItem('Units', $u('perscom_admin_unit_list')),
-            new MenuItem('Positions', $u('perscom_admin_position_list')),
-            new MenuItem('Specialties', $u('perscom_admin_specialty_list')),
-            new MenuItem('Statuses', $u('perscom_admin_status_list')),
-            new MenuItem('Awards', $u('perscom_admin_award_list')),
-            new MenuItem('Qualifications', $u('perscom_admin_qualification_list')),
+            new MenuItem('Awards', $u('perscom_admin_award_list'), ['permission' => 'perscom-io.admin.organization.awards.view']),
+            new MenuItem('Documents', $u('perscom_admin_document_list'), ['permission' => 'perscom-io.admin.organization.documents.view']),
+            new MenuItem('Forms', $u('perscom_admin_form_list'), ['permission' => 'perscom-io.admin.organization.forms.view']),
+            new MenuItem('Positions', $u('perscom_admin_position_list'), ['permission' => 'perscom-io.admin.organization.positions.view']),
+            new MenuItem('Qualifications', $u('perscom_admin_qualification_list'), ['permission' => 'perscom-io.admin.organization.qualifications.view']),
+            new MenuItem('Ranks', $u('perscom_admin_rank_list'), ['permission' => 'perscom-io.admin.organization.ranks.view']),
+            new MenuItem('Rosters', $u('perscom_admin_roster_list'), ['permission' => 'perscom-io.admin.organization.rosters.view']),
+            new MenuItem('Specialties', $u('perscom_admin_specialty_list'), ['permission' => 'perscom-io.admin.organization.specialties.view']),
+            new MenuItem('Statuses', $u('perscom_admin_status_list'), ['permission' => 'perscom-io.admin.organization.statuses.view']),
+            new MenuItem('Units', $u('perscom_admin_unit_list'), ['permission' => 'perscom-io.admin.organization.units.view']),
+        ]));
+
+        $perscomMenu->addItem(new MenuItem('Sync', $u('perscom_admin_sync'), [
+            'icon' => 'ph ph-link',
+            'permission' => 'perscom-io.admin.run_sync',
         ]));
 
         $menu->addItem($perscomMenu);
-    }
-
-    private function getSubmissionForms(): array
-    {
-        return $this->cache->get('perscom.admin.forms', function (ItemInterface $item): array {
-            try {
-                $forms = $this->perscomFactory->getPerscom()->forms()->all(limit: 999)->json()['data'] ?? [];
-            } catch (\Exception) {
-                $item->expiresAfter(new DateInterval('PT15M'));
-                return [];
-            }
-
-            $item->expiresAfter(new DateInterval('PT1H'));
-            return array_combine(array_column($forms, 'id'), array_column($forms, 'name'));
-        });
     }
 }

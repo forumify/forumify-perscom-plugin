@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
-use Forumify\PerscomPlugin\Perscom\PerscomFactory;
-use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
-use Perscom\Data\FilterObject;
+use Forumify\PerscomPlugin\Perscom\Entity\MissionRSVP;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
@@ -20,69 +20,50 @@ class MissionRSVPs
 
     use DefaultActionTrait;
 
-    public function __construct(
-        private readonly PerscomUserService $perscomUserService,
-        private readonly PerscomFactory $perscomFactory,
-    ) {
-    }
-
+    /**
+     * @return array<int, array{ unit: Unit, rsvps: array<array{ rsvp: MissionRSVP, user: PerscomUser }>}>
+     */
     public function getRSVPs(): array
     {
-        $perscomUserIds = [];
         $rsvps = [];
         foreach ($this->mission->getRsvps() as $rsvp) {
-            $id = $rsvp->getPerscomUserId();
-            $perscomUserIds[] = $id;
-            $rsvps[$id] = $rsvp;
-        }
-
-        try {
-            $perscomUsers = $this->perscomFactory
-                ->getPerscom()
-                ->users()
-                ->search(
-                    filter: new FilterObject('id', 'in', $perscomUserIds),
-                    include: ['unit', 'position', 'rank', 'rank.image'],
-                )
-                ->json('data')
-            ;
-        } catch (\Exception) {
-            return [];
-        }
-
-        foreach ($perscomUsers as $i => $user) {
-            $rsvp = $rsvps[$user['id']] ?? null;
-            if ($rsvp === null) {
+            $user = $rsvp->getUser();
+            if ($user === null) {
                 continue;
             }
-            $perscomUsers[$i]['rsvp'] = $rsvp;
+
+            $rsvps[] = [
+                'rsvp' => $rsvp,
+                'user' => $user,
+            ];
         }
 
-        return $this->groupByUnit($perscomUsers);
+        return $this->groupByUnit($rsvps);
     }
 
-    private function groupByUnit(array $users): array
+    /**
+     * @param array<array{ rsvp: MissionRSVP, user: PerscomUser }> $rsvps
+     * @return array<int, array{ unit: Unit, rsvps: array<array{ rsvp: MissionRSVP, user: PerscomUser }>}>
+     */
+    private function groupByUnit(array $rsvps): array
     {
         $units = [];
-        foreach ($users as $user) {
-            $unitId = $user['unit_id'] ?? null;
-            if ($unitId === null) {
+        foreach ($rsvps as $rsvp) {
+            $user = $rsvp['user'];
+            $unit = $user->getUnit();
+            if ($unit === null) {
                 continue;
             }
 
+            $unitId = $unit->getPerscomId();
             if (!isset($units[$unitId])) {
-                $units[$unitId] = $user['unit'];
+                $units[$unitId]['unit'] = $unit;
             }
 
-            $units[$unitId]['users'][] = $user;
+            $units[$unitId]['rsvps'][] = $rsvp;
         }
 
-        foreach ($units as &$unit) {
-            $this->perscomUserService->sortUsers($unit['users']);
-        }
-        unset($unit);
-
-        uasort($units, fn (array $a, array $b): int => $a['position'] <=> $b['position']);
+        uasort($units, fn (array $a, array $b): int => $a['unit']->getPosition() <=> $b['unit']->getPosition());
         return $units;
     }
 }

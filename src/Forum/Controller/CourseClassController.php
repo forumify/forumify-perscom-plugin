@@ -15,8 +15,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
-#[Route('/courses', 'course_class_')]
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
+#[Route('/courses', 'course_class_')]
 class CourseClassController extends AbstractController
 {
     public function __construct(
@@ -86,11 +86,11 @@ class CourseClassController extends AbstractController
         }
 
         return $this->render('@Forumify/form/simple_form_page.html.twig', [
-            'form' => $form->createView(),
-            'title' => $isNew ? 'perscom.course.class.create' : 'perscom.course.class.edit',
             'cancelPath' => $isNew
                 ? $this->generateUrl('perscom_courses_view', ['slug' => $class->getCourse()->getSlug()])
                 : $this->generateUrl('perscom_course_class_view', ['id' => $class->getId()]),
+            'form' => $form->createView(),
+            'title' => $isNew ? 'perscom.course.class.create' : 'perscom.course.class.edit',
         ]);
     }
 }

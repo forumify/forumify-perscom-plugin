@@ -4,12 +4,20 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
-use Forumify\PerscomPlugin\Perscom\Form as PerscomForm;
+use Forumify\PerscomPlugin\Perscom\Entity\Award;
+use Forumify\PerscomPlugin\Perscom\Entity\Document;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
+use Forumify\PerscomPlugin\Perscom\Entity\Position;
+use Forumify\PerscomPlugin\Perscom\Entity\Qualification;
+use Forumify\PerscomPlugin\Perscom\Entity\Rank;
+use Forumify\PerscomPlugin\Perscom\Entity\Specialty;
+use Forumify\PerscomPlugin\Perscom\Entity\Status;
+use Forumify\PerscomPlugin\Perscom\Entity\Unit;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,14 +34,15 @@ class RecordType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('author_id', HiddenType::class)
-            ->add('users', PerscomForm\UserType::class, [
-                'multiple' => true,
+            ->add('users', EntityType::class, [
                 'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => PerscomUser::class,
+                'multiple' => true,
             ])
             ->add('created_at', DateTimeType::class, [
-                'widget' => 'single_text',
                 'required' => false,
+                'widget' => 'single_text',
             ]);
 
         switch ($options['type']) {
@@ -55,23 +64,27 @@ class RecordType extends AbstractType
 
         $builder
             ->add('text', TextareaType::class, [
-                'required' => false,
                 'empty_data' => '',
+                'required' => false,
             ])
-            ->add('document_id', PerscomForm\DocumentType::class, [
-                'label' => 'Document',
+            ->add('document', EntityType::class, [
+                'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => Document::class,
                 'required' => false,
             ])
             ->add('sendNotification', CheckboxType::class, [
-                'required' => false,
                 'data' => true,
+                'required' => false,
             ]);
     }
 
     private function addAwardFields(FormBuilderInterface $builder): void
     {
-        $builder->add('award_id', PerscomForm\AwardType::class, [
-            'label' => 'Award',
+        $builder->add('award', EntityType::class, [
+            'autocomplete' => true,
+            'choice_label' => 'name',
+            'class' => Award::class,
         ]);
     }
 
@@ -79,13 +92,16 @@ class RecordType extends AbstractType
     {
         $builder
             ->add('type', ChoiceType::class, [
+                // phpcs:ignore
                 'choices' => [
-                    'Promote' => 0,
-                    'Demote' => 1,
+                    'Promote' => 'promotion',
+                    'Demote' => 'demotion',
                 ],
             ])
-            ->add('rank_id', PerscomForm\RankType::class, [
-                'label' => 'Rank',
+            ->add('rank', EntityType::class, [
+                'autocomplete' => true,
+                'choice_label' => 'name',
+                'class'=> Rank::class,
             ]);
     }
 
@@ -99,26 +115,38 @@ class RecordType extends AbstractType
                 ],
                 'placeholder' => 'Select a type',
             ])
-            ->add('status_id', PerscomForm\StatusType::class, [
-                'label' => 'Status',
+            ->add('status', EntityType::class, [
+                'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => Status::class,
+                'placeholder' => 'Keep current status.',
                 'required' => false,
             ])
-            ->add('specialty_id', PerscomForm\SpecialtyType::class, [
-                'label' => 'Specialty',
+            ->add('specialty', EntityType::class, [
+                'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => Specialty::class,
+                'placeholder' => 'Keep current specialty.',
                 'required' => false,
             ])
-            ->add('unit_id', PerscomForm\UnitType::class, [
-                'label' => 'Unit',
+            ->add('unit', EntityType::class, [
+                'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => Unit::class,
             ])
-            ->add('position_id', PerscomForm\PositionType::class, [
-                'label' => 'Position',
+            ->add('position', EntityType::class, [
+                'autocomplete' => true,
+                'choice_label' => 'name',
+                'class' => Position::class,
             ]);
     }
 
     private function addQualificationFields(FormBuilderInterface $builder): void
     {
-        $builder->add('qualification_id', PerscomForm\QualificationType::class, [
-            'label' => 'Qualification',
+        $builder->add('qualification', EntityType::class, [
+            'autocomplete' => true,
+            'choice_label' => 'name',
+            'class' => Qualification::class,
         ]);
     }
 }

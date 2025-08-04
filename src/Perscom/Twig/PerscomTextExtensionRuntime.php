@@ -32,6 +32,6 @@ class PerscomTextExtensionRuntime implements RuntimeExtensionInterface
         } catch (Exception|CommonMarkException) {
             return 'An error occurred converting markdown to html.';
         }
-        return $this->sanitizer->sanitize($content);
+        return '<div class="rich-text">' . $this->sanitizer->sanitize($content) . '</div>';
     }
 }

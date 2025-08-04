@@ -7,6 +7,7 @@ namespace Forumify\PerscomPlugin;
 use Forumify\Plugin\AbstractForumifyPlugin;
 use Forumify\Plugin\PluginMetadata;
 
+/** @codeCoverageIgnore */
 class ForumifyPerscomPlugin extends AbstractForumifyPlugin
 {
     public function getPluginMetadata(): PluginMetadata
@@ -23,28 +24,118 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
     public function getPermissions(): array
     {
         return [
-            'frontend' => [
-                'attendance_sheet' => [
-                    'view',
-                ]
-            ],
             'admin' => [
                 'view',
+                'run_sync',
                 'configuration' => [
                     'manage',
                 ],
                 'users' => [
                     'view',
+                    'create',
                     'manage',
                     'delete',
-                    'assign_records',
                 ],
                 'submissions' => [
                     'view',
                     'assign_statuses',
+                    'delete',
                 ],
                 'organization' => [
                     'view',
+                    'awards' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'documents' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'forms' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'positions' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'qualifications' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'ranks' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'rosters' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'specialties' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'statuses' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                    'units' => [
+                        'view',
+                        'manage',
+                        'delete',
+                        'create',
+                    ],
+                ],
+                'records' => [
+                    'view',
+                    'assignment_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'award_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'combat_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'qualification_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'rank_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
+                    'service_records' => [
+                        'view',
+                        'create',
+                        'delete',
+                    ],
                 ],
                 'operations' => [
                     'view',
@@ -55,6 +146,11 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                     'view',
                     'manage',
                     'delete',
+                ],
+            ],
+            'frontend' => [
+                'attendance_sheet' => [
+                    'view',
                 ],
             ],
         ];

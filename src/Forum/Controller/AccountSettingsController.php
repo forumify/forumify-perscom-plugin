@@ -31,7 +31,7 @@ class AccountSettingsController extends AbstractController
         if ($response instanceof RedirectResponse) {
             /** @var User $user */
             $user = $this->getUser();
-            $this->syncUserService->syncFromForumify($user->getId(), false);
+            $this->syncUserService->sync($user->getId(), false);
         }
 
         return $response;

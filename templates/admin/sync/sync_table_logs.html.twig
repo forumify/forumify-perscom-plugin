@@ -1,0 +1,12 @@
+{% embed '@Forumify/components/modal.html.twig' %}
+    {% block modalOpenButton %}
+        <a class="btn-icon btn-link btn-small">
+            <i class="ph ph-file-text"></i>
+        </a>
+    {% endblock %}
+    {% block modalContent %}
+        <div class="box text-left p-4 rich-text" style="overflow: auto">
+            <pre>{{ errorMessages }}</pre>
+        </div>
+    {% endblock %}
+{% endembed %}

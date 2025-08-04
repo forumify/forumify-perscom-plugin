@@ -10,7 +10,7 @@
         </p>
         <div class="flex justify-center gap-4">
             {% if enlistmentTopic is not null %}
-                <a class="btn-primary" href="{{ path('forumify_forum_topic', { slug: enlistmentTopic.topic.slug }) }}">
+                <a class="btn-primary" href="{{ path('forumify_forum_topic', { slug: enlistmentTopic.slug }) }}">
                     {{ 'perscom.enlistment.topic'|trans }}
                 </a>
             {% endif %}

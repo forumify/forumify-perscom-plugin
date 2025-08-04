@@ -1,14 +1,15 @@
 perscom:
     settings:
         tab_settings: 'Settings'
-        tab_enlistment: 'Enlistment'
+        tab_general: 'General'
         tab_profile: 'Profile'
         tab_report_in: 'Report In'
         tab_operations: 'Operations'
         tab_courses: 'Courses'
         title: 'PERSCOM.io Plugin Configuration'
-        license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor at least a pro license is required for this plugin to function.'
-        automations: 'Automations'
+        enlistment: 'Enlistment'
+        enlistment_automations: 'Automations'
+        license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor a valid subscription to PERSCOM.io is required for this plugin to function properly.'
         profile:
             display_name_format_help: >
                 Format to use. This code is in twig, and is given the user's PERSCOM object in context.<br/>
@@ -20,7 +21,11 @@ perscom:
                     <li><strong>Commander Doe:</strong> <code>&lbrace;&lbrace;user.position.name&rbrace;&rbrace; &lbrace;&lbrace;user.name|split(&#039; &#039;)|last}}</code>
                 </ul>
     admin:
-        requires_perscom_account: 'This action requires a PERSCOM account that matches your email.'
+        requires_perscom_account: 'This action requires you to have a PERSCOM user linked to your forum user.'
+        perscom_user:
+            crud:
+                plural: 'Users'
+                single: 'User'
         users:
             not_found: 'User can not be found.'
             list:
@@ -38,7 +43,6 @@ perscom:
                 title: 'Editing {name}'
                 saved: 'User saved.'
                 general: 'General'
-                email_help: 'To link a PERSCOM.io user to a forumify user, their email must match. A user''s email can only be modified on PERSCOM.io.'
                 rank_help: 'Modifying the rank here does not create a new rank record, additionally, time in grade will not be reset. Use "Promote/Demote" in "Quick Actions" to create a new rank record.'
                 created_at_help: 'This date is used to calculate Time In Service on the user''s p-file.'
                 custom_fields_help: 'Custom fields are read-only. PERSCOM.io does not support updating custom fields through the API.'
@@ -58,28 +62,78 @@ perscom:
             view:
                 title: 'Submission'
                 user: 'User'
-                status_history: 'Status History'
+                status_reason: 'Status Reason'
                 status_created: 'Submission status updated.'
-        awards:
-            list:
-                title: 'Awards'
-        positions:
-            list:
-                title: 'Positions'
-        qualifications:
-            list:
-                title: 'Qualifications'
-        units:
-            list:
-                title: 'Units'
-        statuses:
-            list:
-                title: 'Statuses'
-        specialties:
-            list:
-                title: 'Specialties'
+        award:
+            crud:
+                single: 'award'
+                plural: 'awards'
+        document:
+            crud:
+                single: 'document'
+                plural: 'documents'
+        form:
+            crud:
+                single: 'form'
+                plural: 'forms'
+        form_field:
+            crud:
+                single: 'field'
+                plural: 'fields'
+        position:
+            crud:
+                single: 'position'
+                plural: 'positions'
+        qualification:
+            crud:
+                single: 'qualification'
+                plural: 'qualifications'
+        rank:
+            crud:
+                single: 'rank'
+                plural: 'ranks'
+        roster:
+            crud:
+                single: 'roster'
+                plural: 'rosters'
+        unit:
+            crud:
+                single: 'unit'
+                plural: 'units'
+        status:
+            crud:
+                single: 'status'
+                plural: 'statuses'
+        specialty:
+            crud:
+                single: 'specialty'
+                plural: 'specialties'
         configuration:
             title: 'Configuration'
+        service_record:
+            crud:
+                single: 'service record'
+                plural: 'service records'
+        combat_record:
+            crud:
+                single: 'combat record'
+                plural: 'combat records'
+        award_record:
+            crud:
+                single: 'award record'
+                plural: 'award records'
+        assignment_record:
+            crud:
+                single: 'assignment record'
+                plural: 'assignment records'
+        rank_record:
+            crud:
+                single: 'rank record'
+                plural: 'rank records'
+        qualification_record:
+            crud:
+                single: 'qualification record'
+                plural: 'qualification records'
         course:
             crud:
                 single: 'Course'
@@ -103,6 +157,7 @@ perscom:
     enlistment:
         enlist: 'Enlist'
         not_eligible: 'You are currently not eligible for enlistment.'
+        not_enabled: 'Enlistments are currently disabled.'
         pending: 'Your enlistment is being processed. View the enlistment topic for further instructions and updates.'
         topic: 'View enlistment topic'
         start_new: 'Start another enlistment'
@@ -116,6 +171,7 @@ perscom:
         assignment: 'Assignment'
         profile: 'Profile'
         awards: 'Awards'
+        no_awards: 'This user has no awards.'
         service_record: 'Service Record'
         award_record: 'Award Record'
         combat_record: 'Combat Record'
@@ -127,7 +183,7 @@ perscom:
         unit: 'Unit'
         status: 'Status'
         secondary_positions: 'Secondary Positions'
-        no_secondary_positions: 'User does not have any secondary positions.'
+        no_secondary_positions: 'This user does not have any secondary positions.'
         document: 'Record Document'
         text: 'Record Text'
         last_report_in: 'Last report in'
@@ -220,10 +276,10 @@ perscom:
             instructor_slots_help: 'How many instructors are allowed to sign up? Leave blank to allow unlimited, set to 0 to disable signups.'
             student_slots_help: 'How many students are allowed to sign up? Leave blank to allow unlimited, set to 0 to disable signups.'
             created_by: 'Class by'
-            register_as_student: 'Register as student'
-            deregister_as_student: 'Deregister as student'
+            register_as_student: 'Register as Student'
+            deregister_as_student: 'Deregister as Student'
             register_as_instructor: 'Register as {instructor}'
-            deregister_as_instructor: 'Deregister as instructor'
+            deregister_as_instructor: 'Deregister as Instructor'
             start: 'Starts on'
             end: 'Ends on'
             instructors: 'Instructors'

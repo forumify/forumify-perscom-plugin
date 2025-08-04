@@ -23,7 +23,7 @@ export default class extends Controller {
     this.instructorsTarget.firstElementChild.append(row);
 
     document
-      .getElementById(`class_result_instructors_${this.instructorIdx}_perscomUserId`)
+      .getElementById(`class_result_instructors_${this.instructorIdx}_user`)
       .classList
       .remove('d-none')
     ;
@@ -43,7 +43,7 @@ export default class extends Controller {
     this.studentsTarget.firstElementChild.append(row);
 
     document
-      .getElementById(`class_result_students_${this.studentIdx}_perscomUserId`)
+      .getElementById(`class_result_students_${this.studentIdx}_user`)
       .classList
       .remove('d-none')
     ;
@@ -60,7 +60,7 @@ export default class extends Controller {
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.classList.add('btn-link', 'btn-small', 'btn-icon');
-    btn.innerHTML = '<i class="ph ph-x"></i>'
+    btn.innerHTML = '<i class="ph ph-x"></i>';
 
     btn.addEventListener('click', () => {
       formRow.parentElement.removeChild(formRow);

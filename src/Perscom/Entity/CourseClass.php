@@ -28,7 +28,7 @@ class CourseClass
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Course $course;
 
-    #[ORM\Column]
+    #[ORM\Column(length: 255)]
     private string $title;
 
     #[ORM\Column(type: 'text')]
