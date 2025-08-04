@@ -11,6 +11,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class QualificationSerializer implements DenormalizerInterface, NormalizerInterface
 {
+    use SortableNormalizerTrait;
+
     public function __construct(
         private readonly PerscomImageNormalizer $imageNormalizer,
     ) {
@@ -25,9 +27,7 @@ class QualificationSerializer implements DenormalizerInterface, NormalizerInterf
 
         $data['name'] = $object->getName();
         $data['description'] = $object->getDescription();
-        $data['order'] = $object->getPosition();
-
-        // TODO: image
+        $this->normalizePosition($object, $data);
 
         return $data;
     }

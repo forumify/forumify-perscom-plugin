@@ -11,6 +11,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class SpecialtySerializer implements DenormalizerInterface, NormalizerInterface
 {
+    use SortableNormalizerTrait;
+
     /**
      * @param Specialty $object
      */
@@ -21,7 +23,7 @@ class SpecialtySerializer implements DenormalizerInterface, NormalizerInterface
         $data['name'] = $object->getName();
         $data['description'] = $object->getDescription();
         $data['abbreviation'] = $object->getAbbreviation();
-        $data['order'] = $object->getPosition();
+        $this->normalizePosition($object, $data);
 
         return $data;
     }

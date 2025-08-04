@@ -11,6 +11,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class RankSerializer implements DenormalizerInterface, NormalizerInterface
 {
+    use SortableNormalizerTrait;
+
     public function __construct(
         private readonly PerscomImageNormalizer $imageNormalizer,
     ) {
@@ -27,9 +29,7 @@ class RankSerializer implements DenormalizerInterface, NormalizerInterface
         $data['description'] = $object->getDescription();
         $data['abbreviation'] = $object->getAbbreviation();
         $data['paygrade'] = $object->getPaygrade();
-        $data['order'] = $object->getPosition();
-
-        // TODO: image
+        $this->normalizePosition($object, $data);
 
         return $data;
     }

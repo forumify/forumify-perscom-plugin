@@ -11,6 +11,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class StatusSerializer implements DenormalizerInterface, NormalizerInterface
 {
+    use SortableNormalizerTrait;
+
     /**
      * @param Status $object
      */
@@ -20,7 +22,7 @@ class StatusSerializer implements DenormalizerInterface, NormalizerInterface
 
         $data['name'] = $object->getName();
         $data['color'] = $object->getColor();
-        $data['order'] = $object->getPosition();
+        $this->normalizePosition($object, $data);
 
         return $data;
     }

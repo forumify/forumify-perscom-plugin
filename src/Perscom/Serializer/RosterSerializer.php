@@ -12,6 +12,8 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class RosterSerializer implements DenormalizerInterface, NormalizerInterface
 {
+    use SortableNormalizerTrait;
+
     /**
      * @param Roster $object
      */
@@ -21,10 +23,7 @@ class RosterSerializer implements DenormalizerInterface, NormalizerInterface
 
         $data['name'] = $object->getName();
         $data['description'] = $object->getDescription();
-        $data['order'] = $object->getPosition();
-
-        // NOTE: linking units to rosters is done in an event listener
-        // @see Forumify\PerscomPlugin\Sync\EventSubscriber\LinkRosterUnitsListener
+        $this->normalizePosition($object, $data);
 
         return $data;
     }
