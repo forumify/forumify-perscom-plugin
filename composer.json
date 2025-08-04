@@ -7,8 +7,7 @@
         "php": ">=8.2",
         "forumify/forumify-platform": "^0.4.25",
         "deschutesdesigngroupllc/perscom-php-sdk": "3.0.0",
-        "league/commonmark": "^2.5",
-        "symfony/lock": "^6.4|^7.3"
+        "league/commonmark": "^2.5"
     },
     "require-dev": {
         "phpstan/phpstan": "^2.1",
