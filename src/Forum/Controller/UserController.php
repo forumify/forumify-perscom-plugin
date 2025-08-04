@@ -31,7 +31,7 @@ class UserController extends AbstractController
     {
         $lastReportInDate = $this
             ->reportInRepository
-            ->findOneBy(['perscomUserId' => $user->getPerscomId()])
+            ->findOneBy(['user' => $user])
             ?->getLastReportInDate()
         ;
 
