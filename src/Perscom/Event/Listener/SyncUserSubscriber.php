@@ -27,8 +27,13 @@ class SyncUserSubscriber implements EventSubscriberInterface
     public function onRecordsCreated(RecordsCreatedEvent $event): void
     {
         foreach ($event->records as $record) {
-            if ($record instanceof AssignmentRecord || $record instanceof RankRecord) {
-                $this->syncUserService->syncFromPerscom($record->getUser()->getPerscomId());
+            if (!$record instanceof AssignmentRecord && !$record instanceof RankRecord) {
+                continue;
+            }
+
+            $forumUser = $record->getUser()->getUser();
+            if ($forumUser !== null) {
+                $this->syncUserService->sync($forumUser->getId());
             }
         }
     }

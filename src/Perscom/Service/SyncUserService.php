@@ -21,7 +21,6 @@ use Twig\Environment;
 class SyncUserService
 {
     public function __construct(
-        private readonly PerscomUserService $perscomUserService,
         private readonly PerscomUserRepository $perscomUserRepository,
         private readonly UserRepository $userRepository,
         private readonly Environment $twig,
@@ -34,23 +33,9 @@ class SyncUserService
     ) {
     }
 
-    public function syncFromPerscom(int $persomUserId, bool $async = true): void
+    public function sync(int $userId, bool $async = true): void
     {
-        $message = new SyncUserMessage($persomUserId);
-        if ($async) {
-            $this->messageBus->dispatch($message);
-            return;
-        }
-
-        try {
-            $this->doSync($message);
-        } catch (\Exception) {
-        }
-    }
-
-    public function syncFromForumify(int $userId, bool $async = true): void
-    {
-        $message = new SyncUserMessage(forumifyUserId: $userId);
+        $message = new SyncUserMessage($userId);
         if ($async) {
             $this->messageBus->dispatch($message);
             return;
@@ -67,60 +52,33 @@ class SyncUserService
         $displayNameEnabled = $this->settingRepository->get('perscom.profile.overwrite_display_names');
         $signatureEnabled = $this->settingRepository->get('perscom.profile.overwrite_signatures');
         $avatarEnabled = $this->settingRepository->get('perscom.profile.overwrite_avatars');
-
         if (!$displayNameEnabled && !$signatureEnabled && !$avatarEnabled) {
             return;
         }
 
-        if ($message->perscomUserId) {
-            [$forumifyUser, $perscomData] = $this->getUsersFromPerscom($message->perscomUserId);
-        } elseif ($message->forumifyUserId) {
-            [$forumifyUser, $perscomData] = $this->getUsersFromForumify($message->forumifyUserId);
-        } else {
+        $forumifyUser = $this->userRepository->find($message->userId);
+        if ($forumifyUser === null) {
             return;
         }
 
-        if ($forumifyUser === null || $perscomData === null) {
+        $perscomUser = $this->perscomUserRepository->findOneBy(['user' => $forumifyUser]);
+        if ($perscomUser === null) {
             return;
         }
 
         if ($displayNameEnabled) {
-            $this->syncDisplayName($forumifyUser, $perscomData);
+            $this->syncDisplayName($forumifyUser, $perscomUser);
         }
 
         if ($signatureEnabled) {
-            $this->syncSignature($forumifyUser, $perscomData);
+            $this->syncSignature($forumifyUser, $perscomUser);
         }
 
         if ($avatarEnabled) {
-            $this->syncAvatar($forumifyUser, $perscomData);
+            $this->syncAvatar($forumifyUser, $perscomUser);
         }
 
         $this->userRepository->save($forumifyUser);
-    }
-
-    /**
-     * @return array{0: User|null, 1: PerscomUser|null}
-     */
-    private function getUsersFromPerscom(int $userId): array
-    {
-        /** @var PerscomUser|null $perscomUser */
-        $perscomUser = $this->perscomUserRepository->findOneBy(['perscomId' => $userId]);
-        return [$perscomUser?->getUser(), $perscomUser];
-    }
-
-    /**
-     * @return array{0: User|null, 1: PerscomUser|null}
-     */
-    private function getUsersFromForumify(int $userId): array
-    {
-        $forumifyUser = $this->userRepository->find($userId);
-        if ($forumifyUser === null) {
-            return [null, null];
-        }
-
-        $perscomUser = $this->perscomUserService->getPerscomUser($forumifyUser);
-        return [$forumifyUser, $perscomUser];
     }
 
     private function syncDisplayName(User $user, PerscomUser $perscomUser): void

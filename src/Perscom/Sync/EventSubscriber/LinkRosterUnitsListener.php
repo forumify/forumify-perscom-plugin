@@ -6,7 +6,6 @@ namespace Forumify\PerscomPlugin\Perscom\Sync\EventSubscriber;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Roster;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
-use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\PerscomFactory;
 use Forumify\PerscomPlugin\Perscom\Sync\EventSubscriber\Event\PostSyncToPerscomEvent;
 use Perscom\Data\ResourceObject;
@@ -15,11 +14,8 @@ use Symfony\Component\EventDispatcher\Attribute\AsEventListener;
 #[AsEventListener]
 class LinkRosterUnitsListener
 {
-    private readonly Perscom $perscom;
-
-    public function __construct(PerscomFactory $perscomFactory)
+    public function __construct(private readonly PerscomFactory $perscomFactory)
     {
-        $this->perscom = $perscomFactory->getPerscom(true);
     }
 
     public function __invoke(PostSyncToPerscomEvent $event): void
@@ -55,6 +51,6 @@ class LinkRosterUnitsListener
             ->toArray()
         ;
 
-        $this->perscom->groups()->units($perscomId)->sync($newUnitIds);
+        $this->perscomFactory->getPerscom()->groups()->units($perscomId)->sync($newUnitIds);
     }
 }

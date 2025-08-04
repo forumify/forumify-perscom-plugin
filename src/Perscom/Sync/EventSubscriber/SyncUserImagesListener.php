@@ -51,12 +51,12 @@ class SyncUserImagesListener
             return;
         }
 
-        $perscom = $this->perscomFactory->getPerscom(true);
+        $perscom = $this->perscomFactory->getPerscom();
 
         $userId = $user->getPerscomId();
         if ($user->getPerscomSignature()) {
             try {
-                $perscom->users()->profile_photo($userId)->delete();
+                $perscom->users()->profilePhoto($userId)->delete();
             } catch (Exception) {
             }
         }
@@ -67,7 +67,7 @@ class SyncUserImagesListener
 
         $fullPath = Path::join($this->rootDir, 'public', 'storage', 'perscom', $user->getSignature());
         try {
-            $result = $perscom->users()->profile_photo($userId)->create($fullPath)->array('data');
+            $result = $perscom->users()->profilePhoto($userId)->create($fullPath)->array('data');
             $user->setPerscomSignature($result['profile_photo']);
         } catch (Exception) {
         }
@@ -81,12 +81,12 @@ class SyncUserImagesListener
             return;
         }
 
-        $perscom = $this->perscomFactory->getPerscom(true);
+        $perscom = $this->perscomFactory->getPerscom();
 
         $userId = $user->getPerscomId();
         if ($user->getPerscomUniform()) {
             try {
-                $perscom->users()->cover_photo($userId)->delete();
+                $perscom->users()->coverPhoto($userId)->delete();
             } catch (Exception) {
             }
         }
@@ -97,7 +97,7 @@ class SyncUserImagesListener
 
         $fullPath = Path::join($this->rootDir, 'public', 'storage', 'perscom', $user->getUniform());
         try {
-            $result = $perscom->users()->cover_photo($userId)->create($fullPath)->array('data');
+            $result = $perscom->users()->coverPhoto($userId)->create($fullPath)->array('data');
             $user->setPerscomSignature($result['cover_photo']);
         } catch (Exception) {
         }

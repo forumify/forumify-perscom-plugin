@@ -9,8 +9,7 @@ use Forumify\Core\Messenger\AsyncMessageInterface;
 class SyncUserMessage implements AsyncMessageInterface
 {
     public function __construct(
-        public ?int $perscomUserId = null,
-        public ?int $forumifyUserId = null,
+        public ?int $userId = null,
     ) {
     }
 }
