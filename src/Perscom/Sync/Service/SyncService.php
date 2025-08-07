@@ -181,11 +181,17 @@ class SyncService
             batchSize: 1000,
         );
         $forms = $this->syncAllOfResource($p->forms(), Entity\Form::class, ['fields'], ['statuses' => $statuses]);
-        $this->syncAllOfResource($p->submissions(), Entity\FormSubmission::class, ['statuses', 'statuses.record'], [
-            'forms' => $forms,
-            'statuses' => $statuses,
-            'users' => $users,
-        ]);
+        $this->syncAllOfResource(
+            $p->submissions(),
+            Entity\FormSubmission::class,
+            ['statuses', 'statuses.record'],
+            context: [
+                'forms' => $forms,
+                'statuses' => $statuses,
+                'users' => $users,
+            ],
+            batchSize: 500,
+        );
     }
 
     /**
