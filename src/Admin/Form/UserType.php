@@ -17,6 +17,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -73,6 +74,11 @@ class UserType extends AbstractType
             ->add('createdAt', DateType::class, [
                 'help' => 'perscom.admin.users.edit.created_at_help',
                 'widget' => 'single_text',
+            ])
+            ->add('steamId', NumberType::class, [
+                'help' => 'perscom.admin.users.edit.steam_id_help',
+                'help_html' => true,
+                'required' => false,
             ])
             // assignment
             ->add('specialty', EntityType::class, [

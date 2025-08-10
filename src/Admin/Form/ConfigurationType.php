@@ -13,6 +13,7 @@ use Forumify\Plugin\Service\PluginVersionChecker;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -168,6 +169,48 @@ class ConfigurationType extends AbstractType
                     'help' => 'Automatically move users with consecutive absences to a different status.',
                     'label' => 'Consecutive absence status',
                     'placeholder' => 'Do not change status',
+                    'required' => false,
+                ])
+                // SquadXML
+                ->add('perscom__squadxml__enabled', CheckboxType::class, [
+                    'label' => 'Enabled',
+                    'required' => false,
+                ])
+                ->add('perscom__squadxml__name', TextType::class, [
+                    'constraints' => [new Assert\Length(max: 64), new Assert\Regex('/^[^<>]+$/')],
+                    'help' => 'Unit name, leave blank to use the website name.',
+                    'label' => 'Name',
+                    'required' => false,
+                ])
+                ->add('perscom__squadxml__title', TextType::class, [
+                    'constraints' => [new Assert\Length(max: 64), new Assert\Regex('/^[^<>]+$/')],
+                    'help' => 'Unit title, shown on vehicles etc. Leave blank to use the same as name.',
+                    'label' => 'Name',
+                    'required' => false,
+                ])
+                ->add('perscom__squadxml__nick', TextType::class, [
+                    'constraints' => [new Assert\Length(max: 64), new Assert\Regex('/^[a-zA-Z0-9]+$/')],
+                    'help' => 'Also known as your clan tag. Only characters A-z and 0-9 are allowed. So if your tag is "-=[TAG]=-", use "TAG" instead.',
+                    'label' => 'Nick',
+                    'required' => false,
+                ])
+                ->add('perscom__squadxml__email', TextType::class, [
+                    'constraints' => [new Assert\Email(), new Assert\Length(max: 64), new Assert\Regex('/^[^<>]+$/')],
+                    'help' => 'Not required.',
+                    'label' => 'Contact email',
+                    'required' => false,
+                ])
+                ->add('perscom__squadxml__web', TextType::class, [
+                    'constraints' => [new Assert\Length(max: 64), new Assert\Regex('/^[^<>]+$/')],
+                    'help' => 'Only required if it is different from this forumify website. Leave blank to use the website you are on right now.',
+                    'label' => 'Website',
+                    'required' => false,
+                ])
+                ->add('perscom__squadxml__new_picture', FileType::class, [
+                    'constraints' => [new Assert\File(maxSize: '1M')],
+                    'help' => 'Logo in PAA format. Don\'t know how to create a PAA file? See <a href="https://community.bistudio.com/wiki/squad.xml#Logo_Creation">official documentation</a>, or use this <a href="https://paa.gruppe-adler.de/">online converter</a>.',
+                    'help_html' => true,
+                    'label' => 'Logo (.paa)',
                     'required' => false,
                 ])
             ;
