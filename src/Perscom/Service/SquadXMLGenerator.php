@@ -21,8 +21,8 @@ class SquadXMLGenerator
 
     public function generateXml(): string
     {
-        $nick = $this->settingRepository->get('perscom.squadxml.nick');
-        $name = $this->settingRepository->get('perscom.squadxml.name') ?? $this->settingRepository->get('forumify.title');
+        $nick = $this->settingRepository->get('perscom.squadxml.nick') ?? '';
+        $name = $this->settingRepository->get('perscom.squadxml.name') ?? $this->settingRepository->get('forumify.title') ?? '';
         $title = $this->settingRepository->get('perscom.squadxml.title') ?? $name;
         $web = $this->settingRepository->get('perscom.squadxml.web') ?? $this->urlGenerator->generate('forumify_core_index', [], UrlGeneratorInterface::ABSOLUTE_URL);
         $email = $this->settingRepository->get('perscom.squadxml.email');

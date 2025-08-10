@@ -16,7 +16,6 @@ use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\Cache\ItemInterface;
 
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
-#[Route('', 'squadxml_')]
 class SquadXMLController extends AbstractController
 {
     public function __construct(
@@ -30,6 +29,11 @@ class SquadXMLController extends AbstractController
     #[Route('/squad.xml', 'xml')]
     public function xml(): Response
     {
+        $enabled = $this->settingRepository->get('perscom.squadxml.enabled');
+        if (!$enabled) {
+            throw $this->createNotFoundException();
+        }
+
         $xml = $this->cache->get('perscom.squadxml', function (ItemInterface $item) {
             $item->expiresAfter(new DateInterval('PT15M'));
             return $this->xmlGenerator->generateXml();

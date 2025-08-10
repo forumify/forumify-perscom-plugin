@@ -10,3 +10,7 @@ forum:
     prefix: perscom/
     name_prefix: perscom_
 
+squadxml:
+    resource: ../src/Forum/Controller/SquadXMLController.php
+    type: attribute
+    name_prefix: perscom_squadxml_
