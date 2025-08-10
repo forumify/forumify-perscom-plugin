@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Perscom\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
@@ -95,6 +96,9 @@ class PerscomUser implements PerscomEntityInterface
     #[ORM\OneToOne(targetEntity: Topic::class)]
     #[ORM\JoinColumn(onDelete: 'SET NULL')]
     private ?Topic $enlistmentTopic = null;
+
+    #[ORM\Column(type: Types::BIGINT, nullable: true, options: ['unsigned' => true])]
+    private ?int $steamId = null;
 
     public function __construct()
     {
@@ -309,5 +313,15 @@ class PerscomUser implements PerscomEntityInterface
     public function setEnlistmentTopic(?Topic $enlistmentTopic): void
     {
         $this->enlistmentTopic = $enlistmentTopic;
+    }
+
+    public function getSteamId(): ?int
+    {
+        return $this->steamId;
+    }
+
+    public function setSteamId(?int $steamId): void
+    {
+        $this->steamId = $steamId;
     }
 }

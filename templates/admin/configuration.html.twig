@@ -11,6 +11,7 @@
                 {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
                     <button type="button" class="btn-link" data-tab-id="report-in">{{ 'perscom.settings.tab_report_in'|trans }}</button>
                     <button type="button" class="btn-link" data-tab-id="operations">{{ 'perscom.settings.tab_operations'|trans }}</button>
+                    <button type="button" class="btn-link" data-tab-id="squadxml">{{ 'perscom.settings.tab_squadxml'|trans }}</button>
                 {% endif %}
             {% endblock %}
             {% block tabpanels %}
@@ -44,6 +45,20 @@
                         {{ form_row(form.perscom__operations__consecutive_absent_notification_count) }}
                         {{ form_row(form.perscom__operations__consecutive_absent_notification_message) }}
                         {{ form_row(form.perscom__operations__consecutive_absent_status) }}
+                    </div>
+                    <div id="squadxml">
+                        <div class="alert-info mb-6">
+                            <p class="mb-2">SquadXML is a feature used in the Arma games to identify members of different units. It adds your clantag to your member's names, displays your logo on some vehicles and uniforms, and much more.</p>
+                            <p class="mb-2">Link to configure in your in-game profiles: <span class="text-italic">{{ absolute_url(path('perscom_squadxml_xml')) }}</span></p>
+                            <a href="https://community.bistudio.com/wiki/squad.xml" target="_blank">Take a look at the official documentation to learn more.</a>
+                        </div>
+                        {{ form_row(form.perscom__squadxml__enabled) }}
+                        {{ form_row(form.perscom__squadxml__name) }}
+                        {{ form_row(form.perscom__squadxml__title) }}
+                        {{ form_row(form.perscom__squadxml__nick) }}
+                        {{ form_row(form.perscom__squadxml__email) }}
+                        {{ form_row(form.perscom__squadxml__web) }}
+                        {{ form_row(form.perscom__squadxml__new_picture) }}
                     </div>
                 {% endif %}
             {% endblock %}
