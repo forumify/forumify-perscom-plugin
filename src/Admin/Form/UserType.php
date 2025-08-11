@@ -42,12 +42,7 @@ class UserType extends AbstractType
         /** @var PerscomUser|null $user */
         $user = $options['data'] ?? null;
 
-        $builder->add('name', TextType::class, [
-            'constraints' => [
-                new Assert\Regex('/^\w+ .+$/'),
-            ],
-            'help' => 'Must be in the format of "firstname lastname", otherwise some modules won\'t work well.',
-        ]);
+        $builder->add('name', TextType::class);
 
         if ($user?->getUser() === null) {
             $builder->add('user', EntityType::class, [
