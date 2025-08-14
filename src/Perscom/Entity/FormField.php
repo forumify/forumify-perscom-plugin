@@ -15,7 +15,6 @@ use Forumify\PerscomPlugin\Perscom\Repository\FormFieldRepository;
 use LogicException;
 use Perscom\Contracts\Batchable;
 use Perscom\Contracts\Crudable;
-use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FormFieldRepository::class)]
 #[ORM\Table('perscom_form_field')]
@@ -31,16 +30,13 @@ class FormField implements PerscomEntityInterface, SortableEntityInterface
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
     private Form $form;
 
-    #[ORM\Column('`key`', length: 64)]
-    #[Assert\Length(max: 64)]
+    #[ORM\Column('`key`', length: 255)]
     private string $key = '';
 
-    #[ORM\Column(length: 32)]
-    #[Assert\NotBlank(allowNull: false)]
+    #[ORM\Column(length: 64)]
     private string $type;
 
-    #[ORM\Column(length: 128)]
-    #[Assert\NotBlank(allowNull: false)]
+    #[ORM\Column(length: 255)]
     private string $label;
 
     #[ORM\Column(type: Types::TEXT)]
