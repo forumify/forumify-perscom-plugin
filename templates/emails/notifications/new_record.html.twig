@@ -13,8 +13,11 @@
         </p>
     </div>
     <hr>
-    {% include '@Forumify/emails/components/button.html.twig' with {
-        href: path('perscom_user', { id: data.user_id }),
-        label: 'perscom.opcenter.pfile'|trans,
-    } only %}
+    {% set url = this.url(notification) %}
+    {% if url is not empty %}
+        {% include '@Forumify/emails/components/button.html.twig' with {
+            href: url,
+            label: 'perscom.opcenter.pfile'|trans,
+        } only %}
+    {% endif %}
 {% endblock %}

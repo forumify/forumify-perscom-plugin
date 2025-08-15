@@ -65,6 +65,7 @@ class SendRecordNotificationListener
             [
                 'data' => $data,
                 'type' => $type,
+                'user' => $record->getUser()->getId(),
             ]
         ));
     }

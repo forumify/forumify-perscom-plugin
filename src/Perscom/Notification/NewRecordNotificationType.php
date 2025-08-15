@@ -73,8 +73,12 @@ class NewRecordNotificationType extends AbstractEmailNotificationType
 
     public function getUrl(Notification $notification): string
     {
-        $data = $notification->getDeserializedContext()['data'];
-        return $this->urlGenerator->generate('perscom_user', ['id' => $data['user_id']]);
+        $userId = $notification->getDeserializedContext()['user'] ?? null;
+        if ($userId === null) {
+            return '';
+        }
+
+        return $this->urlGenerator->generate('perscom_user', ['id' => $userId]);
     }
 
     public function getEmailTemplate(Notification $notification): string
