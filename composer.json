@@ -28,6 +28,9 @@
         }
     },
     "extra": {
-        "forumify-plugin-class": "Forumify\\PerscomPlugin\\ForumifyPerscomPlugin"
+        "forumify-plugin-class": "Forumify\\PerscomPlugin\\ForumifyPerscomPlugin",
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        }
     }
 }

@@ -9,8 +9,10 @@ use Forumify\Admin\Crud\Event\PreSaveCrudEvent;
 use Forumify\Core\Service\MediaService;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Repository\AssignmentRecordRepository;
+use Forumify\PerscomPlugin\Perscom\Service\SyncUserService;
 use League\Flysystem\FilesystemOperator;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class UserCrudSubscriber implements EventSubscriberInterface
@@ -19,6 +21,7 @@ class UserCrudSubscriber implements EventSubscriberInterface
         private readonly MediaService $mediaService,
         private readonly FilesystemOperator $perscomAssetStorage,
         private readonly AssignmentRecordRepository $assignmentRecordRepository,
+        private readonly SyncUserService $syncUserService,
     ) {
     }
 
@@ -60,17 +63,25 @@ class UserCrudSubscriber implements EventSubscriberInterface
      */
     public function postSaveUser(PostSaveCrudEvent $event): void
     {
-        $form = $event->getForm();
         $user = $event->getEntity();
+        $form = $event->getForm();
 
+        $this->deleteRemovedAssignmentRecords($user, $form);
+        $forumifyUser = $user->getUser()?->getId();
+        if ($forumifyUser !== null) {
+            $this->syncUserService->sync($user->getUser()?->getId());
+        }
+    }
+
+    private function deleteRemovedAssignmentRecords(PerscomUser $user, FormInterface $form): void
+    {
         $qb = $this
             ->assignmentRecordRepository
             ->createQueryBuilder('ar')
             ->where('ar.user = :user')
             ->setParameter('user', $user)
             ->andWhere('ar.type = :typeSecondary')
-            ->setParameter('typeSecondary', 'secondary')
-        ;
+            ->setParameter('typeSecondary', 'secondary');
 
         $assignmentRecords = $form->get('secondaryAssignmentRecords')->getData();
         if ($assignmentRecords !== null) {
