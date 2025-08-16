@@ -17,7 +17,7 @@ class ReportIn
 
     /** @deprecated */
     #[ORM\Column(type: 'integer', nullable: true)]
-    private int $perscomUserId;
+    private ?int $perscomUserId = null;
 
     #[ORM\ManyToOne(targetEntity: PerscomUser::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
@@ -35,7 +35,7 @@ class ReportIn
     private ?Status $returnStatus = null;
 
     /** @deprecated */
-    public function getPerscomUserId(): int
+    public function getPerscomUserId(): ?int
     {
         trigger_deprecation('forumify/forumify-perscom-plugin', '2.0', sprintf('%s is deprecated. Use %s instead', __CLASS__ . '::' . __FUNCTION__, __CLASS__ . '::' . 'getUser()'));
         return $this->perscomUserId;
