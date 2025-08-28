@@ -60,6 +60,8 @@ class FormSerializer implements NormalizerInterface, DenormalizerInterface
             $form->setDefaultStatus($context['statuses'][$data['submission_status_id']] ?? null);
         }
 
+        $position = 1;
+        $allKeys = [];
         foreach ($data['fields'] as $pField) {
             $field = $this->findOrCreateField($form, $pField['key']);
             $field->setType($pField['type']);
@@ -68,9 +70,12 @@ class FormSerializer implements NormalizerInterface, DenormalizerInterface
             $field->setRequired($pField['required'] ?? false);
             $field->setReadonly($pField['readonly'] ?? false);
             $field->setOptions(array_flip($pField['options'] ?? []));
+            $field->setPosition($position);
+
+            $position++;
+            $allKeys[] = $pField['key'];
         }
 
-        $allKeys = array_column($data['fields'], 'key');
         foreach ($form->getFields() as $field) {
             if (!in_array($field->getKey(), $allKeys, true)) {
                 $form->removeField($field);

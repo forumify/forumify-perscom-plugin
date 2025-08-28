@@ -44,7 +44,8 @@ class Form implements PerscomEntityInterface
     #[ORM\OneToMany(mappedBy: 'form', targetEntity: FormSubmission::class)]
     private Collection $submissions;
 
-    #[ORM\OneToMany(mappedBy: 'form', targetEntity: FormField::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(mappedBy: 'form', targetEntity: FormField::class, cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['position' => 'ASC'])]
     private Collection $fields;
 
     public function __construct()

@@ -24,6 +24,7 @@ class PerscomFormFieldTable extends AbstractDoctrineTable
 
     public function __construct(private readonly SyncService $syncService)
     {
+        $this->sort = ['position' => self::SORT_ASC];
     }
 
     protected function getEntityClass(): string
@@ -35,6 +36,13 @@ class PerscomFormFieldTable extends AbstractDoctrineTable
     {
         if (!$this->syncService->isSyncEnabled()) {
             $this->addPositionColumn();
+        } else {
+            $this->addColumn('position', [
+                'class' => 'w-5',
+                'field' => 'position',
+                'label' => '#',
+                'searchable' => false,
+            ]);
         }
 
         $this
@@ -67,7 +75,7 @@ class PerscomFormFieldTable extends AbstractDoctrineTable
         $this->repository->reorder(
             $entity,
             $direction,
-            fn (QueryBuilder $qb) => $qb
+            fn(QueryBuilder $qb) => $qb
                 ->andWhere('e.form = :form')
                 ->setParameter('form', $this->form),
         );

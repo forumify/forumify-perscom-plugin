@@ -10,20 +10,15 @@ use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
-use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\FormFieldRepository;
-use LogicException;
-use Perscom\Contracts\Batchable;
-use Perscom\Contracts\Crudable;
 
 #[ORM\Entity(repositoryClass: FormFieldRepository::class)]
 #[ORM\Table('perscom_form_field')]
 #[ORM\UniqueConstraint(fields: ['form', 'key'])]
-class FormField implements PerscomEntityInterface, SortableEntityInterface
+class FormField implements SortableEntityInterface
 {
     use IdentifiableEntityTrait;
     use SortableEntityTrait;
-    use PerscomEntityTrait;
     use TimestampableEntityTrait;
 
     #[ORM\ManyToOne(targetEntity: Form::class, inversedBy: 'fields')]
@@ -50,11 +45,6 @@ class FormField implements PerscomEntityInterface, SortableEntityInterface
 
     #[ORM\Column(type: Types::JSON, nullable: true)]
     private ?array $options = null;
-
-    public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
-    {
-        throw new LogicException('Not Implemented');
-    }
 
     public function getForm(): Form
     {
