@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Components;
@@ -15,7 +16,7 @@ class MissionRSVPs
     {
         $count = 0;
 
-        foreach($this->mission->getRsvps() as $rsvp) {
+        foreach ($this->mission->getRsvps() as $rsvp) {
             if ($rsvp->isGoing() === true) {
                 $count++;
             }

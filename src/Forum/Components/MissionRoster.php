@@ -11,8 +11,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\Unit;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsTwigComponent('Forumify\\Perscom\\MissionRoster', '@ForumifyPerscomPlugin/frontend/components/mission_roster.html.twig')]
 class MissionRoster extends AbstractController
