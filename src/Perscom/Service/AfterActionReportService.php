@@ -236,13 +236,12 @@ class AfterActionReportService
             return;
         }
 
-        $absentUserIds = array_map(fn (PerscomUser $user) => $user->getId(), $absentUsers);
         $this->recordService->createRecord('assignment', [
             'sendNotification' => true,
             'status' => $consecutiveStatus,
             'text' => "Status updated to {$consecutiveStatus->getName()} due to consecutive absences.",
             'type' => 'primary',
-            'users' => $absentUserIds,
+            'users' => $absentUsers,
         ]);
     }
 
