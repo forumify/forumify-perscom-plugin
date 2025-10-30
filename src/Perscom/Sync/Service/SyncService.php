@@ -353,19 +353,20 @@ class SyncService
 
         $repository = $this->em->getRepository($entityClass);
 
-        $page = 0;
-        $lastPage = 0;
+        $page = 1;
         $allItems = [];
 
         do {
-            $page++;
             $res = $resource->all(include: $includes, page: $page, limit: $batchSize);
-            $lastPage = $res->array('meta')['last_page'] ?? 0;
+            $lastPage = $res->array('meta')['last_page'] ?? 1;
             $perscomItems = $res->array('data') ?? [];
             $perscomIds = array_column($perscomItems, 'id');
 
-            $existingItems = $repository->findBy(['perscomId' => $perscomIds]);
-            $existingItems = $this->indexByPerscomId($existingItems);
+            $existingItems = [];
+            if (!empty($perscomIds)) {
+                $existingItems = $repository->findBy(['perscomId' => $perscomIds]);
+                $existingItems = $this->indexByPerscomId($existingItems);
+            }
 
             foreach ($perscomItems as $item) {
                 if (isset($allItems[$item['id']])) {
@@ -395,6 +396,7 @@ class SyncService
             }
 
             $allItems += $existingItems;
+            $page++;
         } while ($page <= $lastPage);
 
         $this->em->flush();
