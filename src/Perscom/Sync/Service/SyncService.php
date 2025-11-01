@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Sync\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
+use Forumify\Core\Entity\Setting;
 use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Perscom\Entity;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomEntityInterface;
@@ -35,8 +37,9 @@ class SyncService
     private PerscomSyncResult $result;
 
     public function __construct(
-        private readonly SettingRepository $settingRepository,
-        private readonly EntityManagerInterface $em,
+        private SettingRepository $settingRepository,
+        private EntityManagerInterface $em,
+        private readonly ManagerRegistry $doctrine,
         private readonly NormalizerInterface&DenormalizerInterface $normalizer,
         private readonly EventDispatcherInterface $eventDispatcher,
         private readonly MessageBusInterface $messageBus,
@@ -68,9 +71,7 @@ class SyncService
         $this->result->setEnded();
         $this->result->logMessage('Sync finished.');
         $this->result->logMessage('Completed in: ' . number_format(microtime(true) - $start, 3) . ' seconds.');
-
-        $this->em->persist($this->result);
-        $this->em->flush();
+        $this->saveResultForSync();
 
         $isInitialSyncDone = $this->settingRepository->get(SyncService::SETTING_IS_INITIAL_SYNC_COMPLETED) ?? false;
         if (!$isInitialSyncDone) {
@@ -98,6 +99,37 @@ class SyncService
         $this->em->flush();
 
         $this->result = $result;
+    }
+
+    private function saveResultForSync(): void
+    {
+        if ($this->em->isOpen()) {
+            $this->em->flush();
+            return;
+        }
+
+        $newEntityManager = $this->doctrine->resetManager();
+        assert($newEntityManager instanceof EntityManagerInterface);
+        $this->em = $newEntityManager;
+
+        $newSettingRepo = $this->em->getRepository(Setting::class);
+        assert($newSettingRepo instanceof SettingRepository);
+        $this->settingRepository = $newSettingRepo;
+
+        /** @var PerscomSyncResult|null $result */
+        $result = $this->em->getRepository(PerscomSyncResult::class)->find($this->result->getId());
+        if ($result === null) {
+            $result = new PerscomSyncResult();
+            $this->em->persist($result);
+        }
+
+        $result->setStart($this->result->getEnd());
+        $result->setEnd($this->result->getEnd());
+        $result->setSuccess($this->result->isSuccess());
+        $result->setErrorMessage($this->result->getErrorMessage());
+        $this->result = $result;
+
+        $this->em->flush();
     }
 
     private function syncEntities(): void
