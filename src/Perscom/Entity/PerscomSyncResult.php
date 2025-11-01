@@ -13,6 +13,7 @@ use Forumify\PerscomPlugin\Perscom\Repository\PerscomSyncResultRepository;
 
 #[ORM\Entity(repositoryClass: PerscomSyncResultRepository::class)]
 #[ORM\Table('perscom_sync_result')]
+#[ORM\Index(fields: ['start'])]
 class PerscomSyncResult
 {
     use IdentifiableEntityTrait;
@@ -39,9 +40,19 @@ class PerscomSyncResult
         return $this->start;
     }
 
+    public function setStart(DateTimeImmutable $start): void
+    {
+        $this->start = $start;
+    }
+
     public function getEnd(): ?DateTimeImmutable
     {
         return $this->end;
+    }
+
+    public function setEnd(?DateTimeImmutable $end): void
+    {
+        $this->end = $end;
     }
 
     public function setEnded(): void

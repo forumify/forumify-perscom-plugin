@@ -17,7 +17,7 @@ use Symfony\Component\Messenger\Stamp\ErrorDetailsStamp;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 use Throwable;
 
-#[AsCronTask('0 5 * * *', jitter: 3600)]
+#[AsCronTask('0 7 * * *', jitter: 3600)]
 #[AsMessageHandler(handles: SyncAllFromPerscomMessage::class)]
 class SyncPerscomTaskHandler
 {
