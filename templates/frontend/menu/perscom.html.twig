@@ -1,30 +1,32 @@
 {% embed '@Forumify/components/menu.html.twig' with { placement: 'bottom-start' } %}
     {% block button_text %}{{ item.name }}{% endblock %}
     {% block menu_items %}
-        {% if (canEnlist and item.payload.roster_guests) or (not canEnlist and item.payload.roster_active_duty) %}
-            <a class="btn-link" href="{{ path('perscom_roster') }}">{{ 'perscom.roster.title'|trans }}</a>
-        {% endif %}
-        {% if (canEnlist and item.payload.awards_guests) or (not canEnlist and item.payload.awards_active_duty) %}
-            <a class="btn-link" href="{{ path('perscom_awards') }}">{{ 'perscom.award.title'|trans }}</a>
-        {% endif %}
-        {% if (canEnlist and item.payload.ranks_guests) or (not canEnlist and item.payload.ranks_active_duty) %}
-            <a class="btn-link" href="{{ path('perscom_ranks') }}">{{ 'perscom.rank.title'|trans }}</a>
-        {% endif %}
-        {% if (canEnlist and item.payload.qualifications_guests) or (not canEnlist and item.payload.qualifications_active_duty) %}
-            <a class="btn-link" href="{{ path('perscom_qualifications') }}">{{ 'perscom.qualification.title'|trans }}</a>
-        {% endif %}
-        {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
-            {% if (canEnlist and item.payload.operations_guests) or (not canEnlist and item.payload.operations_active_duty) %}
-                <a class="btn-link" href="{{ path('perscom_operations_list') }}">{{ 'perscom.opcenter.operations'|trans }}</a>
+        {% if item.payload is not empty %}
+            {% if (canEnlist and item.payload.roster_guests) or (not canEnlist and item.payload.roster_active_duty) %}
+                <a class="btn-link" href="{{ path('perscom_roster') }}">{{ 'perscom.roster.title'|trans }}</a>
             {% endif %}
-            {% if (canEnlist and item.payload.courses_guests) or (not canEnlist and item.payload.courses_active_duty) %}
-                <a class="btn-link" href="{{ path('perscom_courses_list') }}">{{ 'perscom.opcenter.courses'|trans }}</a>
+            {% if (canEnlist and item.payload.awards_guests) or (not canEnlist and item.payload.awards_active_duty) %}
+                <a class="btn-link" href="{{ path('perscom_awards') }}">{{ 'perscom.award.title'|trans }}</a>
             {% endif %}
-        {% endif %}
-        {% if canEnlist %}
-            <a class="btn-link" href="{{ path('perscom_enlist') }}">{{ 'perscom.enlistment.enlist'|trans }}</a>
-        {% else %}
-            <a class="btn-link" href="{{ path('perscom_operations_center') }}">{{ 'perscom.opcenter.operations_center'|trans }}</a>
+            {% if (canEnlist and item.payload.ranks_guests) or (not canEnlist and item.payload.ranks_active_duty) %}
+                <a class="btn-link" href="{{ path('perscom_ranks') }}">{{ 'perscom.rank.title'|trans }}</a>
+            {% endif %}
+            {% if (canEnlist and item.payload.qualifications_guests) or (not canEnlist and item.payload.qualifications_active_duty) %}
+                <a class="btn-link" href="{{ path('perscom_qualifications') }}">{{ 'perscom.qualification.title'|trans }}</a>
+            {% endif %}
+            {% if plugin_version('forumify/forumify-perscom-plugin', 'premium') %}
+                {% if (canEnlist and item.payload.operations_guests) or (not canEnlist and item.payload.operations_active_duty) %}
+                    <a class="btn-link" href="{{ path('perscom_operations_list') }}">{{ 'perscom.opcenter.operations'|trans }}</a>
+                {% endif %}
+                {% if (canEnlist and item.payload.courses_guests) or (not canEnlist and item.payload.courses_active_duty) %}
+                    <a class="btn-link" href="{{ path('perscom_courses_list') }}">{{ 'perscom.opcenter.courses'|trans }}</a>
+                {% endif %}
+            {% endif %}
+            {% if canEnlist %}
+                <a class="btn-link" href="{{ path('perscom_enlist') }}">{{ 'perscom.enlistment.enlist'|trans }}</a>
+            {% else %}
+                <a class="btn-link" href="{{ path('perscom_operations_center') }}">{{ 'perscom.opcenter.operations_center'|trans }}</a>
+            {% endif %}
         {% endif %}
     {% endblock %}
 {% endembed %}
