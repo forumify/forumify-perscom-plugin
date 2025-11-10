@@ -93,10 +93,9 @@
                 {% endif %}
                 {% if can('view_after_action_reports', mission.operation) %}
                     <div id="aar">
-                        <h3>{{ 'perscom.mission.tab.aar'|trans }}</h3>
+                        <h3>{{ 'perscom.mission.aars'|trans }}</h3>
                         <div class="mb-8">
                             {% if not mission.afterActionReports.empty %}
-                                <h3>{{ 'perscom.mission.aars'|trans }}</h3>
                                 {{ component('Perscom\\AfterActionReportList', { mission: mission }) }}
                             {% else %}
                                 <div class="card">

@@ -246,7 +246,7 @@ perscom:
         tab:
             briefing: 'Briefing'
             expected_attendance: 'Expected Attendance'
-            aar: 'After Action Report'
+            aar: 'After Action Reports'
     aar:
         title: 'After Action Report'
         create: 'New After Action Report'
