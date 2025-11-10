@@ -32,7 +32,7 @@ class MissionRoster extends AbstractController
             return $this->unitsWithRSVPs;
         }
 
-        $this->loadRSVPs();
+        $this->getRSVPsByUserId();
         $units = [];
 
         foreach ($this->rsvpsByUserId as $rsvp) {
@@ -45,12 +45,13 @@ class MissionRoster extends AbstractController
         }
 
         uasort($units, fn (Unit $a, Unit $b) => $a->getPosition() <=> $b->getPosition());
-        return $this->unitsWithRSVPs = $units;
+        $this->unitsWithRSVPs = $units;
+        return $this->unitsWithRSVPs;
     }
 
     public function getUsersInUnitWithRSVPs(Unit $unit): array
     {
-        $this->loadRSVPs();
+        $this->getRSVPsByUserId();
         $users = [];
 
         foreach ($unit->getUsers() as $user) {
@@ -65,20 +66,22 @@ class MissionRoster extends AbstractController
 
     public function getRSVPForUser(PerscomUser $user): ?MissionRSVP
     {
-        $this->loadRSVPs();
-        return $this->rsvpsByUserId[$user->getId()] ?? null;
+        $rsvps = $this->getRSVPsByUserId();
+        return $rsvps[$user->getId()] ?? null;
     }
 
-    private function loadRSVPs(): void
+    private function getRSVPsByUserId(): array
     {
         if (!empty($this->rsvpsByUserId)) {
-            return;
+            return $this->rsvpsByUserId;
         }
 
-        foreach ($this->mission->getRsvps() as $rsvp) {
+        foreach ($this->mission->getRSVPs() as $rsvp) {
             if ($user = $rsvp->getUser()) {
                 $this->rsvpsByUserId[$user->getId()] = $rsvp;
             }
         }
+
+        return $this->rsvpsByUserId;
     }
 }

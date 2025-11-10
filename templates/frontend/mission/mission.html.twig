@@ -39,13 +39,13 @@
             {% endif %}
         </div>
     </div>
-    <div class="flex gap-2" {{ stimulus_controller('forumify/forumify-platform/tabs') }}>
-        <div class="w-20">
+    <div class="grid-12 items-start gap-4" {{ stimulus_controller('forumify/forumify-platform/tabs') }}>
+        <div class="col-xs-12 col-md-5 col-lg-3">
             <div class="card">
                 <div class="card-body text-center">
                     {% if mission.operation.image %}
                         <div class="border-b">
-                            <img src="{{ asset(mission.operation.image, 'forumify.asset') }}" width="250px" height="auto">
+                            <img class="rounded" src="{{ asset(mission.operation.image, 'forumify.asset') }}" style="width: 100%; height: auto">
                         </div>
                     {% endif %}
                     {{ component('Perscom\\MissionStats', {mission: mission}) }}
@@ -53,45 +53,41 @@
                         {% block tabs %}
                             <button type="button" class="btn-outlined w-100 mt-2" data-tab-id="brief" >Briefing</button>
                             <button type="button" class="btn-outlined w-100 mt-2" data-tab-id="attendance" >Attendance</button>
-                            <button type="button" class="btn-outlined w-100 mt-2" data-tab-id="aar" >After Action Reports</button>
+                            {% if can('view_after_action_reports', mission.operation) %}
+                                <button type="button" class="btn-outlined w-100 mt-2" data-tab-id="aar" >After Action Reports</button>
+                            {% endif %}
                         {% endblock %}
                     </div>
                 </div>
             </div>
         </div>
-        <div class="mission_content w-80 d-none" {{ stimulus_target('forumify/forumify-platform/tabs', 'tabPanels') }}>
+        <div class="col-xs-12 col-md-7 col-lg-9 mission_content d-none" {{ stimulus_target('forumify/forumify-platform/tabs', 'tabPanels') }}>
             {% block tabpanels %}
-                <div id="brief">
-                    <div>
-                        <div class="box">
-                            <h3>{{ 'perscom.mission.mission'|trans }}</h3>
-                            <p class="mb-6">
-                                {{ 'perscom.mission.start'|trans }}
-                                <span class="text-bold">{{ mission.start|format_date(true) }}</span>
-                            </p>
-                            {% if mission.end %}
-                                <p class="mb-2">
-                                    {{ 'perscom.mission.end'|trans }}
-                                    <span class="text-bold">{{ mission.end|format_date(true) }}</span>
-                                </p>
-                            {% endif %}
-                            {{ mission.briefing|rich }}
-                        </div>
-                    </div>
+                <div id="brief" class="box">
+                    <h3>{{ 'perscom.mission.mission'|trans }}</h3>
+                    <p class="mb-6">
+                        {{ 'perscom.mission.start'|trans }}
+                        <span class="text-bold">{{ mission.start|format_date(true) }}</span>
+                    </p>
+                    {% if mission.end %}
+                        <p class="mb-2">
+                            {{ 'perscom.mission.end'|trans }}
+                            <span class="text-bold">{{ mission.end|format_date(true) }}</span>
+                        </p>
+                    {% endif %}
+                    {{ mission.briefing|rich }}
                 </div>
                 <div id="attendance">
-                    <div id="attendance">
-                        {{ component('Forumify\\Perscom\\MissionRoster', {mission: mission}) }}
-                    </div>
+                    {{ component('Forumify\\Perscom\\MissionRoster', {mission: mission}) }}
                 </div>
-                <div id="aar">
-                    {% if can('view_after_action_reports', mission.operation) and not mission.afterActionReports.empty %}
+                {% if can('view_after_action_reports', mission.operation) and not mission.afterActionReports.empty %}
+                    <div id="aar">
                         <div class="mb-8">
                             <h3>{{ 'perscom.mission.aars'|trans }}</h3>
                             {{ component('Perscom\\AfterActionReportList', { mission: mission }) }}
                         </div>
-                    {% endif %}
-                </div>
+                    </div>
+                {% endif %}
             {% endblock %}
         </div>
     </div>

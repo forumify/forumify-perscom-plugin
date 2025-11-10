@@ -1,3 +1,11 @@
+{% if rsvp.going == '1' %}
+    {% set statusColor = 'green' %}
+    {% set statusText = 'Going' %}
+{% elseif rsvp.going == '0' %}
+    {% set statusColor = 'red' %}
+    {% set statusText = 'Not Going' %}
+{% endif %}
+
 <div class="flex justify-between items-center w-100">
     <div class="w-5 text-left">
         {% if soldier.rank is not null and soldier.rank.image is not null %}
@@ -24,11 +32,7 @@
     </div>
     <div class="w-15 text-center">
         {% if rsvp is not null %}
-            {% include '@ForumifyPerscomPlugin/frontend/mission/components/status.html.twig' with {
-                rsvp: rsvp
-            } only %}
-        {% else %}
-            <span class="text-muted">No RSVP</span>
+            <span style="color:{{ statusColor }};">{{ statusText }}</span>
         {% endif %}
     </div>
 </div>
