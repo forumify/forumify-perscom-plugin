@@ -5,65 +5,36 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
-use Forumify\PerscomPlugin\Perscom\Entity\MissionRSVP;
-use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
-use Forumify\PerscomPlugin\Perscom\Entity\Unit;
-use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\DefaultActionTrait;
+use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsLiveComponent('Perscom\\MissionRSVPs', '@ForumifyPerscomPlugin/frontend/components/mission_rsvps.html.twig')]
+#[AsTwigComponent('Perscom\\MissionStats', '@ForumifyPerscomPlugin/frontend/components/mission_stats.html.twig')]
 class MissionRSVPs
 {
-    #[LiveProp]
     public Mission $mission;
 
-    use DefaultActionTrait;
-
-    /**
-     * @return array<int, array{ unit: Unit, rsvps: array<array{ rsvp: MissionRSVP, user: PerscomUser }>}>
-     */
-    public function getRSVPs(): array
+    public function getGoing(): int
     {
-        $rsvps = [];
-        foreach ($this->mission->getRsvps() as $rsvp) {
-            $user = $rsvp->getUser();
-            if ($user === null) {
-                continue;
-            }
+        $count = 0;
 
-            $rsvps[] = [
-                'rsvp' => $rsvp,
-                'user' => $user,
-            ];
+        foreach ($this->mission->getRsvps() as $rsvp) {
+            if ($rsvp->isGoing() === true) {
+                $count++;
+            }
         }
 
-        return $this->groupByUnit($rsvps);
+        return $count;
     }
 
-    /**
-     * @param array<array{ rsvp: MissionRSVP, user: PerscomUser }> $rsvps
-     * @return array<int, array{ unit: Unit, rsvps: array<array{ rsvp: MissionRSVP, user: PerscomUser }>}>
-     */
-    private function groupByUnit(array $rsvps): array
+    public function getAbsent(): int
     {
-        $units = [];
-        foreach ($rsvps as $rsvp) {
-            $user = $rsvp['user'];
-            $unit = $user->getUnit();
-            if ($unit === null) {
-                continue;
-            }
+        $count = 0;
 
-            $unitId = $unit->getPerscomId();
-            if (!isset($units[$unitId])) {
-                $units[$unitId]['unit'] = $unit;
+        foreach ($this->mission->getRsvps() as $rsvp) {
+            if ($rsvp->isGoing() === false) {
+                $count++;
             }
-
-            $units[$unitId]['rsvps'][] = $rsvp;
         }
 
-        uasort($units, fn (array $a, array $b): int => $a['unit']->getPosition() <=> $b['unit']->getPosition());
-        return $units;
+        return $count;
     }
 }

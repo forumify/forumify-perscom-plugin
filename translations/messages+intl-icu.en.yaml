@@ -237,11 +237,16 @@ perscom:
         start: 'Starts on'
         end: 'Ends on'
         rsvps: 'Expected Attendance'
+        no_rsvps: 'This mission has no RSVPs yet.'
         rsvp:
             rsvp: 'RSVP'
             going: 'Going'
             not_going: 'Not Going'
             remove_rsvp: 'Remove RSVP'
+        tab:
+            briefing: 'Briefing'
+            expected_attendance: 'Expected Attendance'
+            aar: 'After Action Reports'
     aar:
         title: 'After Action Report'
         create: 'New After Action Report'
