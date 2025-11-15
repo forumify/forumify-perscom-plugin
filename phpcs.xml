@@ -16,6 +16,7 @@
     <rule ref="SlevomatCodingStandard.Classes.MethodSpacing"/>
     <rule ref="SlevomatCodingStandard.Arrays">
         <exclude name="SlevomatCodingStandard.Arrays.DisallowPartiallyKeyed.DisallowedPartiallyKeyed"/>
+        <exclude name="SlevomatCodingStandard.Arrays.AlphabeticallySortedByKeys"/>
     </rule>
     <rule ref="SlevomatCodingStandard.Attributes">
         <exclude name="SlevomatCodingStandard.Attributes.DisallowAttributesJoining"/>

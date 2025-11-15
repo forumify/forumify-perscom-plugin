@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Perscom\Event\Listener;
 
+use Forumify\Admin\Crud\Event\PostSaveCrudEvent;
 use Forumify\Core\Twig\Extension\MenuRuntime;
+use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Event\RecordsCreatedEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -21,6 +23,7 @@ class DeleteMenuCacheSubscriber implements EventSubscriberInterface
     {
         return [
             RecordsCreatedEvent::class => 'onRecordsCreated',
+            PostSaveCrudEvent::getName(PerscomUser::class) => 'postSaveUser',
         ];
     }
 
@@ -36,5 +39,17 @@ class DeleteMenuCacheSubscriber implements EventSubscriberInterface
                 $this->cache->delete(MenuRuntime::createMenuCacheKey($forumUser));
             }
         }
+    }
+
+    /**
+     * @param PostSaveCrudEvent<PerscomUser> $event
+     */
+    public function postSaveUser(PostSaveCrudEvent $event): void
+    {
+        $forumifyUser = $event->getEntity()->getUser();
+        if ($forumifyUser === null) {
+            return;
+        }
+        $this->cache->delete(MenuRuntime::createMenuCacheKey($forumifyUser));
     }
 }
