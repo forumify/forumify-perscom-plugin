@@ -16,7 +16,10 @@
             {% endblock %}
             {% block tabpanels %}
                 <div id="general">
+                    <h2>{{ 'perscom.settings.op_center'|trans }}</h2>
                     {{ form_row(form.perscom__opcenter__announcement) }}
+                    <h2>{{ 'perscom.settings.roster'|trans }}</h2>
+                    {{ form_row(form.perscom__roster__user_sort_order) }}
                     <h2>{{ 'perscom.settings.enlistment'|trans }}</h2>
                     {{ form_row(form.perscom__enlistment__status) }}
                     {{ form_row(form.perscom__enlistment__form) }}

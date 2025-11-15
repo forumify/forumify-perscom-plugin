@@ -35,10 +35,20 @@ class ConfigurationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            // Operations Center
             ->add('perscom__opcenter__announcement', RichTextEditorType::class, [
                 'help' => 'Content to show on the operations center.',
                 'label' => 'Announcement',
                 'required' => false,
+            ])
+            // Roster
+            ->add('perscom__roster__user_sort_order', TextType::class, [
+                'help' => 'Comma separated order used when sorting users. Available options: "rank", "position" and "specialty". Default: "rank, position, specialty". The user\'s name is used as tie-breaker.',
+                'label' => 'User Sort Order',
+                'required' => false,
+                'attr' => [
+                    'placeholder' => 'rank, position, specialty, name',
+                ],
             ])
             // Enlistment
             ->add('perscom__enlistment__status', ChoiceType::class, [

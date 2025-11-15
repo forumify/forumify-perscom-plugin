@@ -8,6 +8,8 @@ perscom:
         tab_courses: 'Courses'
         tab_squadxml: 'SquadXML'
         title: 'PERSCOM.io Plugin Configuration'
+        op_center: 'Operations Center'
+        roster: 'Roster'
         enlistment: 'Enlistment'
         enlistment_automations: 'Automations'
         license_requirement: 'This plugin requires a connection with the PERSCOM.io API to retrieve data, therefor a valid subscription to PERSCOM.io is required for this plugin to function properly.'
