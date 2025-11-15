@@ -22,8 +22,10 @@ use Forumify\PerscomPlugin\Perscom\Perscom;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Perscom\Contracts\Batchable;
 use Perscom\Contracts\Crudable;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PerscomUserRepository::class)]
+#[UniqueEntity('user', errorPath: 'user')]
 class PerscomUser implements PerscomEntityInterface
 {
     use IdentifiableEntityTrait;
