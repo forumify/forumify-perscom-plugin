@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Controller;
 
 use Forumify\Core\Repository\SettingRepository;
-use Forumify\PerscomPlugin\Perscom\Entity\Form;
 use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomUserService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,15 +33,9 @@ class OperationsCenterController extends AbstractController
             $announcement = null;
         }
 
-        $forms = $this->formRepository->findAll();
-        $enlistmentFormId = $this->settingRepository->get('perscom.enlistment.form');
-        if ($enlistmentFormId !== null) {
-            $forms = array_filter($forms, fn (Form $form) => $form->getId() !== $enlistmentFormId);
-        }
-
         return $this->render('@ForumifyPerscomPlugin/frontend/operations_center/operations_center.html.twig', [
             'announcement' => $announcement,
-            'forms' => $forms,
+            'forms' => $this->formRepository->findAllSubmissionsAllowed(),
             'user' => $perscomUser,
         ]);
     }

@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Forumify\Core\Entity\AccessControlledEntityInterface;
+use Forumify\Core\Entity\ACLParameters;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
 use Forumify\PerscomPlugin\Perscom\Perscom;
@@ -18,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: FormRepository::class)]
 #[ORM\Table('perscom_form')]
-class Form implements PerscomEntityInterface
+class Form implements PerscomEntityInterface, AccessControlledEntityInterface
 {
     use IdentifiableEntityTrait;
     use PerscomEntityTrait;
@@ -150,5 +152,15 @@ class Form implements PerscomEntityInterface
     public function removeField(FormField $field): void
     {
         $this->fields->removeElement($field);
+    }
+
+    public function getACLPermissions(): array
+    {
+        return ['create_submissions'];
+    }
+
+    public function getACLParameters(): ACLParameters
+    {
+        return new ACLParameters(self::class, (string)$this->getId(), 'perscom_admin_form_list');
     }
 }

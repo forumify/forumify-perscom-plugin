@@ -38,12 +38,13 @@ class PerscomFormTable extends AbstractDoctrineTable
         ;
     }
 
-    private function renderActions(int $id): string
+    private function renderActions(int $id, Form $form): string
     {
         $actions = '';
 
         if ($this->security->isGranted('perscom-io.admin.organization.forms.manage')) {
             $actions .= $this->renderAction('perscom_admin_form_edit', ['identifier' => $id], 'pencil-simple-line');
+            $actions .= $this->renderAction('forumify_admin_acl', (array)$form->getACLParameters(), 'lock-simple');
             $actions .= $this->renderAction('perscom_admin_form_field_list', ['formId' => $id], 'textbox');
         }
 
