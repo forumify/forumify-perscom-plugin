@@ -1,0 +1,11 @@
+{% extends '@Forumify/admin/base.html.twig' %}
+{% block title_page %}
+    {{ user.name }} Discharge Form
+{% endblock %}
+{% block body %}
+    {% include '@Forumify/admin/components/simple_form.html.twig' with {
+        name: user.name,
+        form: form,
+        cancelPath: path('perscom_admin_user_list')
+    } %}
+{% endblock %}
