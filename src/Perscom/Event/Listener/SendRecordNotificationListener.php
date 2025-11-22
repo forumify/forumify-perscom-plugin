@@ -52,11 +52,16 @@ class SendRecordNotificationListener
             $data['award']['name'] = $record->getAward()->getName();
         } elseif ($record instanceof RankRecord) {
             $data['rank']['name'] = $record->getRank()->getName();
-        } elseif ($record instanceof AssignmentRecord) {
-            $data['position']['name'] = $record->getPosition()->getName();
-            $data['unit']['name'] = $record->getUnit()->getName();
         } elseif ($record instanceof QualificationRecord) {
             $data['qualification']['name'] = $record->getQualification()->getName();
+        } elseif ($record instanceof AssignmentRecord) {
+            if ($record->getPosition() === null && $record->getUnit() === null) {
+                return;
+            }
+
+            $perscomUser = $record->getUser();
+            $data['position']['name'] = ($record->getPosition() ?? $perscomUser->getPosition())?->getName() ?? '';
+            $data['unit']['name'] = ($record->getUnit() ?? $perscomUser->getUnit())?->getName() ?? '';
         }
 
         $this->notificationService->sendNotification(new Notification(
