@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
-use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Position;
 use Forumify\PerscomPlugin\Perscom\Entity\Rank;
 use Forumify\PerscomPlugin\Perscom\Entity\Status;
@@ -21,24 +20,22 @@ class DischargeType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => PerscomUser::class,
+            'data_class' => Discharge::class,
         ]);
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('discharge_level', ChoiceType::class, [
+            ->add('type', ChoiceType::class, [
                 'choices' => [
                     'General Discharge' => 'General Discharge',
                     'Honorable Discharge' => 'Honorable Discharge',
                     'Other Than Honorable Discharge' => 'Other Than Honorable Discharge',
                     'Retirement' => 'Retirement',
                 ],
-                'mapped' => false,
             ])
             ->add('reason', TextType::class, [
-                'mapped' => false,
                 'required' => false,
             ])
             ->add('rank', EntityType::class, [
