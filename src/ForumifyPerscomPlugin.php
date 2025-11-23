@@ -35,6 +35,7 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
                     'create',
                     'manage',
                     'delete',
+                    'discharge',
                 ],
                 'submissions' => [
                     'view',
