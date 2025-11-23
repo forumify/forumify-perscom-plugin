@@ -42,21 +42,25 @@ class DischargeType extends AbstractType
                 'choice_label' => 'name',
                 'class' => Rank::class,
                 'required' => false,
+                'placeholder' => 'Remove Rank',
             ])
             ->add('unit', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Unit::class,
                 'required' => false,
+                'placeholder' => 'Remove Unit',
             ])
             ->add('position', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Position::class,
                 'required' => false,
+                'placeholder' => 'Remove Position',
             ])
             ->add('status', EntityType::class, [
                 'choice_label' => 'name',
                 'class' => Status::class,
                 'required' => false,
+                'placeholder' => 'Remove Status',
             ]);
     }
 }

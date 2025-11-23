@@ -29,16 +29,21 @@ use Zenstruck\Foundry\Story;
  * @method static Entity\Status statusRetired()
  * @method static Entity\Status statusPending()
  * @method static Entity\Status statusApproved()
+ * @method static Entity\Status statusCivilian()
  * @method static Entity\Form formEnlistment()
  * @method static Entity\Unit unitFirstSquad()
  * @method static Entity\Unit unitSecondSquad()
+ * @method static Entity\Unit unitCivilian()
  * @method static Entity\Roster rosterAlphaCompany()
  * @method static Entity\Position positionRiflemanAT()
+ * @method static Entity\Position positionCivilian()
  * @method static Entity\Specialty specialtyInfantry()
  * @method static Entity\Rank rankPVT()
  * @method static Entity\Rank rankPFC()
  * @method static Entity\Qualification qualificationLandNav()
  * @method static Entity\Qualification qualificationCLS()
+ * @method static array<Entity\PerscomUser> firstSquad()
+ * @method static array<Entity\PerscomUser> secondSquad()
  */
 class MilsimStory extends Story
 {
@@ -62,6 +67,8 @@ class MilsimStory extends Story
         $approved = StatusFactory::createOne(['name' => 'Approved']);
         $this->addState('statusApproved', $approved);
         StatusFactory::createOne(['name' => 'Denied']);
+        $civilian = StatusFactory::createOne(['name' => 'Civilian']);
+        $this->addState('statusCivilian', $civilian);
 
         $this->settingRepository->set('perscom.enlistment.status', [$retired->getId()]);
 
@@ -90,6 +97,8 @@ class MilsimStory extends Story
         $this->addState('unitFirstSquad', $firstSquad);
         $secondSquad = UnitFactory::createOne(['name' => 'Second Squad']);
         $this->addState('unitSecondSquad', $secondSquad);
+        $civilianUnit = UnitFactory::createOne(['name' => 'Civilian']);
+        $this->addState('unitCivilian', $civilianUnit);
 
         $alphaCompany = RosterFactory::createOne([
             'name' => 'Alpha Company',
@@ -102,6 +111,8 @@ class MilsimStory extends Story
         $teamLeader = PositionFactory::createOne(['name' => 'Team Leader']);
         $riflemanAT = PositionFactory::createOne(['name' => 'Rifleman AT']);
         $this->addState('positionRiflemanAT', $riflemanAT);
+        $civilianPosition = PositionFactory::createOne(['name' => 'Civilian']);
+        $this->addState('positionCivilian', $civilianPosition);
 
         // Specialties
         $infantry = SpecialtyFactory::createOne(['name' => 'Infantryman', 'abbreviation' => '11B']);
@@ -118,25 +129,29 @@ class MilsimStory extends Story
         $this->addState('rankPVT', $pvt);
 
         // Users
-        $this->createUser($sgt, $firstSquad, $squadLeader, $infantry, $activeDuty);
-        $this->createUser($cpl, $firstSquad, $teamLeader, $infantry, $activeDuty);
-        $this->createUser($cpl, $firstSquad, $teamLeader, $infantry, $activeDuty);
-        $this->createUser($spc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($spc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($pfc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($pfc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($pv2, $firstSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($pv2, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $firstSquadUsers = [];
+        $firstSquadUsers[] = $this->createUser($sgt, $firstSquad, $squadLeader, $infantry, $activeDuty);
+        $firstSquadUsers[] = $this->createUser($cpl, $firstSquad, $teamLeader, $infantry, $activeDuty);
+        $firstSquadUsers[] = $this->createUser($cpl, $firstSquad, $teamLeader, $infantry, $activeDuty);
+        $firstSquadUsers[] = $this->createUser($spc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $firstSquadUsers[] = $this->createUser($spc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $firstSquadUsers[] = $this->createUser($pfc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $firstSquadUsers[] = $this->createUser($pfc, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $firstSquadUsers[] = $this->createUser($pv2, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $firstSquadUsers[] = $this->createUser($pv2, $firstSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->addState('firstSquad', $firstSquadUsers);
 
-        $this->createUser($sgt, $secondSquad, $squadLeader, $infantry, $activeDuty);
-        $this->createUser($cpl, $secondSquad, $teamLeader, $infantry, $activeDuty);
-        $this->createUser($cpl, $secondSquad, $teamLeader, $infantry, $activeDuty);
-        $this->createUser($spc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($spc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($pfc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($pfc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($pv2, $secondSquad, $riflemanAT, $infantry, $activeDuty);
-        $this->createUser($pv2, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $secondSquadUsers = [];
+        $secondSquadUsers[] = $this->createUser($sgt, $secondSquad, $squadLeader, $infantry, $activeDuty);
+        $secondSquadUsers[] = $this->createUser($cpl, $secondSquad, $teamLeader, $infantry, $activeDuty);
+        $secondSquadUsers[] = $this->createUser($cpl, $secondSquad, $teamLeader, $infantry, $activeDuty);
+        $secondSquadUsers[] = $this->createUser($spc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $secondSquadUsers[] = $this->createUser($spc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $secondSquadUsers[] = $this->createUser($pfc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $secondSquadUsers[] = $this->createUser($pfc, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $secondSquadUsers[] = $this->createUser($pv2, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $secondSquadUsers[] = $this->createUser($pv2, $secondSquad, $riflemanAT, $infantry, $activeDuty);
+        $this->addState('secondSquad', $secondSquadUsers);
 
         // Qualifications
         $landNav = QualificationFactory::createOne(['name' => 'Land Navigation']);
