@@ -74,10 +74,7 @@ class CourseClass
     #[Column(type: 'boolean', options: ['default' => false])]
     private bool $result = false;
 
-    #[ORM\ManyToOne(targetEntity: Calendar::class, fetch: 'EXTRA_LAZY')]
     private ?Calendar $calendar = null;
-
-    #[ORM\OneToOne(targetEntity: CalendarEvent::class, fetch: 'EXTRA_LAZY')]
     private ?CalendarEvent $event = null;
 
     public function __construct()

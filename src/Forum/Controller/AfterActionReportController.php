@@ -84,7 +84,7 @@ class AfterActionReportController extends AbstractController
     #[Route('/new', 'create')]
     public function create(Request $request): Response
     {
-        $mission = $this->missionRepository->find($request->get('mission'));
+        $mission = $this->missionRepository->find($request->query->get('mission'));
         if ($mission === null) {
             throw $this->createNotFoundException();
         }
@@ -128,7 +128,7 @@ class AfterActionReportController extends AbstractController
             ]);
         }
 
-        if (!$request->get('confirmed')) {
+        if (!$request->query->get('confirmed')) {
             return $this->render('@ForumifyPerscomPlugin/frontend/aar/delete.html.twig', [
                 'aar' => $aar,
             ]);
@@ -174,7 +174,7 @@ class AfterActionReportController extends AbstractController
     public function getUnit(Unit $unit, Request $request, MissionRSVPRepository $missionRSVPRepository): JsonResponse
     {
         $users = $unit->getUsers()->toArray();
-        $missionId = $request->get('mission');
+        $missionId = $request->query->get('mission');
         $rsvps = $missionId === null
             ? []
             : $missionRSVPRepository->findBy([

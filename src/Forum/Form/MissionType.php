@@ -46,14 +46,20 @@ class MissionType extends AbstractType
                 'view_timezone' => $user?->getTimezone() ?? 'UTC',
                 'widget' => 'single_text',
             ])
-            ->add('calendar', EntityType::class, [
+        ;
+
+        if (class_exists(Calendar::class)) {
+            $builder->add('calendar', EntityType::class, [
                 'autocomplete' => true,
                 'choice_label' => 'title',
                 'class' => Calendar::class,
                 'help' => 'Automatically create a calendar event after posting this mission.',
                 'placeholder' => 'Do not create a calendar event',
                 'required' => false,
-            ])
+            ]);
+        }
+
+        $builder
             ->add('sendNotification', CheckboxType::class, [
                 'help' => 'Send a "new mission posted" notification to everyone who has access to this operation.',
                 'required' => false,

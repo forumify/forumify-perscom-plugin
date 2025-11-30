@@ -6,39 +6,30 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
-use Forumify\PerscomPlugin\Perscom\Repository\FormSubmissionRepository;
+use Forumify\PerscomPlugin\Perscom\Entity\FormSubmission;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
+/**
+ * @extends AbstractDoctrineList<FormSubmission>
+ */
 #[AsLiveComponent('SubmissionList', '@ForumifyPerscomPlugin/frontend/components/submission_list.html.twig')]
 class SubmissionList extends AbstractDoctrineList
 {
     #[LiveProp]
     public int $userId;
 
-    public function __construct(
-        private readonly FormSubmissionRepository $formSubmissionRepository,
-    ) {
+    protected function getEntityClass(): string
+    {
+        return FormSubmission::class;
     }
 
-    protected function getQueryBuilder(): QueryBuilder
+    protected function getQuery(): QueryBuilder
     {
-        return $this
-            ->formSubmissionRepository
-            ->createQueryBuilder('e')
+        return parent::getQuery()
             ->where('e.user = :user')
             ->setParameter('user', $this->userId)
             ->orderBy('e.createdAt', 'DESC')
-        ;
-    }
-
-    protected function getCount(): int
-    {
-        return $this
-            ->getQueryBuilder()
-            ->select('COUNT(e.id)')
-            ->getQuery()
-            ->getSingleScalarResult() ?? 0
         ;
     }
 }

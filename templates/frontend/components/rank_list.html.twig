@@ -6,7 +6,7 @@
     {% endblock %}
     {% block list %}
         <ul>
-            {% for item in this.result.data %}
+            {% for item in this.result.rows %}
                 <li class="card flex flex-col mb-4">
                     <div class="card-title">
                         {{ item.name }}

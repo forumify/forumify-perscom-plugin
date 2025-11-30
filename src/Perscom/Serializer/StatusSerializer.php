@@ -27,12 +27,12 @@ class StatusSerializer implements DenormalizerInterface, NormalizerInterface
         return $data;
     }
 
-    public function supportsNormalization(mixed $data, ?string $format = null): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof Status && $format === 'perscom_array';
     }
 
-    public function getSupportedTypes(): array
+    public function getSupportedTypes(?string $format): array
     {
         return [
             'perscom_array' => true,
@@ -53,7 +53,7 @@ class StatusSerializer implements DenormalizerInterface, NormalizerInterface
         return $status;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, ?string $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return is_array($data) && $type === Status::class;
     }

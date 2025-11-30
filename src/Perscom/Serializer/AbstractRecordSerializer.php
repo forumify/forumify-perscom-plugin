@@ -31,7 +31,7 @@ abstract class AbstractRecordSerializer implements NormalizerInterface, Denormal
         return array_filter($data);
     }
 
-    public function supportsNormalization(mixed $data, ?string $format = null)
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof RecordInterface && $format === 'perscom_array';
     }
@@ -64,7 +64,7 @@ abstract class AbstractRecordSerializer implements NormalizerInterface, Denormal
         return $object;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, ?string $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return is_array($data) && is_a($type, RecordInterface::class, true);
     }

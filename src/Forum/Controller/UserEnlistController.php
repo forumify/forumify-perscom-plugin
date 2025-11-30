@@ -42,7 +42,7 @@ class UserEnlistController extends AbstractController
 
         /** @var PerscomUser|null $perscomUser */
         $perscomUser = $this->perscomUserService->getPerscomUser($user);
-        if ($perscomUser !== null && !$request->get('force_new')) {
+        if ($perscomUser !== null && !$request->query->get('force_new')) {
             return $this->render('@ForumifyPerscomPlugin/frontend/enlistment/enlist_success.html.twig', [
                 'enlistmentTopic' => $perscomUser->getEnlistmentTopic(),
                 'successMessage' => $enlistmentForm->getSuccessMessage(),
