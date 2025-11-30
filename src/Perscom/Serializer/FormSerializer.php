@@ -13,7 +13,7 @@ use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
 
 class FormSerializer implements NormalizerInterface, DenormalizerInterface
 {
-    public function getSupportedTypes(): array
+    public function getSupportedTypes(?string $format): array
     {
         return [Form::class => true, 'perscom_array' => true];
     }
@@ -36,7 +36,7 @@ class FormSerializer implements NormalizerInterface, DenormalizerInterface
         return $data;
     }
 
-    public function supportsNormalization(mixed $data, ?string $format = null)
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof Form && $format === 'perscom_array';
     }
@@ -85,7 +85,7 @@ class FormSerializer implements NormalizerInterface, DenormalizerInterface
         return $form;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, ?string $format = null)
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return is_array($data) && $type === Form::class;
     }

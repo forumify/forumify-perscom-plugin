@@ -8,7 +8,7 @@ use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
 
 class ServiceRecordSerializer extends AbstractRecordSerializer
 {
-    public function getSupportedTypes(): array
+    public function getSupportedTypes(?string $format): array
     {
         return [
             'perscom_array' => true,
@@ -16,12 +16,12 @@ class ServiceRecordSerializer extends AbstractRecordSerializer
         ];
     }
 
-    public function supportsNormalization(mixed $data, ?string $format = null)
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return parent::supportsNormalization($data, $format) && $data instanceof ServiceRecord;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, ?string $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return parent::supportsDenormalization($data, $type, $format) && $type === ServiceRecord::class;
     }

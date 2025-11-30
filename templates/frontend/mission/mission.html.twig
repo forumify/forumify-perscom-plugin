@@ -39,7 +39,7 @@
             {% endif %}
         </div>
     </div>
-    <div class="grid-12 items-start gap-4" {{ stimulus_controller('forumify/forumify-platform/tabs') }}>
+    <div class="grid-12 items-start gap-4" {{ stimulus_controller('forumify/tabs') }}>
         <div class="col-xs-12 col-md-5 col-lg-3">
             <div class="card">
                 <div class="card-body text-center">
@@ -51,7 +51,7 @@
                     {% if mission.operation.requestRsvp %}
                         {{ component('Perscom\\MissionStats', {mission: mission}) }}
                     {% endif %}
-                    <div role="tablist" {{ stimulus_target('forumify/forumify-platform/tabs', 'tabs') }}>
+                    <div role="tablist" {{ stimulus_target('forumify/tabs', 'tabs') }}>
                         {% block tabs %}
                             <button type="button" class="btn-outlined w-100 mt-2" data-tab-id="brief">{{ 'perscom.mission.tab.briefing'|trans }}</button>
                             {% if mission.operation.requestRsvp %}
@@ -65,7 +65,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-xs-12 col-md-7 col-lg-9 mission_content d-none" {{ stimulus_target('forumify/forumify-platform/tabs', 'tabPanels') }}>
+        <div class="col-xs-12 col-md-7 col-lg-9 mission_content d-none" {{ stimulus_target('forumify/tabs', 'tabPanels') }}>
             {% block tabpanels %}
                 <div id="brief">
                     <h3>{{ 'perscom.mission.tab.briefing'|trans }}</h3>
