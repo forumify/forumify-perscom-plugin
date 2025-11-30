@@ -36,6 +36,7 @@ abstract class AbstractRecordCrudController extends AbstractCrudController
 
     protected function save(bool $isNew, FormInterface $form): object
     {
+        /** @var array $recordData */
         $recordData = $form->getData();
         $this->recordService->createRecord($this->getRecordType(), $recordData);
 

@@ -31,7 +31,7 @@ class RecordFormController extends AbstractController
 
         $data = ['created_at' => new DateTime()];
 
-        $userIds = $request->get('users', '');
+        $userIds = $request->query->get('users', '');
         $userIds = array_filter(explode(',', $userIds));
         if (!empty($userIds)) {
             $data['users'] = $this->perscomUserRepository->findBy(['id' => $userIds]);

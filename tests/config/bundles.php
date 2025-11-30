@@ -1,6 +1,6 @@
 <?php
 
-return [
+$bundles = [
     Symfony\Bundle\FrameworkBundle\FrameworkBundle::class => ['all' => true],
     Forumify\ForumifyBundle::class => ['all' => true],
     Symfony\Bundle\TwigBundle\TwigBundle::class => ['all' => true],
@@ -21,4 +21,11 @@ return [
     Symfony\Bundle\WebProfilerBundle\WebProfilerBundle::class => ['dev' => true, 'test' => true],
     Zenstruck\Foundry\ZenstruckFoundryBundle::class => ['dev' => true, 'test' => true],
     Forumify\PerscomPlugin\ForumifyPerscomPlugin::class => ['all' => true],
+    ApiPlatform\Symfony\Bundle\ApiPlatformBundle::class => ['all' => true],
 ];
+
+if (class_exists(Forumify\Calendar\ForumifyCalendarPlugin::class)) {
+    $bundles[Forumify\Calendar\ForumifyCalendarPlugin::class] = ['all' => true];
+}
+
+return $bundles;

@@ -58,18 +58,25 @@ class CourseClassType extends AbstractType
                 'view_timezone' => $user?->getTimezone() ?? 'UTC',
                 'widget' => 'single_text',
             ])
-            ->add('calendar', EntityType::class, [
+        ;
+
+        if (class_exists(Calendar::class)) {
+            $builder->add('calendar', EntityType::class, [
                 'autocomplete' => true,
                 'choice_label' => 'title',
                 'class' => Calendar::class,
                 'help' => 'Automatically create a calendar event after posting this class.',
                 'placeholder' => 'Do not create a calendar event',
                 'required' => false,
-            ])
+            ]);
+        }
+
+        $builder
             ->add('studentSlots', NumberType::class, [
                 'help' => 'perscom.course.class.student_slots_help',
                 'html5' => true,
                 'required' => false,
-            ]);
+            ])
+        ;
     }
 }

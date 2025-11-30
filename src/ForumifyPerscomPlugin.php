@@ -6,6 +6,8 @@ namespace Forumify\PerscomPlugin;
 
 use Forumify\Plugin\AbstractForumifyPlugin;
 use Forumify\Plugin\PluginMetadata;
+use Forumify\PerscomPlugin\DependencyInjection\CalendarPluginCompilerPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /** @codeCoverageIgnore */
 class ForumifyPerscomPlugin extends AbstractForumifyPlugin
@@ -19,6 +21,13 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
             'https://forumify.net',
             'perscom_admin_settings',
         );
+    }
+
+    public function build(ContainerBuilder $container): void
+    {
+        parent::build($container);
+
+        $container->addCompilerPass(new CalendarPluginCompilerPass());
     }
 
     public function getPermissions(): array

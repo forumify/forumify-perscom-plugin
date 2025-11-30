@@ -23,12 +23,12 @@ class RankRecordSerializer extends AbstractRecordSerializer
         return $data;
     }
 
-    public function supportsNormalization(mixed $data, ?string $format = null)
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return parent::supportsNormalization($data, $format) && $data instanceof RankRecord;
     }
 
-    public function getSupportedTypes(): array
+    public function getSupportedTypes(?string $format): array
     {
         return [
             'perscom_array' => true,
@@ -51,7 +51,7 @@ class RankRecordSerializer extends AbstractRecordSerializer
         return $record;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, ?string $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return parent::supportsDenormalization($data, $type, $format) && $type === RankRecord::class;
     }

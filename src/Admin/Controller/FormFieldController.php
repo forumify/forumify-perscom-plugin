@@ -72,7 +72,7 @@ class FormFieldController extends AbstractCrudController
         return $params;
     }
 
-    protected function redirectAfterSave(mixed $entity): Response
+    protected function redirectAfterSave(mixed $entity, bool $isNew): Response
     {
         return $this->redirectToRoute($this->getRoute('list'), ['formId' => $this->getParent()->getId()]);
     }
@@ -80,7 +80,7 @@ class FormFieldController extends AbstractCrudController
     private function getParent(): Form
     {
         $request = $this->requestStack->getCurrentRequest();
-        $form = $this->formRepository->find($request->get('formId'));
+        $form = $this->formRepository->find($request->query->get('formId'));
         if ($form === null) {
             throw $this->createNotFoundException();
         }

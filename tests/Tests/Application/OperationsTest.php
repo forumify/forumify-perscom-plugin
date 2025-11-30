@@ -7,7 +7,10 @@ namespace PluginTests\Application;
 use DateInterval;
 use DateTimeImmutable;
 use Forumify\Core\Repository\SettingRepository;
+use Forumify\Calendar\ForumifyCalendarPlugin;
+use PHPUnit\Framework\Attributes\RequiresMethod;
 use PluginTests\Factories\Forumify\CalendarFactory;
+use PluginTests\Factories\Perscom\OperationFactory;
 use PluginTests\Factories\Perscom\UserFactory;
 use PluginTests\Factories\Stories\MilsimStory;
 use PluginTests\Traits\SessionTrait;
@@ -42,8 +45,6 @@ class OperationsTest extends PerscomWebTestCase
         $this->client->request('GET', '/perscom/operations/sandstorm');
         self::assertSelectorTextSame('h1', 'Sandstorm');
 
-        $calendar = CalendarFactory::createOne(['title' => 'Missions']);
-
         $c = $this->client->clickLink('New Mission');
         $initialBriefingText = $c->filter('#mission_briefing')->innerText();
         self::assertSame('Briefing template', $initialBriefingText);
@@ -56,7 +57,6 @@ class OperationsTest extends PerscomWebTestCase
             'mission[title]' => 'Test Mission',
             'mission[start]' => $start->format('Y-m-d H:i:s'),
             'mission[end]' => $end->format('Y-m-d H:i:s'),
-            'mission[calendar]' => $calendar->getId(),
             'mission[sendNotification]' => true,
             'mission[createCombatRecords]' => true,
             'mission[briefing]' => 'Mission briefing',
@@ -105,7 +105,7 @@ class OperationsTest extends PerscomWebTestCase
                 'form' => [
                     'from' => $now->sub(new DateInterval('P3D'))->format('Y-m-d'),
                     'to' => $now->add(new DateInterval('P3D'))->format('Y-m-d'),
-                ]
+                ],
             ], 'calculate')
             ->render()
             ->crawler()
@@ -121,5 +121,32 @@ class OperationsTest extends PerscomWebTestCase
         self::assertEquals('33%', $value);
         $value = $c->filter('td[data-testid="perc-accountable"]')->siblings()->first()->innerText();
         self::assertEquals('66%', $value);
+    }
+
+    #[RequiresMethod(ForumifyCalendarPlugin::class, 'getPluginMetadata')]
+    public function testMissionCreatesCalendarEvent(): void
+    {
+        $operation = OperationFactory::createOne();
+        $calendar = CalendarFactory::createOne(['title' => 'Missions']);
+
+        $this->client->request('GET', "/perscom/operations/{$operation->getSlug()}");
+        $this->client->clickLink('New Mission');
+
+        $now = new DateTimeImmutable();
+        $start = $now->add(new DateInterval('P1D'));
+        $end = $now->add(new DateInterval('P1DT1H'));
+
+        $this->client->submitForm('Save', [
+            'mission[title]' => 'Test Mission',
+            'mission[start]' => $start->format('Y-m-d H:i:s'),
+            'mission[end]' => $end->format('Y-m-d H:i:s'),
+            'mission[calendar]' => $calendar->getId(),
+            'mission[sendNotification]' => true,
+            'mission[createCombatRecords]' => true,
+            'mission[briefing]' => 'Mission briefing',
+        ]);
+
+        $calendar->_refresh();
+        self::assertCount(1, $calendar->getEvents());
     }
 }

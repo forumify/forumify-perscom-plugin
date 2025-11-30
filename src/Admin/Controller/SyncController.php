@@ -33,7 +33,7 @@ class SyncController extends AbstractController
     #[Route('/initiate', '_initiate')]
     public function initialize(Request $request): Response
     {
-        if (!$request->get('confirmed')) {
+        if (!$request->query->get('confirmed')) {
             return $this->render('@ForumifyPerscomPlugin/admin/sync/initiate_warning.html.twig');
         }
 

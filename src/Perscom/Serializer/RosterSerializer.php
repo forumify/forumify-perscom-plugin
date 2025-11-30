@@ -28,12 +28,12 @@ class RosterSerializer implements DenormalizerInterface, NormalizerInterface
         return $data;
     }
 
-    public function supportsNormalization(mixed $data, ?string $format = null): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof Roster && $format === 'perscom_array';
     }
 
-    public function getSupportedTypes(): array
+    public function getSupportedTypes(?string $format): array
     {
         return [
             'perscom_array' => true,
@@ -75,7 +75,7 @@ class RosterSerializer implements DenormalizerInterface, NormalizerInterface
         return $roster;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, ?string $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return is_array($data) && $type === Roster::class;
     }

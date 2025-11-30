@@ -41,7 +41,7 @@ class MissionController extends AbstractController
     #[Route('/new', 'create')]
     public function create(Request $request): Response
     {
-        $operation = $this->operationRepository->find($request->get('operation'));
+        $operation = $this->operationRepository->find($request->query->get('operation'));
         if ($operation === null) {
             throw $this->createNotFoundException();
         }
@@ -79,7 +79,7 @@ class MissionController extends AbstractController
             'permission' => 'manage_missions',
         ]);
 
-        if (!$request->get('confirmed')) {
+        if (!$request->query->get('confirmed')) {
             return $this->render('@ForumifyPerscomPlugin/frontend/mission/delete.html.twig', [
                 'mission' => $mission,
             ]);

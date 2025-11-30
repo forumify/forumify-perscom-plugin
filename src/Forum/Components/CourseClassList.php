@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Components;
 
-use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
-use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
+use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
+/**
+ * @extends AbstractDoctrineList<CourseClass>
+ */
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
 #[AsLiveComponent('Perscom\\CourseClassList', '@ForumifyPerscomPlugin/frontend/components/course_class_list.html.twig')]
 class CourseClassList extends AbstractDoctrineList
@@ -23,29 +25,27 @@ class CourseClassList extends AbstractDoctrineList
     #[LiveProp]
     public bool $signupOnly = false;
 
-    public function __construct(
-        private readonly CourseClassRepository $courseClassRepository,
-    ) {
+    protected string|array|null $aclPermission = [
+        'permission' => 'view',
+        'alias' => 'c',
+        'entity' => Course::class,
+    ];
+
+    protected function getEntityClass(): string
+    {
+        return CourseClass::class;
     }
 
-    protected function getQueryBuilder(): QueryBuilder
+    protected function getQuery(): QueryBuilder
     {
-        $qb = $this->courseClassRepository->getListQuery($this->course);
-        if ($this->signupOnly) {
-            $qb
-                ->andWhere('cc.start > :now')
-                ->andWhere(':now BETWEEN cc.signupFrom AND cc.signupUntil')
-                ->setParameter('now', new DateTime());
+        $qb = parent::getQuery()
+            ->innerJoin('e.course', 'c')
+            ->orderBy('e.start', 'DESC');
+
+        if ($this->course !== null) {
+            $qb->andWhere('e.course = :course')->setParameter('course', $this->course);
         }
 
         return $qb;
-    }
-
-    protected function getCount(): int
-    {
-        return $this->getQueryBuilder()
-            ->select('COUNT(cc)')
-            ->getQuery()
-            ->getSingleScalarResult();
     }
 }

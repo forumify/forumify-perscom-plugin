@@ -20,7 +20,7 @@ class PerscomImageNormalizer implements DenormalizerInterface
     {
     }
 
-    public function getSupportedTypes(): array
+    public function getSupportedTypes(?string $format): array
     {
         return [];
     }
@@ -69,7 +69,7 @@ class PerscomImageNormalizer implements DenormalizerInterface
         return $object;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, ?string $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return false;
     }

@@ -28,7 +28,7 @@ class SubmissionController extends AbstractController
     #[Route('', 'list')]
     public function list(Request $request): Response
     {
-        $formId = $request->get('form');
+        $formId = $request->query->get('form');
         $form = $formId !== null ? $this->formRepository->find($formId) : null;
 
         return $this->render('@ForumifyPerscomPlugin/admin/submissions/list/list.html.twig', [
@@ -69,7 +69,7 @@ class SubmissionController extends AbstractController
             return $this->redirectToRoute('perscom_admin_submission_list');
         }
 
-        if (!$request->get('confirmed')) {
+        if (!$request->query->get('confirmed')) {
             return $this->render('@ForumifyPerscomPlugin/admin/submissions/delete/delete.html.twig', [
                 'submission' => $formSubmission,
             ]);
