@@ -6,12 +6,15 @@ namespace Forumify\PerscomPlugin\Forum\Components;
 
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
+use Forumify\PerscomPlugin\Perscom\Entity\Mission;
 use Forumify\PerscomPlugin\Perscom\Entity\Operation;
-use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
+/**
+ * @extends AbstractDoctrineList<Mission>
+ */
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
 #[AsLiveComponent('Perscom\\MissionList', '@ForumifyPerscomPlugin/frontend/components/mission_list.html.twig')]
 class MissionList extends AbstractDoctrineList
@@ -22,23 +25,16 @@ class MissionList extends AbstractDoctrineList
     #[LiveProp]
     public int $size = 5;
 
-    public function __construct(private readonly MissionRepository $missionRepository)
+    protected function getEntityClass(): string
     {
+        return Mission::class;
     }
 
-    protected function getQueryBuilder(): QueryBuilder
+    protected function getQuery(): QueryBuilder
     {
-        return $this->missionRepository->createQueryBuilder('m')
-            ->where('m.operation = :operation')
-            ->orderBy('m.start', 'DESC')
+        return parent::getQuery()
+            ->where('e.operation = :operation')
+            ->orderBy('e.start', 'DESC')
             ->setParameter('operation', $this->operation);
-    }
-
-    protected function getCount(): int
-    {
-        return $this->getQueryBuilder()
-            ->select('COUNT(m)')
-            ->getQuery()
-            ->getSingleScalarResult();
     }
 }

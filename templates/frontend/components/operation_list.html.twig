@@ -7,7 +7,7 @@
 {% endblock %}
 {% block list %}
     <ul>
-        {% for operation in this.result.data %}
+        {% for operation in this.result.rows %}
             <li class="card flex flex-col mb-4{% if this.inOpCenter %} topic-row{% endif %}" style="position: relative; padding: 0">
                 {% if this.inOpCenter %}
                     <a class="topic-link" href="{{ path('perscom_operations_view', { slug: operation.slug }) }}"></a>

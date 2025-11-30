@@ -1,7 +1,7 @@
 {% extends '@Forumify/components/list.html.twig' %}
 {% block list %}
     <ul>
-        {% for mission in this.result.data %}
+        {% for mission in this.result.rows %}
             <li class="flex flex-col topic-row justify-between">
                 <a class="topic-link" href="{{ path('perscom_missions_view', { id: mission.id }) }}"></a>
                 <div class="flex justify-between items-center">

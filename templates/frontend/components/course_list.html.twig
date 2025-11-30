@@ -1,7 +1,7 @@
 {% extends '@Forumify/components/list.html.twig' %}
 {% block list %}
     <ul>
-        {% for course in this.result.data %}
+        {% for course in this.result.rows %}
             <li class="topic-row">
                 <a class="topic-link" href="{{ path('perscom_courses_view', { slug: course.slug }) }}"></a>
                 <div class="flex justify-between">

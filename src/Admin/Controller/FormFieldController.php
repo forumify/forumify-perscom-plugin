@@ -72,7 +72,7 @@ class FormFieldController extends AbstractCrudController
         return $params;
     }
 
-    protected function redirectAfterSave(mixed $entity): Response
+    protected function redirectAfterSave(mixed $entity, bool $isNew): Response
     {
         return $this->redirectToRoute($this->getRoute('list'), ['formId' => $this->getParent()->getId()]);
     }

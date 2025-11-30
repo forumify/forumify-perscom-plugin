@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin;
 
+use Doctrine\Bundle\DoctrineBundle\DependencyInjection\Compiler\DoctrineOrmMappingsPass;
 use Forumify\Plugin\AbstractForumifyPlugin;
 use Forumify\Plugin\PluginMetadata;
+use Forumify\Calendar\Entity\Calendar;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 /** @codeCoverageIgnore */
 class ForumifyPerscomPlugin extends AbstractForumifyPlugin
@@ -19,6 +23,26 @@ class ForumifyPerscomPlugin extends AbstractForumifyPlugin
             'https://forumify.net',
             'perscom_admin_settings',
         );
+    }
+
+    public function loadExtension(array $config, ContainerConfigurator $container, ContainerBuilder $builder): void
+    {
+        parent::loadExtension($config, $container, $builder);
+
+        $this->loadDoctrineCalendarPluginIntegration($builder);
+    }
+
+    private function loadDoctrineCalendarPluginIntegration(ContainerBuilder $builder): void
+    {
+        if (!class_exists(Calendar::class)) {
+            return;
+        }
+
+        $mappingDir = $this->getPath() . '/config/doctrine/calendar';
+        $pass = DoctrineOrmMappingsPass::createXmlMappingDriver([
+            $mappingDir => 'Forumify\PerscomPlugin\Perscom\Entity',
+        ]);
+        $pass->process($builder);
     }
 
     public function getPermissions(): array

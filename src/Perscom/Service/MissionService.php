@@ -14,7 +14,6 @@ use Forumify\Core\Repository\UserRepository;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Notification\MissionCreatedNotificationType;
-use Forumify\PerscomPlugin\Perscom\Repository\MissionRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\StatusRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -22,32 +21,30 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 class MissionService
 {
     public function __construct(
-        private readonly MissionRepository $missionRepository,
         private readonly NotificationService $notificationService,
         private readonly ACLRepository $ACLRepository,
         private readonly SettingRepository $settingRepository,
         private readonly UserRepository $userRepository,
-        private readonly CalendarEventRepository $calendarEventRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly PerscomUserRepository $perscomUserRepository,
         private readonly StatusRepository $statusRepository,
+        private readonly ?CalendarEventRepository $calendarEventRepository = null,
     ) {
     }
 
-    public function createCalendarEvent(Mission $mission): void
+    public function createOrUpdateCalendarEvent(Mission $mission): void
     {
-        $calendar = $mission->getCalendar();
-        if ($calendar === null) {
+        if ($this->calendarEventRepository === null) {
+            // Calendar plugin not installed
             return;
         }
 
-        $event = $this->createOrUpdateCalendarEvent($mission);
-        $mission->setCalendarEvent($event);
-        $this->missionRepository->save($mission);
-    }
+        $calendar = $mission->getCalendar();
+        if ($calendar === null) {
+            // No events should be created
+            return;
+        }
 
-    public function createOrUpdateCalendarEvent(Mission $mission): CalendarEvent
-    {
         $event = $mission->getCalendarEvent() ?? new CalendarEvent();
         $event->setCalendar($mission->getCalendar());
         $event->setTitle($mission->getTitle());
@@ -57,8 +54,23 @@ class MissionService
         $content = "<p><a href='$missionLink' target='_blank'><i class='ph ph-arrow-square-out'></i> View mission</a></p>";
         $event->setContent($content);
 
+        $mission->setCalendarEvent($event);
         $this->calendarEventRepository->save($event);
-        return $event;
+    }
+
+    public function removeCalendarEvent(Mission $mission): void
+    {
+        if ($this->calendarEventRepository === null) {
+            // Calendar plugin not installed
+            return;
+        }
+
+        $event = $mission->getCalendarEvent();
+        if ($event === null) {
+            return;
+        }
+
+        $this->calendarEventRepository->remove($event);
     }
 
     public function sendNotification(Mission $mission): void

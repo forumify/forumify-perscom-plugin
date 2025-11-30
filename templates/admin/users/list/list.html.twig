@@ -21,11 +21,11 @@
             'records.rank_records.create',
             'records.qualification_records.create',
         ] has some perm => is_granted('perscom-io.admin.' ~ perm) %}
-            <div {{ stimulus_controller('forumify/forumify-platform/menu', { placement: 'bottom-end' }) }}>
-                <a class="btn-primary" {{ stimulus_target('forumify/forumify-platform/menu', 'openButton') }}>
+            <div {{ stimulus_controller('forumify/menu', { placement: 'bottom-end' }) }}>
+                <a class="btn-primary" {{ stimulus_target('forumify/menu', 'openButton') }}>
                     <i class="ph ph-plus"></i>{{ 'perscom.admin.users.quick_actions'|trans }}
                 </a>
-                <div class="menu" {{ stimulus_target('forumify/forumify-platform/menu', 'menu') }}>
+                <div class="menu" {{ stimulus_target('forumify/menu', 'menu') }}>
                     {% include '@ForumifyPerscomPlugin/admin/users/list/quick_actions.html.twig' %}
                 </div>
             </div>
