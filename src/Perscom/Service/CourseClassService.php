@@ -14,7 +14,6 @@ use Forumify\PerscomPlugin\Perscom\Entity\Record\QualificationRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\RecordInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
 use Forumify\PerscomPlugin\Perscom\Exception\PerscomException;
-use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\QualificationRepository;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -22,29 +21,27 @@ class CourseClassService
 {
     public function __construct(
         private readonly RecordService $recordService,
-        private readonly CourseClassRepository $courseClassRepository,
-        private readonly CalendarEventRepository $calendarEventRepository,
         private readonly UrlGeneratorInterface $urlGenerator,
         private readonly QualificationRepository $qualificationRepository,
+        private readonly ?CalendarEventRepository $calendarEventRepository = null,
     ) {
     }
 
-    public function createCalendarEvent(CourseClass $class): void
+    public function createOrUpdateCalendarEvent(CourseClass $class): void
     {
-        $calendar = $class->getCalendar();
-        if ($calendar === null) {
+        if ($this->calendarEventRepository === null) {
+            // Calendar plugin not installed
             return;
         }
 
-        $event = $this->createOrUpdateCalendarEvent($class);
-        $class->setEvent($event);
-        $this->courseClassRepository->save($class);
-    }
+        $calendar = $class->getCalendar();
+        if ($calendar === null) {
+            // No events should be created
+            return;
+        }
 
-    public function createOrUpdateCalendarEvent(CourseClass $class): CalendarEvent
-    {
         $event = $class->getEvent() ?? new CalendarEvent();
-        $event->setCalendar($class->getCalendar());
+        $event->setCalendar($calendar);
         $event->setTitle($class->getTitle());
         $event->setStart($class->getStart());
 
@@ -52,8 +49,23 @@ class CourseClassService
         $content = "<p><a href='$classLink' target='_blank'><i class='ph ph-arrow-square-out'></i> View class</a></p>";
         $event->setContent($content);
 
+        $class->setEvent($event);
         $this->calendarEventRepository->save($event);
-        return $event;
+    }
+
+    public function removeCalendarEvent(CourseClass $class): void
+    {
+        if ($this->calendarEventRepository === null) {
+            // Calendar plugin not installed
+            return;
+        }
+
+        $event = $class->getEvent();
+        if ($event === null) {
+            return;
+        }
+
+        $this->calendarEventRepository->remove($event);
     }
 
     /**

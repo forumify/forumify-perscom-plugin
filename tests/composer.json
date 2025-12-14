@@ -1,19 +1,19 @@
 {
     "require": {
-        "forumify/forumify-platform": "dev-master",
         "forumify/forumify-perscom-plugin": "@dev",
+        "forumify/forumify-platform": "1.0.x-dev",
         "symfony/flex": "^2",
-        "symfony/runtime": "6.4.*"
+        "symfony/runtime": "7.4.*"
     },
     "require-dev": {
         "dama/doctrine-test-bundle": "^8.0",
         "dg/bypass-finals": "^1.9",
         "phpunit/phpunit": "^11.5",
-        "symfony/browser-kit": "6.4.*",
-        "symfony/css-selector": "6.4.*",
-        "symfony/debug-bundle": "6.4.*",
-        "symfony/stopwatch": "6.4.*",
-        "symfony/web-profiler-bundle": "6.4.*",
+        "symfony/browser-kit": "7.4.*",
+        "symfony/css-selector": "7.4.*",
+        "symfony/debug-bundle": "7.4.*",
+        "symfony/stopwatch": "7.4.*",
+        "symfony/web-profiler-bundle": "7.4.*",
         "zenstruck/foundry": "2.x-dev"
     },
     "repositories": [
@@ -41,7 +41,7 @@
     "extra": {
         "symfony": {
             "allow-contrib": true,
-            "require": "6.4.*",
+            "require": "7.4.*",
             "endpoint": [
                 "https://api.github.com/repos/forumify/flex-recipes/contents/index.json?ref=flex/main",
                 "flex://defaults"

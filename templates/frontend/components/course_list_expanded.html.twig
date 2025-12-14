@@ -2,7 +2,7 @@
 {% extends '@Forumify/components/list.html.twig' %}
 {% block list %}
     <ul>
-        {% for course in this.result.data %}
+        {% for course in this.result.rows %}
             <li class="card flex flex-col mb-4" style="position: relative; padding: 0">
                 <div class="card-title">
                     {{ course.title }}

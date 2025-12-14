@@ -31,13 +31,13 @@ class Operation implements AccessControlledEntityInterface
     private string $content = '';
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $image;
+    private ?string $image = null;
 
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $start;
+    private ?DateTime $start = null;
 
     #[ORM\Column(type: 'date', nullable: true)]
-    private ?DateTime $end;
+    private ?DateTime $end = null;
 
     #[ORM\Column(type: 'text')]
     private string $missionBriefingTemplate = '';

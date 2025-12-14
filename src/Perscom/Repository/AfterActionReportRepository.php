@@ -34,7 +34,8 @@ class AfterActionReportRepository extends AbstractRepository
             ->join('aar.unit', 'u')
             ->join('m.operation', 'o')
             ->where('m.start BETWEEN :from AND :to')
-            ->setParameters(['from' => $from, 'to' => $to])
+            ->setParameter('from', $from)
+            ->setParameter('to', $to)
             ->orderBy('m.start', 'ASC')
             ->addOrderBy('u.position', 'ASC')
         ;

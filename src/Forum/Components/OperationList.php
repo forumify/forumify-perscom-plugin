@@ -4,13 +4,17 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Components;
 
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
-use Forumify\PerscomPlugin\Perscom\Repository\OperationRepository;
+use Forumify\PerscomPlugin\Perscom\Entity\Operation;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
+/**
+ * @extends AbstractDoctrineList<Operation>
+ */
 #[PluginVersion('forumify/forumify-perscom-plugin', 'premium')]
 #[AsLiveComponent('Perscom\\OperationList', '@ForumifyPerscomPlugin/frontend/components/operation_list.html.twig')]
 class OperationList extends AbstractDoctrineList
@@ -18,21 +22,24 @@ class OperationList extends AbstractDoctrineList
     #[LiveProp]
     public bool $inOpCenter = false;
 
-    public function __construct(
-        private readonly OperationRepository $operationRepository,
-    ) {
+    protected string|array|null $aclPermission = 'view';
+
+    protected function getEntityClass(): string
+    {
+        return Operation::class;
     }
 
-    protected function getQueryBuilder(): QueryBuilder
+    protected function getQuery(): QueryBuilder
     {
-        return $this->operationRepository->createListQueryBuilder();
-    }
-
-    protected function getCount(): int
-    {
-        return $this->operationRepository->createListQueryBuilder()
-            ->select('COUNT(o)')
-            ->getQuery()
-            ->getSingleScalarResult();
+        return parent::getQuery()
+            ->orderBy('CASE
+                WHEN e.start IS NULL AND e.end IS NULL THEN 0
+                WHEN :now > e.start AND e.end IS NULL THEN 1
+                WHEN :now BETWEEN e.start AND e.end THEN 2
+                ELSE 3
+                END
+            ', 'ASC')
+            ->addOrderBy('e.start', 'DESC')
+            ->setParameter('now', (new DateTime())->format('Y-m-d'));
     }
 }

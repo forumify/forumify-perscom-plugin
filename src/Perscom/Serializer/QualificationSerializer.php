@@ -32,12 +32,12 @@ class QualificationSerializer implements DenormalizerInterface, NormalizerInterf
         return $data;
     }
 
-    public function supportsNormalization(mixed $data, ?string $format = null): bool
+    public function supportsNormalization(mixed $data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof Qualification && $format === 'perscom_array';
     }
 
-    public function getSupportedTypes(): array
+    public function getSupportedTypes(?string $format): array
     {
         return [
             'perscom_array' => true,
@@ -62,7 +62,7 @@ class QualificationSerializer implements DenormalizerInterface, NormalizerInterf
         return $qualification;
     }
 
-    public function supportsDenormalization(mixed $data, string $type, ?string $format = null): bool
+    public function supportsDenormalization(mixed $data, string $type, ?string $format = null, array $context = []): bool
     {
         return is_array($data) && $type === Qualification::class;
     }

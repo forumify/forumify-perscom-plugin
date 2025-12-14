@@ -53,14 +53,11 @@ class Mission
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $combatRecordText = null;
 
-    #[ORM\ManyToOne(targetEntity: Calendar::class, fetch: 'EXTRA_LAZY')]
-    private ?Calendar $calendar = null;
-
-    #[ORM\OneToOne(targetEntity: CalendarEvent::class, fetch: 'EXTRA_LAZY')]
-    private ?CalendarEvent $calendarEvent = null;
-
     #[ORM\OneToMany(mappedBy: 'mission', targetEntity: MissionRSVP::class, fetch: 'EXTRA_LAZY', cascade: ['persist', 'remove'])]
     private Collection $rsvps;
+
+    private ?Calendar $calendar = null;
+    private ?CalendarEvent $calendarEvent = null;
 
     public function __construct()
     {
