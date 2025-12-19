@@ -5,7 +5,7 @@
     "license": "OSL-3.0",
     "require": {
         "php": ">=8.4",
-        "forumify/forumify-platform": "1.0.x-dev",
+        "forumify/forumify-platform": "^1.0",
         "deschutesdesigngroupllc/perscom-php-sdk": "3.0.0",
         "league/commonmark": "^2.5"
     },

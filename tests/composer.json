@@ -1,7 +1,7 @@
 {
     "require": {
         "forumify/forumify-perscom-plugin": "@dev",
-        "forumify/forumify-platform": "1.0.x-dev",
+        "forumify/forumify-platform": "^1.0",
         "symfony/flex": "^2",
         "symfony/runtime": "7.4.*"
     },
