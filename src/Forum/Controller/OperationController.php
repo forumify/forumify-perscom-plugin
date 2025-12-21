@@ -21,7 +21,7 @@ class OperationController extends AbstractController
         return $this->render('@ForumifyPerscomPlugin/frontend/operation/list.html.twig');
     }
 
-    #[Route('/{slug}', 'view')]
+    #[Route('/{slug:operation}', 'view')]
     public function view(Operation $operation): Response
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
