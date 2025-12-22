@@ -21,7 +21,7 @@ class CourseController extends AbstractController
         return $this->render('@ForumifyPerscomPlugin/frontend/course/list.html.twig');
     }
 
-    #[Route('/{slug:course', 'view')]
+    #[Route('/{slug:course}', 'view')]
     public function view(Course $course): Response
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [
