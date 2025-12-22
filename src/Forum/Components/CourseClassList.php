@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Components;
 
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
@@ -43,7 +44,16 @@ class CourseClassList extends AbstractDoctrineList
             ->orderBy('e.start', 'DESC');
 
         if ($this->course !== null) {
-            $qb->andWhere('e.course = :course')->setParameter('course', $this->course);
+            $qb
+                ->andWhere('e.course = :course')
+                ->setParameter('course', $this->course);
+        }
+
+        if ($this->signupOnly) {
+            $qb
+                ->andWhere('e.start > :now')
+                ->andWhere(':now BETWEEN e.signupFrom AND e.signupUntil')
+                ->setParameter('now', new DateTime());
         }
 
         return $qb;

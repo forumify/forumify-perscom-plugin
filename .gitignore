@@ -10,3 +10,4 @@ public/styles
 coverage/
 .phpunit.*
 var
+tests/config/reference.php

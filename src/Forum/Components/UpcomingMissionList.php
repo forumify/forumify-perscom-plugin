@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Forum\Components;
 
+use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
@@ -29,7 +30,8 @@ class UpcomingMissionList extends AbstractDoctrineList
     protected function getQuery(): QueryBuilder
     {
         return parent::getQuery()
-            ->where('e.start > CURRENT_TIMESTAMP()')
+            ->where('e.start > :start')
+            ->setParameter('start', new DateTime())
             ->orderBy('e.start', 'ASC');
     }
 }
