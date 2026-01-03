@@ -24,7 +24,7 @@ abstract class AbstractRecordSerializer implements NormalizerInterface, Denormal
 
         $data['user_id'] = $object->getUser()->getPerscomId();
         $data['author_id'] = $object->getAuthor()?->getPerscomId();
-        $data['document_id'] = $object->getDocument()?->getId();
+        $data['document_id'] = $object->getDocument()?->getPerscomId();
         $data['text'] = $object->getText();
         $data['created_at'] = $object->getCreatedAt()->format(Perscom::DATE_FORMAT);
 
