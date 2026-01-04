@@ -42,22 +42,26 @@
                                 <p>{{ user.specialty.name }}</p>
                             </div>
                         {% endif %}
-                        {% if user.position %}
-                            <div>
-                                <p class="text-bold">{{ 'perscom.user.position'|trans }}</p>
-                                <p>{{ user.position.name }}</p>
-                            </div>
-                        {% endif %}
                         {% if user.unit %}
                             <div>
                                 <p class="text-bold">{{ 'perscom.user.unit'|trans }}</p>
                                 <p>{{ user.unit.name }}</p>
                             </div>
                         {% endif %}
-                        {% if user.status %}
+                        {% if user.position %}
                             <div>
-                                <p class="text-bold">{{ 'perscom.user.status'|trans }}</p>
-                                <p>{{ user.status.name }}</p>
+                                <p class="text-bold">{{ 'perscom.user.position'|trans }}</p>
+                                <p>{{ user.position.name }}</p>
+                            </div>
+                        {% endif %}
+                        {% if supervisors is not empty %}
+                            <div>
+                                <p class="text-bold">{{ 'perscom.user.supervisors'|trans }}</p>
+                                <ul>
+                                    {% for supervisor in supervisors %}
+                                        <li>{{ supervisor.rank.abbreviation|default('') }} {{ supervisor.name }}</li>
+                                    {% endfor %}
+                                </ul>
                             </div>
                         {% endif %}
                     </div>

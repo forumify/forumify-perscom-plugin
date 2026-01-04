@@ -35,7 +35,8 @@
                                             <li class="text-small">
                                                 <a href="{{ path('perscom_user', { id: user.id }) }}" class="btn-link w-100">
                                                     {% include '@ForumifyPerscomPlugin/frontend/roster/components/soldier_row.html.twig' with {
-                                                        soldier: user
+                                                        soldier: user,
+                                                        unit: unit,
                                                     } only %}
                                                 </a>
                                             </li>

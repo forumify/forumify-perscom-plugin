@@ -184,7 +184,7 @@ perscom:
         specialty: 'Specialty'
         position: 'Position'
         unit: 'Unit'
-        status: 'Status'
+        supervisors: 'Supervisors'
         secondary_positions: 'Secondary Positions'
         no_secondary_positions: 'This user does not have any secondary positions.'
         document: 'Record Document'

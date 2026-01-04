@@ -12,6 +12,11 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
+/**
+ * @deprecated These functions exist to call the PERSCOM API from Twig,
+ *             Reading data from the API instead of the local DB is deprecated
+ *             and will be removed in version 3.
+ */
 class PerscomExtension extends AbstractExtension
 {
     public function __construct(private readonly PerscomFactory $perscomFactory)
@@ -21,7 +26,10 @@ class PerscomExtension extends AbstractExtension
     public function getFunctions(): array
     {
         return [
-            new TwigFunction('perscom', $this->perscomFactory->getPerscom(...)),
+            new TwigFunction('perscom', function () {
+                trigger_deprecation('forumify/forumify-perscom-plugin', '2.2.5', 'Calling the API directly from twig is deprecated. Use repositories to access the local database instead.');
+                return $this->perscomFactory->getPerscom();
+            }),
         ];
     }
 
@@ -36,6 +44,7 @@ class PerscomExtension extends AbstractExtension
 
     private function createFilter(array $filter): FilterObject
     {
+        trigger_deprecation('forumify/forumify-perscom-plugin', '2.2.5', 'Calling the API directly from twig is deprecated. Use repositories to access the local database instead.');
         return new FilterObject(
             $filter['field'],
             $filter['operator'],
@@ -46,6 +55,7 @@ class PerscomExtension extends AbstractExtension
 
     private function createSort(array $sort): SortObject
     {
+        trigger_deprecation('forumify/forumify-perscom-plugin', '2.2.5', 'Calling the API directly from twig is deprecated. Use repositories to access the local database instead.');
         return new SortObject(
             $sort['field'],
             $sort['direction'] ?? 'asc',
@@ -54,6 +64,7 @@ class PerscomExtension extends AbstractExtension
 
     private function createScope(array $scope): ScopeObject
     {
+        trigger_deprecation('forumify/forumify-perscom-plugin', '2.2.5', 'Calling the API directly from twig is deprecated. Use repositories to access the local database instead.');
         return new ScopeObject(
             $scope['name'],
             $scope['parameters'] ?? [],

@@ -5,8 +5,11 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Perscom\Scheduler;
 
 use Forumify\PerscomPlugin\Perscom\Service\ReportInService;
+use Symfony\Component\Console\Attribute\AsCommand;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Scheduler\Attribute\AsCronTask;
 
+#[AsCommand('perscom:report-in:run-checks')]
 #[AsCronTask('0 8 * * *', jitter: 1800)]
 class ReportInTaskHandler
 {
@@ -14,12 +17,13 @@ class ReportInTaskHandler
     {
     }
 
-    public function __invoke(): void
+    public function __invoke(): int
     {
         if (!$this->reportInService->isEnabled()) {
-            return;
+            return Command::SUCCESS;
         }
 
         $this->reportInService->runReportInChecks();
+        return Command::SUCCESS;
     }
 }

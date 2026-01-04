@@ -6,7 +6,9 @@ namespace Forumify\PerscomPlugin\Perscom\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\Mapping\JoinColumn;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
@@ -39,10 +41,25 @@ class Unit implements PerscomEntityInterface, SortableEntityInterface
     #[ORM\ManyToMany(targetEntity: Roster::class, mappedBy: 'units')]
     private Collection $rosters;
 
+    /**
+     * @var Collection<int, Position>
+     */
+    #[ORM\ManyToMany(targetEntity: Position::class)]
+    #[ORM\JoinTable(
+        name: 'perscom_unit_supervisors',
+        joinColumns: new JoinColumn(onDelete: 'CASCADE'),
+        inverseJoinColumns: new JoinColumn(onDelete: 'CASCADE'),
+    )]
+    public Collection $supervisors;
+
+    #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
+    public bool $markSupervisorsOnRoster = true;
+
     public function __construct()
     {
         $this->users = new ArrayCollection();
         $this->rosters = new ArrayCollection();
+        $this->supervisors = new ArrayCollection();
     }
 
     public static function getPerscomResource(Perscom $perscom): Batchable|Crudable

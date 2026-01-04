@@ -5,8 +5,12 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Admin\Form;
 
 use Forumify\Core\Form\RichTextEditorType;
+use Forumify\PerscomPlugin\Perscom\Entity\Position;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
+use Forumify\PerscomPlugin\Perscom\Repository\PositionRepository;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -26,6 +30,21 @@ class UnitType extends AbstractType
             ->add('name', TextType::class)
             ->add('description', RichTextEditorType::class, [
                 'required' => false,
+            ])
+            ->add('supervisors', EntityType::class, [
+                'required' => false,
+                'multiple' => true,
+                'autocomplete' => true,
+                'class' => Position::class,
+                'choice_label' => 'name',
+                'query_builder' => fn(PositionRepository $repository) => $repository
+                    ->createQueryBuilder('p')
+                    ->orderBy('p.position', 'ASC'),
+                'help' => 'Users in these positions will be considered supervisors. If multiple positions are selected, the position\'s sorting will decide the hierarchy.',
+            ])
+            ->add('markSupervisorsOnRoster', CheckboxType::class, [
+                'required' => false,
+                'help' => 'When enabled, supervisor positions will have an adornment added to them on the roster.',
             ])
         ;
     }

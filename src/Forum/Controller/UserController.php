@@ -10,6 +10,7 @@ use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Repository\AssignmentRecordRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\AwardRecordRepository;
+use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\RankRecordRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\ReportInRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,6 +24,7 @@ class UserController extends AbstractController
         private readonly AwardRecordRepository $awardRecordRepository,
         private readonly AssignmentRecordRepository $assignmentRecordRepository,
         private readonly ReportInRepository $reportInRepository,
+        private readonly PerscomUserRepository $userRepository,
     ) {
     }
 
@@ -42,6 +44,7 @@ class UserController extends AbstractController
             'tig' => $this->getTimeInGrade($user),
             'tis' => $this->getTimeInService($user),
             'user' => $user,
+            'supervisors' => $this->getSupervisors($user),
         ]);
     }
 
@@ -118,5 +121,33 @@ class UserController extends AbstractController
         }
 
         return $grouped;
+    }
+
+    /**
+     * @return array<PerscomUser>
+     */
+    private function getSupervisors(PerscomUser $user): array
+    {
+        $unit = $user->getUnit();
+        if ($unit === null) {
+            return [];
+        }
+
+        $supervisorPositions = $unit->supervisors->toArray();
+        if (empty($supervisorPositions)) {
+            return [];
+        }
+
+        $supervisors = $this->userRepository->findBy(['position' => $supervisorPositions]);
+        if ($user->getPosition() === null) {
+            return $supervisors;
+        }
+
+        $supervisors = array_filter(
+            $supervisors,
+            fn (PerscomUser $supervisor) => $user->getPosition()->getPosition() > $supervisor->getPosition()->getPosition(),
+        );
+        usort($supervisors, fn (PerscomUser $a, PerscomUser $b) => $a->getPosition()->getPosition() <=> $b->getPosition()->getPosition());
+        return $supervisors;
     }
 }
