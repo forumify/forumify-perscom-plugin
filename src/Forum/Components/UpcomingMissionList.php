@@ -8,6 +8,7 @@ use DateTime;
 use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
 use Forumify\PerscomPlugin\Perscom\Entity\Mission;
+use Forumify\PerscomPlugin\Perscom\Repository\OperationRepository;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -22,6 +23,10 @@ class UpcomingMissionList extends AbstractDoctrineList
     #[LiveProp]
     public int $size = 5;
 
+    public function __construct(private readonly OperationRepository $operationRepository)
+    {
+    }
+
     protected function getEntityClass(): string
     {
         return Mission::class;
@@ -29,9 +34,13 @@ class UpcomingMissionList extends AbstractDoctrineList
 
     protected function getQuery(): QueryBuilder
     {
-        return parent::getQuery()
+        $qb = parent::getQuery()
+            ->innerJoin('e.operation', 'o')
             ->where('e.start > :start')
             ->setParameter('start', new DateTime())
             ->orderBy('e.start', 'ASC');
+
+        $this->operationRepository->addACLToQuery($qb, 'view_missions', alias: 'o');
+        return $qb;
     }
 }
