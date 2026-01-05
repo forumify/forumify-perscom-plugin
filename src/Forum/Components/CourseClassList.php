@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Forumify\Core\Component\List\AbstractDoctrineList;
 use Forumify\PerscomPlugin\Perscom\Entity\Course;
 use Forumify\PerscomPlugin\Perscom\Entity\CourseClass;
+use Forumify\PerscomPlugin\Perscom\Repository\CourseRepository;
 use Forumify\Plugin\Attribute\PluginVersion;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
@@ -26,11 +27,9 @@ class CourseClassList extends AbstractDoctrineList
     #[LiveProp]
     public bool $signupOnly = false;
 
-    protected string|array|null $aclPermission = [
-        'permission' => 'view',
-        'alias' => 'c',
-        'entity' => Course::class,
-    ];
+    public function __construct(private readonly CourseRepository $courseRepository)
+    {
+    }
 
     protected function getEntityClass(): string
     {
@@ -48,6 +47,8 @@ class CourseClassList extends AbstractDoctrineList
                 ->andWhere('e.course = :course')
                 ->setParameter('course', $this->course);
         }
+
+        $this->courseRepository->addACLToQuery($qb, 'view', alias: 'c');
 
         if ($this->signupOnly) {
             $qb
