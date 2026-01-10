@@ -102,7 +102,7 @@ class MilsimStory extends Story
 
         $alphaCompany = RosterFactory::createOne([
             'name' => 'Alpha Company',
-            'units' => new ArrayCollection([$firstSquad->_real(), $secondSquad->_real()]),
+            'units' => new ArrayCollection([$firstSquad, $secondSquad]),
         ]);
         $this->addState('rosterAlphaCompany', $alphaCompany);
 

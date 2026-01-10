@@ -5,12 +5,12 @@ declare(strict_types=1);
 namespace PluginTests\Factories\Perscom;
 
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomSyncResult;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
 /**
- * @extends PersistentProxyObjectFactory<PerscomSyncResult>
+ * @extends PersistentObjectFactory<PerscomSyncResult>
  */
-class SyncResultFactory extends PersistentProxyObjectFactory
+class SyncResultFactory extends PersistentObjectFactory
 {
     public static function class(): string
     {

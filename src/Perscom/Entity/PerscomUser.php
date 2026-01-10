@@ -26,7 +26,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PerscomUserRepository::class)]
 #[UniqueEntity('user', errorPath: 'user')]
-class PerscomUser implements PerscomEntityInterface
+class PerscomUser implements PerscomEntityInterface, AssignmentInterface
 {
     use IdentifiableEntityTrait;
     use PerscomEntityTrait;
@@ -287,6 +287,9 @@ class PerscomUser implements PerscomEntityInterface
         $this->rankRecords = $rankRecords;
     }
 
+    /**
+     * @return Collection<int, AssignmentRecord>
+     */
     public function getAssignmentRecords(): Collection
     {
         return $this->assignmentRecords;

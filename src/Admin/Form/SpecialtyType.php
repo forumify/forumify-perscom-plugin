@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
+use Forumify\Admin\Form\UserRoleType;
 use Forumify\Core\Form\RichTextEditorType;
 use Forumify\PerscomPlugin\Perscom\Entity\Specialty;
 use Symfony\Component\Form\AbstractType;
@@ -29,6 +30,10 @@ class SpecialtyType extends AbstractType
             ])
             ->add('abbreviation', TextType::class, [
                 'help' => 'Give this specialty an abbreviation. For example the specialty of a US Infantryman would get the abbreviation of 11B.',
+                'required' => false,
+            ])
+            ->add('role', UserRoleType::class, [
+                'placeholder' => 'Do not assign any role',
                 'required' => false,
             ])
         ;

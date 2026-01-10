@@ -6,6 +6,7 @@ namespace Forumify\PerscomPlugin\Perscom\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
+use Forumify\Core\Entity\Role;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
@@ -34,6 +35,10 @@ class Specialty implements PerscomEntityInterface, SortableEntityInterface
     #[ORM\Column(length: 8)]
     #[Assert\Length(max: 8)]
     private string $abbreviation = '';
+
+    #[ORM\ManyToOne(targetEntity: Role::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    public ?Role $role = null;
 
     public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {

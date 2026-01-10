@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace PluginTests\Factories\Perscom;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Rank;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
-class RankFactory extends PersistentProxyObjectFactory
+class RankFactory extends PersistentObjectFactory
 {
     public static function class(): string
     {
