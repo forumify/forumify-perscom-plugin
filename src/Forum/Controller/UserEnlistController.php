@@ -27,13 +27,23 @@ class UserEnlistController extends AbstractController
     public function __invoke(Request $request): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+
+        /** @var User $user */
+        $user = $this->getUser();
+        if ($user->isBanned()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        if (!$user->isEmailVerified()) {
+            $this->addFlash('error', 'perscom.enlistment.not_verified');
+            return $this->redirectToRoute('forumify_core_index');
+        }
+
         if (!$this->perscomEnlistService->canEnlist()) {
             $this->addFlash('error', 'perscom.enlistment.not_eligible');
             return $this->redirectToRoute('forumify_core_index');
         }
 
-        /** @var User $user */
-        $user = $this->getUser();
         $enlistmentForm = $this->perscomEnlistService->getEnlistmentForm();
         if ($enlistmentForm === null) {
             $this->addFlash('error', 'perscom.enlistment.not_enabled');
