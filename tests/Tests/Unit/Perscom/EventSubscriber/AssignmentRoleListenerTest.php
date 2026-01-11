@@ -70,8 +70,8 @@ class AssignmentRoleListenerTest extends KernelTestCase
         ]);
 
         $unitC = UnitFactory::createOne([
-            'name' => 'UnitB',
-            'role' => RoleFactory::createOne(['title' => 'UnitB']),
+            'name' => 'UnitC',
+            'role' => RoleFactory::createOne(['title' => 'UnitC']),
         ]);
 
         $targetUser = $this->createUser();
