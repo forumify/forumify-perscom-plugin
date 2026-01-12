@@ -6,6 +6,7 @@ namespace PluginTests\Application;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\RankRecord;
+use PluginTests\Factories\Perscom\UserFactory;
 use PluginTests\Factories\Stories\MilsimStory;
 
 class DischargeTest extends PerscomWebTestCase
@@ -27,6 +28,7 @@ class DischargeTest extends PerscomWebTestCase
             'discharge[status]' => '',
         ]);
 
+        $user = UserFactory::find($user->getId());
         self::assertNull($user->getRank());
         self::assertNull($user->getUnit());
         self::assertNull($user->getPosition());
@@ -63,6 +65,7 @@ class DischargeTest extends PerscomWebTestCase
             'discharge[status]' => $status,
         ]);
 
+        $user = UserFactory::find($user->getId());
         self::assertEquals($rank, $user->getRank()->getId());
         self::assertEquals($unit, $user->getUnit()->getId());
         self::assertEquals($position, $user->getPosition()->getId());

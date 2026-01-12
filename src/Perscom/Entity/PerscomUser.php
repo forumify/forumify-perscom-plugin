@@ -26,7 +26,7 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 #[ORM\Entity(repositoryClass: PerscomUserRepository::class)]
 #[UniqueEntity('user', errorPath: 'user')]
-class PerscomUser implements PerscomEntityInterface, AssignmentInterface
+class PerscomUser implements PerscomEntityInterface
 {
     use IdentifiableEntityTrait;
     use PerscomEntityTrait;

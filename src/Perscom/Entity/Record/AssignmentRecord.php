@@ -6,7 +6,6 @@ namespace Forumify\PerscomPlugin\Perscom\Entity\Record;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\Column;
-use Forumify\PerscomPlugin\Perscom\Entity\AssignmentInterface;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Entity\Position;
 use Forumify\PerscomPlugin\Perscom\Entity\Specialty;
@@ -20,12 +19,15 @@ use Perscom\Contracts\Crudable;
 #[ORM\Entity(repositoryClass: AssignmentRecordRepository::class)]
 #[ORM\Index(fields: ['type'])]
 #[ORM\Table('perscom_record_assignment')]
-class AssignmentRecord implements RecordInterface, AssignmentInterface
+class AssignmentRecord implements RecordInterface
 {
     use RecordFields;
 
+    public const string TYPE_PRIMARY = 'primary';
+    public const string TYPE_SECONDARY = 'secondary';
+
     #[Column(length: 16)]
-    private string $type = 'primary';
+    private string $type = self::TYPE_PRIMARY;
 
     #[ORM\ManyToOne(targetEntity: Status::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]
