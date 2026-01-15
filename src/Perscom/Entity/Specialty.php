@@ -31,9 +31,10 @@ class Specialty implements PerscomEntityInterface, SortableEntityInterface
     #[ORM\Column(type: 'text')]
     private string $description = '';
 
-    #[ORM\Column(length: 8, nullable: true)]
+    #[ORM\Column(length: 8)]
     #[Assert\Length(max: 8)]
-    private ?string $abbreviation = null;
+    #[Assert\NotBlank(allowNull: false)]
+    private string $abbreviation;
 
     public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
@@ -60,12 +61,12 @@ class Specialty implements PerscomEntityInterface, SortableEntityInterface
         $this->description = $description;
     }
 
-    public function getAbbreviation(): ?string
+    public function getAbbreviation(): string
     {
         return $this->abbreviation;
     }
 
-    public function setAbbreviation(?string $abbreviation): void
+    public function setAbbreviation(string $abbreviation): void
     {
         $this->abbreviation = $abbreviation;
     }
