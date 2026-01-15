@@ -34,7 +34,7 @@ class Specialty implements PerscomEntityInterface, SortableEntityInterface
     #[ORM\Column(length: 8)]
     #[Assert\Length(max: 8)]
     #[Assert\NotBlank(allowNull: false)]
-    private string $abbreviation;
+    private string $abbreviation = '';
 
     public static function getPerscomResource(Perscom $perscom): Batchable|Crudable
     {
