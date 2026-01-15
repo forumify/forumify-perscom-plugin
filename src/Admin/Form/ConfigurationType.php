@@ -67,6 +67,11 @@ class ConfigurationType extends AbstractType
                 'placeholder' => 'Select a form to use for enlistments',
                 'required' => false,
             ])
+            ->add('perscom__enlistment__roleplay_names', CheckboxType::class, [
+                'required' => false,
+                'label' => 'Require roleplay friendly name',
+                'help' => 'When enabled, the enlistment form will show "firstname" and "lastname". Otherwise, it will use the logged in user\'s forum display name.',
+            ])
             ->add('perscom__enlistment__forum', ChoiceType::class, [
                 'autocomplete' => true,
                 'choices' => $this->getForumChoices(),

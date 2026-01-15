@@ -7,6 +7,7 @@ namespace Forumify\PerscomPlugin\Perscom\Service;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\User;
 use Forumify\Core\Repository\SettingRepository;
+use Forumify\PerscomPlugin\Forum\Form\Enlistment;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -44,17 +45,20 @@ class PerscomUserService
         return $this->userIdToPerscomUser[$userId];
     }
 
-    public function createUser(string $firstName, string $lastName): PerscomUser
+    public function createUser(Enlistment $enlistment): PerscomUser
     {
         /** @var User $user */
         $user = $this->security->getUser();
-        $name = ucfirst($firstName) . ' ' . ucfirst($lastName);
-
         $perscomUser = new PerscomUser();
         $perscomUser->setUser($user);
-        $perscomUser->setName($name);
-        $this->perscomUserRepository->save($perscomUser);
+        $perscomUser->setName($user->getDisplayName());
 
+        if (!empty($enlistment->firstName) && !empty($enlistment->lastName)) {
+            $name = ucfirst($enlistment->firstName) . ' ' . ucfirst($enlistment->lastName);
+            $perscomUser->setName($name);
+        }
+
+        $this->perscomUserRepository->save($perscomUser);
         return $perscomUser;
     }
 

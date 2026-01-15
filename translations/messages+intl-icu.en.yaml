@@ -162,7 +162,8 @@ perscom:
         not_verified: 'You must verify your email before being able to enlist.'
         not_eligible: 'You are currently not eligible for enlistment.'
         not_enabled: 'Enlistments are currently disabled.'
-        pending: 'Your enlistment is being processed. View the enlistment topic for further instructions and updates.'
+        pending: 'Your enlistment is being processed.'
+        pending_with_topic:  'Your enlistment is being processed. View the enlistment topic for further instructions and updates.'
         topic: 'View enlistment topic'
         start_new: 'Start another enlistment'
     user:
