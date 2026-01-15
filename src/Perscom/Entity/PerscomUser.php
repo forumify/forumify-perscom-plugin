@@ -287,6 +287,9 @@ class PerscomUser implements PerscomEntityInterface
         $this->rankRecords = $rankRecords;
     }
 
+    /**
+     * @return Collection<int, AssignmentRecord>
+     */
     public function getAssignmentRecords(): Collection
     {
         return $this->assignmentRecords;

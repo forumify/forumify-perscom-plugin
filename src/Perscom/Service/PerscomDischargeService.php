@@ -9,6 +9,7 @@ use Forumify\PerscomPlugin\Admin\Service\RecordService;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\AssignmentRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\RankRecord;
 use Forumify\PerscomPlugin\Perscom\Entity\Record\ServiceRecord;
+use Forumify\PerscomPlugin\Perscom\Repository\AssignmentRecordRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
 
 class PerscomDischargeService
@@ -16,6 +17,7 @@ class PerscomDischargeService
     public function __construct(
         private readonly RecordService $recordService,
         private readonly PerscomUserRepository $perscomUserRepository,
+        private readonly AssignmentRecordRepository $assignmentRecordRepository,
     ) {
     }
 
@@ -111,6 +113,13 @@ class PerscomDischargeService
         }
 
         $user->setSpecialty(null);
+
+        foreach ($user->getAssignmentRecords() as $assignment) {
+            if ($assignment->getType() === AssignmentRecord::TYPE_SECONDARY) {
+                $this->assignmentRecordRepository->remove($assignment, false);
+            }
+        }
+
         $this->perscomUserRepository->save($user);
     }
 }

@@ -23,8 +23,11 @@ class AssignmentRecord implements RecordInterface
 {
     use RecordFields;
 
+    public const string TYPE_PRIMARY = 'primary';
+    public const string TYPE_SECONDARY = 'secondary';
+
     #[Column(length: 16)]
-    private string $type = 'primary';
+    private string $type = self::TYPE_PRIMARY;
 
     #[ORM\ManyToOne(targetEntity: Status::class)]
     #[ORM\JoinColumn(onDelete: 'CASCADE')]

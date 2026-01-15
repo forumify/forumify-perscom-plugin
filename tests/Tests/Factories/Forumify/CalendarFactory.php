@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace PluginTests\Factories\Forumify;
 
 use Forumify\Calendar\Entity\Calendar;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
-class CalendarFactory extends PersistentProxyObjectFactory
+class CalendarFactory extends PersistentObjectFactory
 {
     public static function class(): string
     {

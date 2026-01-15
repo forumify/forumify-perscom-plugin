@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
+use Forumify\Admin\Form\UserRoleType;
 use Forumify\Core\Form\RichTextEditorType;
 use Forumify\PerscomPlugin\Perscom\Entity\Position;
 use Forumify\PerscomPlugin\Perscom\Entity\Unit;
@@ -29,6 +30,10 @@ class UnitType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('description', RichTextEditorType::class, [
+                'required' => false,
+            ])
+            ->add('role', UserRoleType::class, [
+                'placeholder' => 'Do not assign any role',
                 'required' => false,
             ])
             ->add('supervisors', EntityType::class, [

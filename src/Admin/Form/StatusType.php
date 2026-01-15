@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Forumify\PerscomPlugin\Admin\Form;
 
+use Forumify\Admin\Form\UserRoleType;
 use Forumify\PerscomPlugin\Perscom\Entity\Status;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ColorType;
@@ -25,6 +26,10 @@ class StatusType extends AbstractType
         $builder
             ->add('name', TextType::class)
             ->add('color', ColorType::class, [
+                'required' => false,
+            ])
+            ->add('role', UserRoleType::class, [
+                'placeholder' => 'Do not assign any role',
                 'required' => false,
             ])
         ;

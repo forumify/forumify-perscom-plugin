@@ -10,6 +10,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Forumify\Core\Entity\IdentifiableEntityTrait;
+use Forumify\Core\Entity\Role;
 use Forumify\Core\Entity\SortableEntityInterface;
 use Forumify\Core\Entity\SortableEntityTrait;
 use Forumify\Core\Entity\TimestampableEntityTrait;
@@ -54,6 +55,10 @@ class Unit implements PerscomEntityInterface, SortableEntityInterface
 
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => 1])]
     public bool $markSupervisorsOnRoster = true;
+
+    #[ORM\ManyToOne(targetEntity: Role::class)]
+    #[ORM\JoinColumn(onDelete: 'SET NULL')]
+    public ?Role $role = null;
 
     public function __construct()
     {
