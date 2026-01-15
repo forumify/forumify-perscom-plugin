@@ -146,7 +146,7 @@ class OperationsTest extends PerscomWebTestCase
             'mission[briefing]' => 'Mission briefing',
         ]);
 
-        $calendar->_refresh();
+        $calendar = CalendarFactory::find($calendar->getId());
         self::assertCount(1, $calendar->getEvents());
     }
 }

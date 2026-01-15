@@ -28,7 +28,9 @@ class RankUpdateUserListener
         $previousRankRecord = $this->rankRecordRepository
             ->createQueryBuilder('rr')
             ->where('rr != :record')
+            ->andWhere('rr.user = :user')
             ->setParameter('record', $record)
+            ->setParameter('user', $record->getUser())
             ->orderBy('rr.createdAt', 'DESC')
             ->setMaxResults(1)
             ->getQuery()
