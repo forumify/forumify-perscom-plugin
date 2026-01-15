@@ -6,7 +6,11 @@
             <p class="mb-2">{{ successMessage|perscom_text }}</p>
         {% endif %}
         <p class="mb-4">
-            {{ 'perscom.enlistment.pending'|trans }}
+            {% if enlistmentTopic is not null %}
+                {{ 'perscom.enlistment.pending_with_topic'|trans }}
+            {% else %}
+                {{ 'perscom.enlistment.pending'|trans }}
+            {% endif %}
         </p>
         <div class="flex justify-center gap-4">
             {% if enlistmentTopic is not null %}

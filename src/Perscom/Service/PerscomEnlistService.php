@@ -53,10 +53,8 @@ class PerscomEnlistService
 
     public function enlist(Enlistment $enlistment): PerscomUser
     {
-        $perscomUser = $this->perscomUserService->getLoggedInPerscomUser() ?? $this->perscomUserService->createUser(
-            $enlistment->firstName,
-            $enlistment->lastName,
-        );
+        $perscomUser = $this->perscomUserService->getLoggedInPerscomUser()
+            ?? $this->perscomUserService->createUser($enlistment);
 
         $submission = new FormSubmission();
         $submission->setForm($this->getEnlistmentForm());

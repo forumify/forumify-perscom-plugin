@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Forumify\PerscomPlugin\Forum\Controller;
 
 use Forumify\Core\Entity\User;
-use Forumify\PerscomPlugin\Forum\Form\Enlistment;
+use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Forum\Form\EnlistmentType;
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Service\PerscomEnlistService;
@@ -20,6 +20,7 @@ class UserEnlistController extends AbstractController
     public function __construct(
         private readonly PerscomEnlistService $perscomEnlistService,
         private readonly PerscomUserService $perscomUserService,
+        private readonly SettingRepository $settingRepository,
     ) {
     }
 
@@ -59,10 +60,10 @@ class UserEnlistController extends AbstractController
             ]);
         }
 
-        $enlistment = new Enlistment();
-        $enlistment->email = $user->getEmail();
-
-        $form = $this->createForm(EnlistmentType::class, $enlistment, ['form' => $enlistmentForm]);
+        $form = $this->createForm(EnlistmentType::class, null, [
+            'form' => $enlistmentForm,
+            'roleplay_names' => $this->settingRepository->get('perscom.enlistment.roleplay_names') ?? true,
+        ]);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $perscomUser = $this->perscomEnlistService->enlist($form->getData());
