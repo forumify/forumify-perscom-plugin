@@ -150,7 +150,7 @@ class UserSerializer implements DenormalizerInterface, NormalizerInterface
         }
 
         $directory = 'user/uniform';
-        $path = u($source)->afterLast('/')->toString();
+        $path = u($source)->afterLast('/')->beforeLast('?')->toString();
         $imagePath = $directory . '/' . $path;
         $this->perscomAssetStorage->write($imagePath, $imageData);
 

@@ -28,7 +28,7 @@ class FormSerializer implements NormalizerInterface, DenormalizerInterface
         $data['name'] = $object->getName();
         $data['description'] = $object->getDescription();
         $data['success_message'] = $object->getSuccessMessage();
-        $data['submission_status_id'] = $object->getDefaultStatus()?->getId();
+        $data['submission_status_id'] = $object->getDefaultStatus()?->getPerscomId();
         $data['is_public'] = false;
         $data['instructions'] = $object->getInstructions();
         $data['fields'] = $object->getFields();

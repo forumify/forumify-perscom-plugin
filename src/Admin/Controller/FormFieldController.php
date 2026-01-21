@@ -80,7 +80,7 @@ class FormFieldController extends AbstractCrudController
     private function getParent(): Form
     {
         $request = $this->requestStack->getCurrentRequest();
-        $form = $this->formRepository->find($request->query->get('formId'));
+        $form = $this->formRepository->find($request->attributes->get('formId'));
         if ($form === null) {
             throw $this->createNotFoundException();
         }
