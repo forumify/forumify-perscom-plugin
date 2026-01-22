@@ -32,7 +32,7 @@ class CourseClassController extends AbstractController
         ]);
     }
 
-    #[Route('/{slug}/class/create', 'create')]
+    #[Route('/{slug:course}/class/create', 'create')]
     public function create(Request $request, Course $course): Response
     {
         $this->denyAccessUnlessGranted(VoterAttribute::ACL->value, [

@@ -30,7 +30,6 @@ class SpecialtyType extends AbstractType
             ])
             ->add('abbreviation', TextType::class, [
                 'help' => 'Give this specialty an abbreviation. For example the specialty of a US Infantryman would get the abbreviation of 11B.',
-                'required' => false,
             ])
             ->add('role', UserRoleType::class, [
                 'placeholder' => 'Do not assign any role',

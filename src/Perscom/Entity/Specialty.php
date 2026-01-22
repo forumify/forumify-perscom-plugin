@@ -34,6 +34,7 @@ class Specialty implements PerscomEntityInterface, SortableEntityInterface
 
     #[ORM\Column(length: 8)]
     #[Assert\Length(max: 8)]
+    #[Assert\NotBlank(allowNull: false)]
     private string $abbreviation = '';
 
     #[ORM\ManyToOne(targetEntity: Role::class)]
