@@ -2,8 +2,9 @@
 
 declare(strict_types=1);
 
-namespace PluginTests\Traits;
+namespace PluginTests\Tests\Traits;
 
+use Forumify\Testing\Traits\RequiresContainerTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;

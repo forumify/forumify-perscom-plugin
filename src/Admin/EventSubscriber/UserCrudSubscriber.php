@@ -67,9 +67,9 @@ class UserCrudSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
 
         $this->deleteRemovedAssignmentRecords($user, $form);
-        $forumifyUser = $user->getUser()?->getId();
-        if ($forumifyUser !== null) {
-            $this->syncUserService->sync($user->getUser()?->getId());
+        $forumifyUserId = $user->getUser()?->getId();
+        if ($forumifyUserId !== null) {
+            $this->syncUserService->sync($forumifyUserId);
         }
     }
 

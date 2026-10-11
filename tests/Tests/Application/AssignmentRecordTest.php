@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PluginTests\Application;
+namespace PluginTests\Tests\Application;
 
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomUserRepository;
-use PluginTests\Factories\Perscom\UserFactory;
-use PluginTests\Factories\Stories\MilsimStory;
+use PluginTests\Tests\Factories\Perscom\UserFactory;
+use PluginTests\Tests\Factories\Stories\MilsimStory;
 
 class AssignmentRecordTest extends PerscomWebTestCase
 {
