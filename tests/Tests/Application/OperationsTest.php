@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace PluginTests\Application;
+namespace PluginTests\Tests\Application;
 
 use DateInterval;
 use DateTimeImmutable;
 use Forumify\Core\Repository\SettingRepository;
 use Forumify\Calendar\ForumifyCalendarPlugin;
 use PHPUnit\Framework\Attributes\RequiresMethod;
-use PluginTests\Factories\Forumify\CalendarFactory;
-use PluginTests\Factories\Perscom\OperationFactory;
-use PluginTests\Factories\Perscom\UserFactory;
-use PluginTests\Factories\Stories\MilsimStory;
-use PluginTests\Traits\SessionTrait;
+use PluginTests\Tests\Factories\Forumify\CalendarFactory;
+use PluginTests\Tests\Factories\Perscom\OperationFactory;
+use PluginTests\Tests\Factories\Perscom\UserFactory;
+use PluginTests\Tests\Factories\Stories\MilsimStory;
+use PluginTests\Tests\Traits\SessionTrait;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 class OperationsTest extends PerscomWebTestCase
@@ -146,7 +146,7 @@ class OperationsTest extends PerscomWebTestCase
             'mission[briefing]' => 'Mission briefing',
         ]);
 
-        $calendar->_refresh();
+        $calendar = CalendarFactory::find($calendar->getId());
         self::assertCount(1, $calendar->getEvents());
     }
 }

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PluginTests\Factories\Perscom\Record;
+namespace PluginTests\Tests\Factories\Perscom\Record;
 
 use Forumify\PerscomPlugin\Perscom\Entity\Record\QualificationRecord;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
-class QualificationRecordFactory extends PersistentProxyObjectFactory
+class QualificationRecordFactory extends PersistentObjectFactory
 {
     public static function class(): string
     {

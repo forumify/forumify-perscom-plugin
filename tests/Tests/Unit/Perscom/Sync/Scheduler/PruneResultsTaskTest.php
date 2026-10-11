@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace PluginTests\Unit\Perscom\Sync\Scheduler;
+namespace PluginTests\Tests\Unit\Perscom\Sync\Scheduler;
 
 use DateInterval;
 use DateTime;
 use Forumify\PerscomPlugin\Perscom\Repository\PerscomSyncResultRepository;
 use Forumify\PerscomPlugin\Perscom\Sync\Scheduler\PruneResultsTask;
-use PluginTests\Factories\Perscom\SyncResultFactory;
+use PluginTests\Tests\Factories\Perscom\SyncResultFactory;
 use Symfony\Bundle\FrameworkBundle\Test\KernelTestCase;
 use Zenstruck\Foundry\Test\Factories;
 

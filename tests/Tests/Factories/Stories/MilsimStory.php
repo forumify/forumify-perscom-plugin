@@ -2,24 +2,24 @@
 
 declare(strict_types=1);
 
-namespace PluginTests\Factories\Stories;
+namespace PluginTests\Tests\Factories\Stories;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Forumify\Core\Entity\MenuItem;
 use Forumify\Core\Repository\MenuItemRepository;
 use Forumify\Core\Repository\SettingRepository;
 use Forumify\PerscomPlugin\Perscom\Entity;
-use PluginTests\Factories\Forumify\ForumFactory;
-use PluginTests\Factories\Perscom\FormFactory;
-use PluginTests\Factories\Perscom\FormFieldFactory;
-use PluginTests\Factories\Perscom\PositionFactory;
-use PluginTests\Factories\Perscom\QualificationFactory;
-use PluginTests\Factories\Perscom\RankFactory;
-use PluginTests\Factories\Perscom\RosterFactory;
-use PluginTests\Factories\Perscom\SpecialtyFactory;
-use PluginTests\Factories\Perscom\StatusFactory;
-use PluginTests\Factories\Perscom\UnitFactory;
-use PluginTests\Factories\Perscom\UserFactory;
+use Forumify\Testing\Factories\Forum\ForumFactory;
+use PluginTests\Tests\Factories\Perscom\FormFactory;
+use PluginTests\Tests\Factories\Perscom\FormFieldFactory;
+use PluginTests\Tests\Factories\Perscom\PositionFactory;
+use PluginTests\Tests\Factories\Perscom\QualificationFactory;
+use PluginTests\Tests\Factories\Perscom\RankFactory;
+use PluginTests\Tests\Factories\Perscom\RosterFactory;
+use PluginTests\Tests\Factories\Perscom\SpecialtyFactory;
+use PluginTests\Tests\Factories\Perscom\StatusFactory;
+use PluginTests\Tests\Factories\Perscom\UnitFactory;
+use PluginTests\Tests\Factories\Perscom\UserFactory;
 use Zenstruck\Foundry\Story;
 
 /**
@@ -102,7 +102,7 @@ class MilsimStory extends Story
 
         $alphaCompany = RosterFactory::createOne([
             'name' => 'Alpha Company',
-            'units' => new ArrayCollection([$firstSquad->_real(), $secondSquad->_real()]),
+            'units' => new ArrayCollection([$firstSquad, $secondSquad]),
         ]);
         $this->addState('rosterAlphaCompany', $alphaCompany);
 

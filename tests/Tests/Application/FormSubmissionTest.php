@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PluginTests\Application;
+namespace PluginTests\Tests\Application;
 
 use Forumify\PerscomPlugin\Perscom\Repository\FormRepository;
-use PluginTests\Factories\Perscom\FormFieldFactory;
-use PluginTests\Factories\Perscom\UserFactory;
-use PluginTests\Factories\Stories\MilsimStory;
+use PluginTests\Tests\Factories\Perscom\FormFieldFactory;
+use PluginTests\Tests\Factories\Perscom\UserFactory;
+use PluginTests\Tests\Factories\Stories\MilsimStory;
 
 class FormSubmissionTest extends PerscomWebTestCase
 {

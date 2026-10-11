@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace PluginTests\Factories\Perscom;
+namespace PluginTests\Tests\Factories\Perscom;
 
 use Forumify\PerscomPlugin\Perscom\Entity\PerscomUser;
-use Zenstruck\Foundry\Persistence\PersistentProxyObjectFactory;
+use Zenstruck\Foundry\Persistence\PersistentObjectFactory;
 
-class UserFactory extends PersistentProxyObjectFactory
+class UserFactory extends PersistentObjectFactory
 {
     public static function class(): string
     {

@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace PluginTests\Application;
+namespace PluginTests\Tests\Application;
 
 use DateInterval;
 use DateTimeImmutable;
 use Forumify\PerscomPlugin\Perscom\Repository\CourseClassRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\QualificationRecordRepository;
 use Forumify\PerscomPlugin\Perscom\Repository\ServiceRecordRepository;
-use PluginTests\Application\PerscomWebTestCase;
-use PluginTests\Factories\Perscom\Record\QualificationRecordFactory;
-use PluginTests\Factories\Perscom\UserFactory;
-use PluginTests\Factories\Stories\MilsimStory;
-use PluginTests\Traits\SessionTrait;
+use PluginTests\Tests\Application\PerscomWebTestCase;
+use PluginTests\Tests\Factories\Perscom\Record\QualificationRecordFactory;
+use PluginTests\Tests\Factories\Perscom\UserFactory;
+use PluginTests\Tests\Factories\Stories\MilsimStory;
+use PluginTests\Tests\Traits\SessionTrait;
 use Symfony\UX\LiveComponent\Test\InteractsWithLiveComponents;
 
 class CoursesTest extends PerscomWebTestCase
